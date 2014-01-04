@@ -20,7 +20,7 @@
 
 (asdf:defsystem #:win32
   :description "A cffi wrapper package for win32, including Kernel32, User32, and GDI32."
-  :version "0.0.0.1"
+  :version "0.0.0.2"
   :author "Wilfredo Velázquez-Rodríguez <zulu.inuoe@gmail.com>"
   :license "zlib/libpng License <http://opensource.org/licenses/zlib-license.php>"
   :components ((:file "package")

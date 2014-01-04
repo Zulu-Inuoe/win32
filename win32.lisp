@@ -53,6 +53,11 @@
       (t
        (error "The value ~A cannot be converted at this time, as negatives are not supported." value)))))
 
+(defconstant +win32-string-encoding+
+  #+little-endian :utf-16le
+  #+big-endian :utf-16be
+  "Not a win32 'constant' per-se, but useful to expose for usage with CFFI:FOREIGN-STRING-TO-LISP and friends.")
+
 ;;Pixel types
 (defconstant +pfd-type-rgba+        0)
 (defconstant +pfd-type-colorindex+  1)
@@ -508,8 +513,8 @@
   (icon :pointer)
   (cursor :pointer)
   (background :pointer)
-  (menu-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
-  (wndclass-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (menu-name (:string :encoding #.+win32-string-encoding+))
+  (wndclass-name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcstruct wndclassex
   (cbsize :uint32)
@@ -521,8 +526,8 @@
   (icon :pointer)
   (cursor :pointer)
   (background :pointer)
-  (menu-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
-  (wndclass-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
+  (menu-name (:string :encoding #.+win32-string-encoding+))
+  (wndclass-name (:string :encoding #.+win32-string-encoding+))
   (iconsm :pointer))
 
 (cffi:defcstruct msg
@@ -543,8 +548,8 @@
   (y :int)
   (x :int)
   (style :long)
-  (name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
-  (class (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
+  (name (:string :encoding #.+win32-string-encoding+))
+  (class (:string :encoding #.+win32-string-encoding+))
   (exstyle :uint32))
 
 (cffi:defcfun ("Beep" beep) :boolean
@@ -583,8 +588,8 @@
   (paint :pointer))
 
 (cffi:defcfun ("FindWindowW" find-window) :pointer
-  (wndclass-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
-  (window-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (wndclass-name (:string :encoding #.+win32-string-encoding+))
+  (window-name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("GetClassLongW" get-class-long) :long
   (hwnd :pointer)
@@ -608,7 +613,7 @@
   (hwnd :pointer)
   (rect :pointer))
 
-(cffi:defcfun ("GetCommandLineW" get-command-line) (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
+(cffi:defcfun ("GetCommandLineW" get-command-line) (:string :encoding #.+win32-string-encoding+))
 
 (cffi:defcfun ("GetCurrentProcess" get-current-process) :pointer)
 
@@ -634,7 +639,7 @@
 
 (cffi:defcfun ("GetWindowTextW" get-window-text) :int
   (hwnd :pointer)
-  (string (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
+  (string (:string :encoding #.+win32-string-encoding+))
   (size :int))
 
 (cffi:defcfun ("IsGUIThread" is-gui-thread) :boolean
@@ -719,7 +724,7 @@
   (trackmousevent :pointer))
 
 (cffi:defcfun ("UnregisterClassW" unregister-class) :boolean
-  (wndclass-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
+  (wndclass-name (:string :encoding #.+win32-string-encoding+))
   (instance :pointer))
 
 (cffi:defcfun ("ValidateRect" validate-rect) :boolean
@@ -733,26 +738,26 @@
   (lparam :pointer))
 
 (cffi:defcfun ("GetModuleHandleW" get-module-handle) :pointer
-  (module (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (module (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("LoadIconW" load-icon) :pointer
   (instance :pointer)
-  (name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("LoadCursorW" load-cursor) :pointer
   (instance :pointer)
-  (name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("LoadCursorFromFileW" load-cursor-from-file) :pointer
-  (file-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (file-name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("GetStockObject" get-stock-object) :pointer
   (object :uint32))
 
 (cffi:defcfun ("CreateWindowExW" create-window-ex) :pointer
   (ex-style :uint32)
-  (wndclass-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
-  (window-name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
+  (wndclass-name (:string :encoding #.+win32-string-encoding+))
+  (window-name (:string :encoding #.+win32-string-encoding+))
   (style :uint32)
   (x :int32)
   (y :int32)
@@ -890,18 +895,18 @@
   (security-attributes :pointer)
   (manual-reset :boolean)
   (initial-state :boolean)
-  (name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("CreateSemaphoreW" create-semaphore) :pointer
   (security-attributes :pointer)
   (initial-count :int32)
   (maximum-count :int32)
-  (name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("OpenEventW" open-event) :pointer
   (access :uint32)
   (inherit-handle :boolean)
-  (name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("WaitForSingleObject" wait-for-single-object) :uint32
   (handle :pointer)
@@ -929,10 +934,10 @@
 (cffi:defcfun ("CreateMutexW" create-mutex) :pointer
   (security-attributes :pointer)
   (initial-owner :boolean)
-  (name (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be)))
+  (name (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("CreateDesktopW" create-desktop) :pointer
-  (desktop (:string :encoding #+:little-endian :utf-16le #+big-endian :utf-16be))
+  (desktop (:string :encoding #.+win32-string-encoding+))
   (device :pointer)
   (devmode :pointer)
   (flags :uint32)

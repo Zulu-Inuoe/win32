@@ -23,6 +23,9 @@
 (defpackage #:win32
   (:use #:cl)
   (:export
+   
+   #:+win32-string-encoding+
+   
    #:+pfd-type-rgba+
    #:+pfd-type-colorindex+
    
