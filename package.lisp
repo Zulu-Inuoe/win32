@@ -311,6 +311,7 @@
    #:+gcw-atom+
    
    #:+gwl-wndproc+
+   #:+gwl-id+
    #:+gwl-style+
    #:+gwl-userdata+
 
@@ -508,6 +509,7 @@
    #:set-foreground-window
    #:set-parent
    #:set-pixel-format
+   #:set-window-text
    #:swap-buffers
    #:track-mouse-event
    #:unregister-class

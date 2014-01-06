@@ -348,6 +348,7 @@
 (defconstant +gcw-atom+ -32)
 
 (defconstant +gwl-wndproc+  -4)
+(defconstant +gwl-id+       -12)
 (defconstant +gwl-style+    -16)
 (defconstant +gwl-userdata+ -21)
 
@@ -716,6 +717,10 @@
   (dc :pointer)
   (format-index :int)
   (pixel-format :pointer))
+
+(cffi:defcfun ("SetWindowTextW" set-window-text) :boolean
+  (hwnd :pointer)
+  (text (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("SwapBuffers" swap-buffers) :boolean
   (dc :pointer))
