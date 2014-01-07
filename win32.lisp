@@ -561,6 +561,12 @@
   (hwnd :pointer)
   (paint :pointer))
 
+(cffi:defcfun ("CallNextHookEx" call-next-hook) :uint32
+  (current-hook :pointer)
+  (code :int32)
+  (wparam :uint32)
+  (lparam :uint32))
+
 (cffi:defcfun ("ChoosePixelFormat" choose-pixel-format) :int
   (dc :pointer)
   (pixel-format :pointer))
@@ -572,8 +578,62 @@
 (cffi:defcfun ("ClipCursor" clip-cursor) :boolean
   (rect :pointer))
 
+(cffi:defcfun ("CloseHandle" close-handle) :boolean
+  (handle :pointer))
+
+(cffi:defcfun ("CloseWindow" close-window) :boolean
+  (hwnd :pointer))
+
+(cffi:defcfun ("CreateDesktopW" create-desktop) :pointer
+  (desktop (:string :encoding #.+win32-string-encoding+))
+  (device :pointer)
+  (devmode :pointer)
+  (flags :uint32)
+  (desired-access :uint32)
+  (security-attributes :pointer))
+
+(cffi:defcfun ("CreateEventW" create-event) :pointer
+  (security-attributes :pointer)
+  (manual-reset :boolean)
+  (initial-state :boolean)
+  (name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("CreateMutexW" create-mutex) :pointer
+  (security-attributes :pointer)
+  (initial-owner :boolean)
+  (name (:string :encoding #.+win32-string-encoding+)))
+
 (cffi:defcfun ("CreatePalette" create-palette) :pointer
   (log-palette :pointer))
+
+(cffi:defcfun ("CreateSemaphoreW" create-semaphore) :pointer
+  (security-attributes :pointer)
+  (initial-count :int32)
+  (maximum-count :int32)
+  (name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("CreateWindowExW" create-window-ex) :pointer
+  (ex-style :uint32)
+  (wndclass-name (:string :encoding #.+win32-string-encoding+))
+  (window-name (:string :encoding #.+win32-string-encoding+))
+  (style :uint32)
+  (x :int32)
+  (y :int32)
+  (width :int32)
+  (height :int32)
+  (parent :pointer)
+  (menu :pointer)
+  (module-instance :pointer)
+  (param :pointer))
+
+(cffi:defcfun ("DefWindowProcW" def-window-proc) :uint32
+  (hwnd :pointer)
+  (msg :uint32)
+  (wparam :pointer)
+  (lparam :pointer))
+
+(cffi:defcfun ("DeleteObject" delete-object) :int
+  (object :pointer))
 
 (cffi:defcfun ("DescribePixelFormat" describe-pixel-format) :int
   (dc :pointer)
@@ -584,9 +644,19 @@
 (cffi:defcfun ("DestroyCursor" destroy-cursor) :boolean
   (cursor :pointer))
 
+(cffi:defcfun ("DestroyWindow" destroy-window) :boolean
+  (hwnd :pointer))
+
+(cffi:defcfun ("DispatchMessageW" dispatch-message) :int32
+  (msg :pointer))
+
 (cffi:defcfun ("EndPaint" end-paint) :boolean
   (hwnd :pointer)
   (paint :pointer))
+
+(cffi:defcfun ("EnumWindows" enum-windows) :boolean
+  (callback :pointer)
+  (lparam :pointer))
 
 (cffi:defcfun ("FindWindowW" find-window) :pointer
   (wndclass-name (:string :encoding #.+win32-string-encoding+))
@@ -622,12 +692,28 @@
 
 (cffi:defcfun ("GetCurrentProcessorNumber" get-current-processor-number) :uint32)
 
+(cffi:defcfun ("GetCurrentThreadId" get-current-thread-id) :uint32)
+
 (cffi:defcfun ("GetDC" get-dc) :pointer
   (hwnd :pointer))
 
 (cffi:defcfun ("GetDesktopWindow" get-desktop-window) :pointer)
 
+(cffi:defcfun ("GetLastError" get-last-error) :uint32)
+
+(cffi:defcfun ("GetMessageW" get-message) :boolean
+  (msg :pointer)
+  (hwnd :pointer)
+  (msg-min :uint32)
+  (msg-max :uint32))
+
+(cffi:defcfun ("GetModuleHandleW" get-module-handle) :pointer
+  (module (:string :encoding #.+win32-string-encoding+)))
+
 (cffi:defcfun ("GetShellWindow" get-shell-window) :pointer)
+
+(cffi:defcfun ("GetStockObject" get-stock-object) :pointer
+  (object :uint32))
 
 (cffi:defcfun ("GetParent" get-parent) :pointer
   (hwnd :pointer))
@@ -638,21 +724,82 @@
 (cffi:defcfun ("GetTopWindow" get-top-window) :pointer
   (hwnd :pointer))
 
+(cffi:defcfun ("GetWindowLongW" get-window-long) :int32
+  (hwnd :pointer)
+  (index :int32))
+
+(cffi:defcfun ("GetWindowRect" get-window-rect) :boolean
+  (hwnd :pointer)
+  (rect :pointer))
+
 (cffi:defcfun ("GetWindowTextW" get-window-text) :int
   (hwnd :pointer)
   (string (:string :encoding #.+win32-string-encoding+))
   (size :int))
 
-(cffi:defcfun ("IsGUIThread" is-gui-thread) :boolean
-  (convert :boolean))
+(cffi:defcfun ("GetWindowThreadProcessId" get-window-thread-process-id) :uint32
+  (hwnd :pointer)
+  (process-id :pointer))
 
 (cffi:defcfun ("InvalidateRect" invalidate-rect) :boolean
   (hwnd :pointer)
   (rect :pointer)
   (erase :boolean))
 
+(cffi:defcfun ("IsGUIThread" is-gui-thread) :boolean
+  (convert :boolean))
+
 (cffi:defcfun ("IsWindow" is-window) :boolean
   (hwnd :pointer))
+
+(cffi:defcfun ("LoadCursorW" load-cursor) :pointer
+  (instance :pointer)
+  (name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("LoadCursorFromFileW" load-cursor-from-file) :pointer
+  (file-name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("LoadIconW" load-icon) :pointer
+  (instance :pointer)
+  (name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("memset" memset) :pointer
+  (ptr :pointer)
+  (val :int)
+  (num :int))
+
+(cffi:defcfun ("OpenEventW" open-event) :pointer
+  (access :uint32)
+  (inherit-handle :boolean)
+  (name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("OpenInputDesktop" open-input-desktop) :pointer
+  (flags :uint32)
+  (inherit :boolean)
+  (desired-access :uint32))
+
+
+(cffi:defcfun ("PeekMessageW" peek-message) :int
+  (msg :pointer)
+  (hwnd :pointer)
+  (msg-min :uint32)
+  (msg-max :uint32)
+  (remove :uint32))
+
+(cffi:defcfun ("PostMessageW" post-message) :boolean
+  (hwnd :pointer)
+  (msg :uint32)
+  (wparam :pointer)
+  (lparam :pointer))
+
+(cffi:defcfun ("PostQuitMessage" post-quit-message) :void
+  (exit-code :int32))
+
+(cffi:defcfun ("PostThreadMessageW" post-thread-message) :boolean
+  (thread-id :uint32)
+  (msg :uint32)
+  (wparam :pointer)
+  (lparam :pointer))
 
 (cffi:defcfun ("RealizePalette" realize-palette) :uint32
   (dc :pointer))
@@ -667,15 +814,22 @@
   (hwnd :pointer)
   (dc :pointer))
 
+(cffi:defcfun ("ResetEvent" reset-event) :boolean
+  (event :pointer))
+
 (cffi:defcfun ("ResizePalette" resize-palette) :boolean
   (palette :pointer)
   (entries :int))
+
+(defun rgb (r g b)
+  (logior (ash b 16)
+          (ash g 8)
+          (ash r 0)))
 
 (cffi:defcfun ("SelectPalette" select-palette) :pointer
   (dc :pointer)
   (palette :pointer)
   (force-background :boolean))
-
 
 (cffi:defcfun ("SetClassLongW" set-class-long) :uint32
   (hwnd :pointer)
@@ -706,8 +860,17 @@
   (x :int)
   (y :int))
 
+(cffi:defcfun ("SetEvent" set-event) :boolean
+  (event :pointer))
+
 (cffi:defcfun ("SetForegroundWindow" set-foreground-window) :boolean
   (hwnd :pointer))
+
+(cffi:defcfun ("SetLayeredWindowAttributes" set-layered-window-attributes) :boolean
+  (hwnd :pointer)
+  (color :uint32)
+  (alpha :uint8)
+  (flags :uint32))
 
 (cffi:defcfun ("SetParent" set-parent) :boolean
   (hwnd :pointer)
@@ -718,119 +881,18 @@
   (format-index :int)
   (pixel-format :pointer))
 
-(cffi:defcfun ("SetWindowTextW" set-window-text) :boolean
-  (hwnd :pointer)
-  (text (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("SwapBuffers" swap-buffers) :boolean
-  (dc :pointer))
-
-(cffi:defcfun ("TrackMouseEvent" track-mouse-event) :boolean
-  (trackmousevent :pointer))
-
-(cffi:defcfun ("UnregisterClassW" unregister-class) :boolean
-  (wndclass-name (:string :encoding #.+win32-string-encoding+))
-  (instance :pointer))
-
-(cffi:defcfun ("ValidateRect" validate-rect) :boolean
-  (hwnd :pointer)
-  (rect :pointer))
-
-(cffi:defcfun ("DefWindowProcW" def-window-proc) :uint32
-  (hwnd :pointer)
-  (msg :uint32)
-  (wparam :pointer)
-  (lparam :pointer))
-
-(cffi:defcfun ("GetModuleHandleW" get-module-handle) :pointer
-  (module (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("LoadIconW" load-icon) :pointer
-  (instance :pointer)
-  (name (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("LoadCursorW" load-cursor) :pointer
-  (instance :pointer)
-  (name (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("LoadCursorFromFileW" load-cursor-from-file) :pointer
-  (file-name (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("GetStockObject" get-stock-object) :pointer
-  (object :uint32))
-
-(cffi:defcfun ("CreateWindowExW" create-window-ex) :pointer
-  (ex-style :uint32)
-  (wndclass-name (:string :encoding #.+win32-string-encoding+))
-  (window-name (:string :encoding #.+win32-string-encoding+))
-  (style :uint32)
-  (x :int32)
-  (y :int32)
-  (width :int32)
-  (height :int32)
-  (parent :pointer)
-  (menu :pointer)
-  (module-instance :pointer)
-  (param :pointer))
-
-(cffi:defcfun ("ShowCursor" show-cursor) :int
-  (show :boolean))
-
-(cffi:defcfun ("ShowWindow" show-window) :int
-  (hwnd :pointer)
-  (cmd :int32))
-
-(cffi:defcfun ("EnumWindows" enum-windows) :boolean
-  (callback :pointer)
-  (lparam :pointer))
-
-(cffi:defcfun ("UpdateWindow" update-window) :int
-  (hwnd :pointer))
-
-(cffi:defcfun ("GetMessageW" get-message) :boolean
-  (msg :pointer)
-  (hwnd :pointer)
-  (msg-min :uint32)
-  (msg-max :uint32))
-
-(cffi:defcfun ("PeekMessageW" peek-message) :int
-  (msg :pointer)
-  (hwnd :pointer)
-  (msg-min :uint32)
-  (msg-max :uint32)
-  (remove :uint32))
-
-(cffi:defcfun ("PostQuitMessage" post-quit-message) :void
-  (exit-code :int32))
-
-(cffi:defcfun ("PostThreadMessageW" post-thread-message) :boolean
-  (thread-id :uint32)
-  (msg :uint32)
-  (wparam :pointer)
-  (lparam :pointer))
-
-(cffi:defcfun ("TranslateMessage" translate-message) :int
-  (msg :pointer))
-
-(cffi:defcfun ("DispatchMessageW" dispatch-message) :int32
-  (msg :pointer))
-
-(cffi:defcfun ("CloseWindow" close-window) :boolean
-  (hwnd :pointer))
-
-(cffi:defcfun ("DestroyWindow" destroy-window) :boolean
-  (hwnd :pointer))
-
-(cffi:defcfun ("GetLastError" get-last-error) :uint32)
+(cffi:defcfun ("SetWinEventHook" set-win-event-hook) :pointer
+  (event-min :uint32)
+  (event-max :uint32)
+  (proc-module :pointer)
+  (id-process :uint32)
+  (id-thread :uint32)
+  (flags :uint32))
 
 (cffi:defcfun ("SetWindowLongW" set-window-long) :int32
   (hwnd :pointer)
   (index :int32)
   (newval :int32))
-
-(cffi:defcfun ("GetWindowLongW" get-window-long) :int32
-  (hwnd :pointer)
-  (index :int32))
 
 (cffi:defcfun ("SetWindowPos" set-window-pos) :boolean
   (hwnd :pointer)
@@ -841,20 +903,9 @@
   (cy :int32)
   (flags :uint32))
 
-(cffi:defcfun ("GetWindowRect" get-window-rect) :boolean
+(cffi:defcfun ("SetWindowTextW" set-window-text) :boolean
   (hwnd :pointer)
-  (rect :pointer))
-
-(cffi:defcfun ("DeleteObject" delete-object) :int
-  (object :pointer))
-
-(cffi:defcfun ("PostMessageW" post-message) :boolean
-  (hwnd :pointer)
-  (msg :uint32)
-  (wparam :pointer)
-  (lparam :pointer))
-
-(cffi:defcfun ("GetCurrentThreadId" get-current-thread-id) :uint32)
+  (text (:string :encoding #.+win32-string-encoding+)))
 
 (cffi:defcfun ("SetWindowsHookExW" set-windows-hook-ex) :pointer
   (id-hook :int32)
@@ -862,56 +913,35 @@
   (module :pointer)
   (thread-id :uint32))
 
-(cffi:defcfun ("SetLayeredWindowAttributes" set-layered-window-attributes) :boolean
+(cffi:defcfun ("ShowCursor" show-cursor) :int
+  (show :boolean))
+
+(cffi:defcfun ("ShowWindow" show-window) :int
   (hwnd :pointer)
-  (color :uint32)
-  (alpha :uint8)
-  (flags :uint32))
+  (cmd :int32))
 
-(defun rgb (r g b)
-  (logior (ash b 16)
-          (ash g 8)
-          (ash r 0)))
+(cffi:defcfun ("SwapBuffers" swap-buffers) :boolean
+  (dc :pointer))
 
-(cffi:defcfun ("CallNextHookEx" call-next-hook) :uint32
-  (current-hook :pointer)
-  (code :int32)
-  (wparam :uint32)
-  (lparam :uint32))
+(cffi:defcfun ("SwitchDesktop" switch-desktop) :boolean
+  (desktop :pointer))
 
-(cffi:defcfun ("SetWinEventHook" set-win-event-hook) :pointer
-  (event-min :uint32)
-  (event-max :uint32)
-  (proc-module :pointer)
-  (id-process :uint32)
-  (id-thread :uint32)
-  (flags :uint32))
+(cffi:defcfun ("TrackMouseEvent" track-mouse-event) :boolean
+  (trackmousevent :pointer))
 
-(cffi:defcfun ("GetWindowThreadProcessId" get-window-thread-process-id) :uint32
+(cffi:defcfun ("TranslateMessage" translate-message) :int
+  (msg :pointer))
+
+(cffi:defcfun ("UnregisterClassW" unregister-class) :boolean
+  (wndclass-name (:string :encoding #.+win32-string-encoding+))
+  (instance :pointer))
+
+(cffi:defcfun ("UpdateWindow" update-window) :int
+  (hwnd :pointer))
+
+(cffi:defcfun ("ValidateRect" validate-rect) :boolean
   (hwnd :pointer)
-  (process-id :pointer))
-
-;;;TODO This function actually takes in a struct point, but we need cffi-libffi for that
-(cffi:defcfun ("WindowFromPoint" window-from-point) :pointer
-  (x :int32)
-  (y :int32))
-
-(cffi:defcfun ("CreateEventW" create-event) :pointer
-  (security-attributes :pointer)
-  (manual-reset :boolean)
-  (initial-state :boolean)
-  (name (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("CreateSemaphoreW" create-semaphore) :pointer
-  (security-attributes :pointer)
-  (initial-count :int32)
-  (maximum-count :int32)
-  (name (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("OpenEventW" open-event) :pointer
-  (access :uint32)
-  (inherit-handle :boolean)
-  (name (:string :encoding #.+win32-string-encoding+)))
+  (rect :pointer))
 
 (cffi:defcfun ("WaitForSingleObject" wait-for-single-object) :uint32
   (handle :pointer)
@@ -927,37 +957,7 @@
   (dc :pointer)
   (gl-rc :pointer))
 
-(cffi:defcfun ("SetEvent" set-event) :boolean
-  (event :pointer))
-
-(cffi:defcfun ("ResetEvent" reset-event) :boolean
-  (event :pointer))
-
-(cffi:defcfun ("CloseHandle" close-handle) :boolean
-  (handle :pointer))
-
-(cffi:defcfun ("CreateMutexW" create-mutex) :pointer
-  (security-attributes :pointer)
-  (initial-owner :boolean)
-  (name (:string :encoding #.+win32-string-encoding+)))
-
-(cffi:defcfun ("CreateDesktopW" create-desktop) :pointer
-  (desktop (:string :encoding #.+win32-string-encoding+))
-  (device :pointer)
-  (devmode :pointer)
-  (flags :uint32)
-  (desired-access :uint32)
-  (security-attributes :pointer))
-
-(cffi:defcfun ("OpenInputDesktop" open-input-desktop) :pointer
-  (flags :uint32)
-  (inherit :boolean)
-  (desired-access :uint32))
-
-(cffi:defcfun ("SwitchDesktop" switch-desktop) :boolean
-  (desktop :pointer))
-
-(cffi:defcfun ("memset" memset) :pointer
-  (ptr :pointer)
-  (val :int)
-  (num :int))
+;;;TODO This function actually takes in a struct point, but we need cffi-libffi for that
+(cffi:defcfun ("WindowFromPoint" window-from-point) :pointer
+  (x :int32)
+  (y :int32))

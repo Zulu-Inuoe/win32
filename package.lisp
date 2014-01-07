@@ -468,13 +468,26 @@
    
    #:beep
    #:begin-paint
+   #:call-next-hook
    #:choose-pixel-format
    #:client-to-screen
    #:clip-cursor
+   #:close-handle
+   #:close-window
+   #:create-desktop
+   #:create-event
+   #:create-mutex
    #:create-palette
+   #:create-semaphore
+   #:create-window-ex
+   #:def-window-proc
+   #:delete-object
    #:describe-pixel-format
    #:destroy-cursor
+   #:destroy-window
+   #:dispatch-message
    #:end-paint
+   #:enum-windows
    #:find-window
    #:get-class-long
    #:get-class-long-ptr
@@ -484,82 +497,70 @@
    #:get-current-process
    #:get-current-process-id
    #:get-current-processor-number
+   #:get-current-thread-id
    #:get-dc
    #:get-desktop-window
+   #:get-last-error
+   #:get-message
+   #:get-module-handle
    #:get-shell-window
-   #:get-pixel-format
+   #:get-stock-object
    #:get-parent
+   #:get-pixel-format
    #:get-top-window
+   #:get-window-long
+   #:get-window-rect
    #:get-window-text
+   #:get-window-thread-process-id
    #:invalidate-rect
    #:is-gui-thread
    #:is-window
+   #:load-cursor
+   #:load-cursor-from-file
+   #:load-icon
+   #:memset
+   #:open-event
+   #:open-input-desktop
+   #:peek-message
+   #:post-message
+   #:post-quit-message
+   #:post-thread-message
    #:realize-palette
    #:register-class
    #:register-class-ex
    #:release-dc
+   #:reset-event
    #:resize-palette
-   #:show-cursor
+   #:rgb
    #:select-palette
    #:set-class-long
    #:set-class-long-ptr
    #:set-class-word
    #:set-cursor
    #:set-cursor-pos
+   #:set-event
    #:set-foreground-window
+   #:set-layered-window-attributes
    #:set-parent
    #:set-pixel-format
-   #:set-window-text
-   #:swap-buffers
-   #:track-mouse-event
-   #:unregister-class
-   #:validate-rect
-   #:def-window-proc
-   #:get-module-handle
-   #:load-icon
-   #:load-cursor
-   #:load-cursor-from-file
-   #:get-stock-object
-   #:create-window-ex
-   #:show-window
-   #:enum-windows
-   #:update-window
-   #:get-message
-   #:peek-message
-   #:post-quit-message
-   #:post-thread-message
-   #:translate-message
-   #:dispatch-message
-   #:close-window
-   #:destroy-window
-   #:get-last-error
-   #:set-window-long
-   #:get-window-long
-   #:set-window-pos
-   #:get-window-rect
-   #:delete-object
-   #:post-message
-   #:get-current-thread-id
-   #:set-windows-hook-ex
-   #:set-layered-window-attributes
-   #:call-next-hook
    #:set-win-event-hook
-   #:get-window-thread-process-id
-   #:window-from-point
-   #:create-event
-   #:create-semaphore
-   #:open-event
+   #:set-window-long
+   #:set-window-pos
+   #:set-window-text
+   #:set-windows-hook-ex
+   #:show-cursor
+   #:show-window
+   #:swap-buffers
+   #:switch-desktop
+   #:track-mouse-event
+   #:translate-message
+   #:unregister-class
+   #:update-window
+   #:validate-rect
    #:wait-for-single-object
    #:wgl-create-context
    #:wgl-delete-context
    #:wgl-make-current
-   #:set-event
-   #:reset-event
-   #:close-handle
-   #:create-mutex
-   #:create-desktop
-   #:switch-desktop
-   #:open-input-desktop
-   #:memset))
+   #:window-from-point))
 
 (cl:in-package #:win32)
