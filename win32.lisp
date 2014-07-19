@@ -58,6 +58,13 @@
   #+big-endian :utf-16be
   "Not a win32 'constant' per-se, but useful to expose for usage with CFFI:FOREIGN-STRING-TO-LISP and friends.")
 
+;;CreateFile Creation Disposition
+(defconstant +create-new+        1)
+(defconstant +create-always+     2)
+(defconstant +open-existing+     3)
+(defconstant +open-always+       4)
+(defconstant +truncate-existing+ 5)
+
 ;;Pixel types
 (defconstant +pfd-type-rgba+        0)
 (defconstant +pfd-type-colorindex+  1)
@@ -104,8 +111,38 @@
 (defconstant +ws-overlappedwindow+ (logior +ws-overlapped+ +ws-caption+ +ws-sysmenu+ +ws-thickframe+ +ws-minimizebox+ +ws-maximizebox+))
 
 ;;Window ex styles
-(defconstant +ws-ex-windowedge+   #x00000100)
-(defconstant +ws-ex-appwindow+    #x00040000)
+(defconstant +ws-ex-left+                 #x00000000)
+(defconstant +ws-ex-ltrreading+           #x00000000)
+(defconstant +ws-ex-rightscrollbar+       #x00000000)
+(defconstant +ws-ex-dlgmodalframe+        #x00000001)
+(defconstant +ws-ex-noparentnotify+       #x00000004)
+(defconstant +ws-ex-topmost+              #x00000008)
+(defconstant +ws-ex-acceptfiles+          #x00000010)
+(defconstant +ws-ex-transparent+          #x00000020)
+(defconstant +ws-ex-mdichild+             #x00000040)
+(defconstant +ws-ex-toolwindow+           #x00000080)
+(defconstant +ws-ex-windowedge+           #x00000100)
+(defconstant +ws-ex-clientedge+           #x00000200)
+(defconstant +ws-ex-contexthelp+          #x00000400)
+(defconstant +ws-ex-right+                #x00001000)
+(defconstant +ws-ex-rtlreading+           #x00002000)
+(defconstant +ws-ex-leftscrollbar+        #x00004000)
+(defconstant +ws-ex-controlparent+        #x00010000)
+(defconstant +ws-ex-staticedge+           #x00020000)
+(defconstant +ws-ex-appwindow+            #x00040000)
+(defconstant +ws-ex-noinheritlayout+      #x00100000)
+(defconstant +ws-ex-noredirectionbitmap+  #x00200000)
+(defconstant +ws-ex-layoutrtl+            #x00400000)
+(defconstant +ws-ex-composited+           #x02000000)
+(defconstant +ws-ex-noactivate+           #x08000000)
+
+(defconstant +ws-ex-overlapped-window+    (logior
+                                           +ws-ex-windowedge+
+                                           +ws-ex-clientedge+))
+(defconstant +ws-ex-palettewindow+        (logior
+                                           +ws-ex-windowedge+
+                                           +ws-ex-toolwindow+
+                                           +ws-ex-topmost+))
 
 ;;Edit control types
 (defconstant +es-left+ #x0000)
@@ -370,9 +407,17 @@
 
 (defconstant +hwnd-top+       #x00000000)
 (defconstant +hwnd-bottom+    #x00000001)
-(defconstant +hwnd-message+   #xFFFFFFFD)
-(defconstant +hwnd-notopmost+ #xFFFFFFFE)
-(defconstant +hwnd-topmost+   #xFFFFFFFF)
+#+:x86
+(progn
+  (defconstant +hwnd-message+   #xFFFFFFFD)
+  (defconstant +hwnd-notopmost+ #xFFFFFFFE)
+  (defconstant +hwnd-topmost+   #xFFFFFFFF))
+
+#+:x86-64
+(progn
+  (defconstant +hwnd-message+   #xFFFFFFFFFFFFFFFD)
+  (defconstant +hwnd-notopmost+ #xFFFFFFFFFFFFFFFE)
+  (defconstant +hwnd-topmost+   #xFFFFFFFFFFFFFFFF))
 
 (defconstant +winevent-outofcontext+    #x0000)
 (defconstant +winevent-skipownthread+   #x0001)
@@ -553,6 +598,13 @@
   (class (:string :encoding #.+win32-string-encoding+))
   (exstyle :uint32))
 
+(cffi:defcstruct overlapped
+  (internal :pointer)
+  (internal-high :pointer)
+  (offset :uint32)
+  (offset-high :uint32)
+  (event :pointer))
+
 (cffi:defcfun ("Beep" beep) :boolean
   (frequency :uint32)
   (duration :uint32))
@@ -566,6 +618,9 @@
   (code :int32)
   (wparam :uint32)
   (lparam :uint32))
+
+(cffi:defcfun ("CancelIo" cancel-io) :int
+  (handle :pointer))
 
 (cffi:defcfun ("ChoosePixelFormat" choose-pixel-format) :int
   (dc :pointer)
@@ -597,6 +652,15 @@
   (manual-reset :boolean)
   (initial-state :boolean)
   (name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("CreateFileW" create-file) :pointer
+  (path (:string :encoding #.+win32-string-encoding+))
+  (file-access :uint)
+  (share-access :uint)
+  (security :pointer)
+  (file-mode :uint)
+  (flags :uint)
+  (template :pointer))
 
 (cffi:defcfun ("CreateMutexW" create-mutex) :pointer
   (security-attributes :pointer)
@@ -650,6 +714,10 @@
 (cffi:defcfun ("DispatchMessageW" dispatch-message) :int32
   (msg :pointer))
 
+(cffi:defcfun ("EnableWindow" enable-window) :boolean
+  (hwnd :pointer)
+  (enable :boolean))
+
 (cffi:defcfun ("EndPaint" end-paint) :boolean
   (hwnd :pointer)
   (paint :pointer))
@@ -684,13 +752,15 @@
   (hwnd :pointer)
   (rect :pointer))
 
-(cffi:defcfun ("GetCommandLineW" get-command-line) (:string :encoding #.+win32-string-encoding+))
+(cffi:defcfun ("GetCommandLineW" get-command-line) 
+    (:string :encoding #.+win32-string-encoding+))
 
 (cffi:defcfun ("GetCurrentProcess" get-current-process) :pointer)
 
 (cffi:defcfun ("GetCurrentProcessId" get-current-process-id) :uint32)
 
-(cffi:defcfun ("GetCurrentProcessorNumber" get-current-processor-number) :uint32)
+(cffi:defcfun ("GetCurrentProcessorNumber" get-current-processor-number) 
+    :uint32)
 
 (cffi:defcfun ("GetCurrentThreadId" get-current-thread-id) :uint32)
 
@@ -710,16 +780,22 @@
 (cffi:defcfun ("GetModuleHandleW" get-module-handle) :pointer
   (module (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("GetShellWindow" get-shell-window) :pointer)
-
-(cffi:defcfun ("GetStockObject" get-stock-object) :pointer
-  (object :uint32))
+(cffi:defcfun ("GetOverlappedResult" get-overlapped-result) :int
+  (handle :pointer)
+  (overlapped (:pointer overlapped))
+  (bytes-transfered (:pointer :uint32))
+  (wait :int))
 
 (cffi:defcfun ("GetParent" get-parent) :pointer
   (hwnd :pointer))
 
 (cffi:defcfun ("GetPixelFormat" get-pixel-format) :int
   (dc :pointer))
+
+(cffi:defcfun ("GetShellWindow" get-shell-window) :pointer)
+
+(cffi:defcfun ("GetStockObject" get-stock-object) :pointer
+  (object :uint32))
 
 (cffi:defcfun ("GetTopWindow" get-top-window) :pointer
   (hwnd :pointer))
@@ -778,7 +854,6 @@
   (inherit :boolean)
   (desired-access :uint32))
 
-
 (cffi:defcfun ("PeekMessageW" peek-message) :int
   (msg :pointer)
   (hwnd :pointer)
@@ -800,6 +875,13 @@
   (msg :uint32)
   (wparam :pointer)
   (lparam :pointer))
+
+(cffi:defcfun ("ReadFile" read-file) :int
+  (handle :pointer)
+  (buffer :pointer)
+  (bytes-to-read :uint32)
+  (bytes-read (:pointer :uint32))
+  (overlapped (:pointer overlapped)))
 
 (cffi:defcfun ("RealizePalette" realize-palette) :uint32
   (dc :pointer))
@@ -961,3 +1043,10 @@
 (cffi:defcfun ("WindowFromPoint" window-from-point) :pointer
   (x :int32)
   (y :int32))
+
+(cffi:defcfun ("WriteFile" hid_write-file) :int
+  (handle :pointer)
+  (buffer :pointer)
+  (bytes-to-write :uint32)
+  (bytes-written (:pointer :uint32))
+  (overlapped (:pointer overlapped)))

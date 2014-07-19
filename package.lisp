@@ -26,6 +26,12 @@
    
    #:+win32-string-encoding+
    
+   #:+create-new+
+   #:+create-always+
+   #:+open-existing+
+   #:+open-always+
+   #:+truncate-existing+
+   
    #:+pfd-type-rgba+
    #:+pfd-type-colorindex+
    
@@ -66,16 +72,38 @@
    #:+ws-thickframe+
    #:+ws-sysmenu+
    #:+ws-overlappedwindow+
-
+   
    ;;Window ex styles
+   #:+ws-ex-left+
+   #:+ws-ex-ltrreading+
+   #:+ws-ex-rightscrollbar+
+   #:+ws-ex-dlgmodalframe+
+   #:+ws-ex-noparentnotify+
+   #:+ws-ex-topmost+
+   #:+ws-ex-acceptfiles+
+   #:+ws-ex-transparent+
+   #:+ws-ex-mdichild+
+   #:+ws-ex-toolwindow+
    #:+ws-ex-windowedge+
+   #:+ws-ex-clientedge+
+   #:+ws-ex-contexthelp+
+   #:+ws-ex-right+
+   #:+ws-ex-rtlreading+
+   #:+ws-ex-leftscrollbar+
+   #:+ws-ex-controlparent+
+   #:+ws-ex-staticedge+
    #:+ws-ex-appwindow+
-
+   #:+ws-ex-noinheritlayout+
+   #:+ws-ex-noredirectionbitmap+
+   #:+ws-ex-layoutrtl+
+   #:+ws-ex-composited+
+   #:+ws-ex-noactivate+
+   
    ;;Edit control types
    #:+es-left+
    #:+es-center+
    #:+es-right+
-
+   
    #:+wm-null+
    #:+wm-create+
    #:+wm-destroy+
@@ -292,20 +320,20 @@
    #:+time-query+
    
    #:+cw-usedefault+
-
+   
    #:+cs-vredraw+
    #:+cs-hredraw+
    #:+cs-owndc+
-
+   
    #:+sw-show+
-
+   
    #:+idi-application+
    #:+idc-arrow+
-
+   
    #:+white-brush+
    #:+black-brush+
    #:+dc-brush+
-
+   
    #:+gcl-hbrbackground+
    #:+gcl-wndproc+
    #:+gcw-atom+
@@ -323,9 +351,9 @@
    #:+swp-hidewindow+
    #:+swp-noownerzorder+
    #:+swp-noreposition+
-
+   
    #:+infinite+
-
+   
    #:+wait-object-0+
    #:+wait-abandoned+
    #:+wait-timeout+
@@ -336,7 +364,7 @@
    #:+hwnd-message+
    #:+hwnd-notopmost+
    #:+hwnd-topmost+
-
+   
    #:+winevent-outofcontext+
    #:+winevent-skipownthread+
    #:+winevent-skipownprocess+
@@ -350,16 +378,16 @@
    #:+write-dac+
    #:+write-owner+
    #:+synchronize+
-
+   
    #:+standard-rights-required+
-
+   
    #:+standard-rights-read+
    #:+standard-rights-write+
    #:+standard-rights-execute+
-
+   
    #:+standard-rights-all+
    #:+specific-rights-all+
-
+   
    #:+desktop-createmenu+
    #:+desktop-createwindow+
    #:+desktop-enumerate+
@@ -369,7 +397,7 @@
    #:+desktop-readobjects+
    #:+desktop-switchdesktop+
    #:+desktop-writeobjects+
-
+   
    #:+generic-read+
    #:+generic-write+
    #:+generic-execute+
@@ -386,6 +414,7 @@
    #:wndclassex
    #:msg
    #:createstruct
+   #:overlapped
    
    #:dc
    #:erase
@@ -424,7 +453,7 @@
    #:menu-name
    #:wndclass-name
    #:iconsm
-      
+   
    #:size
    #:version
    #:pixel-type
@@ -466,9 +495,16 @@
    #:class
    #:exstyle
    
+   #:internal
+   #:internal-high
+   #:offset
+   #:offset-high
+   #:event
+   
    #:beep
    #:begin-paint
    #:call-next-hook
+   #:cancel-io
    #:choose-pixel-format
    #:client-to-screen
    #:clip-cursor
@@ -476,6 +512,7 @@
    #:close-window
    #:create-desktop
    #:create-event
+   #:create-file
    #:create-mutex
    #:create-palette
    #:create-semaphore
@@ -486,6 +523,7 @@
    #:destroy-cursor
    #:destroy-window
    #:dispatch-message
+   #:enable-window
    #:end-paint
    #:enum-windows
    #:find-window
@@ -503,10 +541,11 @@
    #:get-last-error
    #:get-message
    #:get-module-handle
-   #:get-shell-window
-   #:get-stock-object
+   #:get-overlapped-result
    #:get-parent
    #:get-pixel-format
+   #:get-shell-window
+   #:get-stock-object
    #:get-top-window
    #:get-window-long
    #:get-window-rect
@@ -525,6 +564,7 @@
    #:post-message
    #:post-quit-message
    #:post-thread-message
+   #:read-file
    #:realize-palette
    #:register-class
    #:register-class-ex
@@ -561,6 +601,8 @@
    #:wgl-create-context
    #:wgl-delete-context
    #:wgl-make-current
-   #:window-from-point))
+   #:window-from-point
+   #:write-file
+   ))
 
 (cl:in-package #:win32)
