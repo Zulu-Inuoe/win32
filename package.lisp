@@ -403,6 +403,20 @@
    #:+generic-execute+
    #:+generic-all+
    
+   #:+movefile-replace-existing+
+   #:+movefile-copy-allowed+
+   #:+movefile-delay-until-reboot+
+   #:+movefile-write-through+
+   #:+movefile-create-hardlink+
+   #:+movefile-fail-if-not-trackable+
+
+   #:+copy-file-fail-if-exists+
+   #:+copy-file-restartable+
+   #:+copy-file-open-source-for-write+
+   #:+copy-file-allow-decrypted-destination+
+   #:+copy-file-copy-symlink+
+   #:+copy-file-no-buffering+   
+   
    #:logpalette
    #:paletteentry
    #:paintstruct
@@ -510,6 +524,8 @@
    #:clip-cursor
    #:close-handle
    #:close-window
+   #:copy-file
+   #:copy-file-ex
    #:create-desktop
    #:create-event
    #:create-file
@@ -558,6 +574,8 @@
    #:load-cursor-from-file
    #:load-icon
    #:memset
+   #:move-file
+   #:move-file-ex
    #:open-event
    #:open-input-desktop
    #:peek-message

@@ -487,6 +487,20 @@
                                    +desktop-writeobjects+
                                    +standard-rights-required+))
 
+(defconstant +movefile-replace-existing+      #x01)
+(defconstant +movefile-copy-allowed+          #x02)
+(defconstant +movefile-delay-until-reboot+    #x04)
+(defconstant +movefile-write-through+         #x08)
+(defconstant +movefile-create-hardlink+       #x10)
+(defconstant +movefile-fail-if-not-trackable+ #x20)
+
+(defconstant +copy-file-fail-if-exists+              #x00000001)
+(defconstant +copy-file-restartable+                 #x00000002)
+(defconstant +copy-file-open-source-for-write+       #x00000004)
+(defconstant +copy-file-allow-decrypted-destination+ #x00000008)
+(defconstant +copy-file-copy-symlink+                #x00000800)
+(defconstant +copy-file-no-buffering+                #x00001000)
+
 (cffi:defcstruct rect
   (left :int32)
   (top :int32)
@@ -638,6 +652,19 @@
 
 (cffi:defcfun ("CloseWindow" close-window) :boolean
   (hwnd :pointer))
+
+(cffi:defcfun ("CopyFileW" copy-file) :boolean
+  (existing-name (:string :encoding #.+win32-string-encoding+))
+  (new-name (:string :encoding #.+win32-string-encoding+))
+  (fail-if-exists :boolean))
+
+(cffi:defcfun ("CopyFileExW" copy-file-ex) :boolean
+  (existing-name (:string :encoding #.+win32-string-encoding+))
+  (new-name (:string :encoding #.+win32-string-encoding+))
+  (progress-routine :pointer)
+  (data :pointer)
+  (cancel :pointer)
+  (flags :uint32))
 
 (cffi:defcfun ("CreateDesktopW" create-desktop) :pointer
   (desktop (:string :encoding #.+win32-string-encoding+))
@@ -844,6 +871,15 @@
   (val :int)
   (num :int))
 
+(cffi:defcfun ("MoveFileW" move-file) :boolean
+  (old-name (:string :encoding #.+win32-string-encoding+))
+  (new-name (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("MoveFileExW" move-file-ex) :boolean
+  (old-name (:string :encoding #.+win32-string-encoding+))
+  (new-name (:string :encoding #.+win32-string-encoding+))
+  (flags :uint32))
+
 (cffi:defcfun ("OpenEventW" open-event) :pointer
   (access :uint32)
   (inherit-handle :boolean)
@@ -912,6 +948,11 @@
   (dc :pointer)
   (palette :pointer)
   (force-background :boolean))
+
+(cffi:defcfun ("SendInput" send-input) :uint32
+  (num-inputs :uint32)
+  (inputs :pointer)
+  (cbsize :int))
 
 (cffi:defcfun ("SetClassLongW" set-class-long) :uint32
   (hwnd :pointer)
