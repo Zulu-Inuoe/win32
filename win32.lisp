@@ -32,10 +32,14 @@
 (cffi:define-foreign-library opengl32
   (:win32 "Opengl32"))
 
+(cffi:define-foreign-library advapi32
+  (:win32 "advapi32.dll"))
+
 (cffi:use-foreign-library user32)
 (cffi:use-foreign-library kernel32)
 (cffi:use-foreign-library gdi32)
 (cffi:use-foreign-library opengl32)
+(cffi:use-foreign-library advapi32)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
@@ -501,6 +505,71 @@
 (defconstant +copy-file-copy-symlink+                #x00000800)
 (defconstant +copy-file-no-buffering+                #x00001000)
 
+
+(defconstant +hkey-classes-root+        #x80000000)
+(defconstant +hkey-current-user+        #x80000001)
+(defconstant +hkey-local-machine+       #x80000002)
+(defconstant +hkey-users+               #x80000003)
+(defconstant +hkey-performance-data+    #x80000004)
+(defconstant +hkey-current-config+      #x80000005)
+(defconstant +hkey-dyn-data+            #x80000006)
+(defconstant +hkey-performance-text+    #x80000050)
+(defconstant +hkey-performance-nlstext+ #x80000060)
+
+(defconstant +reg-none+ 0)
+(defconstant +reg-sz+ 1)
+(defconstant +reg-expand-sz+ 2)
+(defconstant +reg-binary+ 3)
+(defconstant +reg-dword+ 4)
+(defconstant +reg-dword-little-endian+ 4)
+(defconstant +reg-dword-big-endian+ 5)
+(defconstant +reg-link+ 6)
+(defconstant +reg-multi-sz+ 7)
+(defconstant +reg-resource-list+ 8)
+(defconstant +reg-full-resource-descriptor+ 9)
+(defconstant +reg-resource-requirements-list+ 10)
+(defconstant +reg-qword+ 11)
+(defconstant +reg-qword-little-endian+ 11)
+
+(defconstant +rrf-rt-any+           #x0000ffff)
+(defconstant +rrf-rt-dword+         #x00000018)
+(defconstant +rrf-rt-qword+         #x00000048)
+(defconstant +rrf-rt-reg-binary+    #x00000008)
+(defconstant +rrf-rt-reg-dword+     #x00000010)
+(defconstant +rrf-rt-reg-expand-sz+ #x00000004)
+(defconstant +rrf-rt-reg-multi-sz+  #x00000020)
+(defconstant +rrf-rt-reg-none+      #x00000001)
+(defconstant +rrf-rt-reg-qword+     #x00000040)
+(defconstant +rrf-rt-reg-sz+        #x00000002)
+
+(defconstant +rrf-noexpand+          #x10000000)
+(defconstant +rrf-zeroonfailure+     #x20000000)
+(defconstant +rrf-subkey-wow6464key+ #x00010000)
+(defconstant +rrf-subkey-wow6432key+ #x00020000)
+
+(defconstant +reg-option-reserved+       #x00000000)
+(defconstant +reg-option-backup-restore+ #x00000004)
+(defconstant +reg-option-create-link+    #x00000002)
+(defconstant +reg-option-non-volatile+   #x00000000)
+(defconstant +reg-option-volatile+       #x00000001)
+(defconstant +reg-option-open-link+      #x00000008)
+
+(defconstant +reg-created-new-key+     #x00000001)
+(defconstant +reg-opened-existing-key+ #x00000002)
+
+(defconstant +key-all-access+         #xF003F)
+(defconstant +key-create-link+        #x00020)
+(defconstant +key-create-sub-key+     #x00004)
+(defconstant +key-enumerate-sub-keys+ #x00008)
+(defconstant +key-execute+            #x20019)
+(defconstant +key-notify+             #x00010)
+(defconstant +key-query-value+        #x00001)
+(defconstant +key-read+               #x20019)
+(defconstant +key-set-value+          #x00002)
+(defconstant +key-wow64-32key+        #x00200)
+(defconstant +key-wow64-64key+        #x00100)
+(defconstant +key-write+              #x20006)
+
 (cffi:defcstruct rect
   (left :int32)
   (top :int32)
@@ -618,6 +687,11 @@
   (offset :uint32)
   (offset-high :uint32)
   (event :pointer))
+
+(cffi:defcstruct security-attributes
+  (length :uint32)
+  (security-descriptor :pointer)
+  (inherit :boolean))
 
 (cffi:defcfun ("Beep" beep) :boolean
   (frequency :uint32)
@@ -779,14 +853,14 @@
   (hwnd :pointer)
   (rect :pointer))
 
-(cffi:defcfun ("GetCommandLineW" get-command-line) 
+(cffi:defcfun ("GetCommandLineW" get-command-line)
     (:string :encoding #.+win32-string-encoding+))
 
 (cffi:defcfun ("GetCurrentProcess" get-current-process) :pointer)
 
 (cffi:defcfun ("GetCurrentProcessId" get-current-process-id) :uint32)
 
-(cffi:defcfun ("GetCurrentProcessorNumber" get-current-processor-number) 
+(cffi:defcfun ("GetCurrentProcessorNumber" get-current-processor-number)
     :uint32)
 
 (cffi:defcfun ("GetCurrentThreadId" get-current-thread-id) :uint32)
@@ -809,7 +883,7 @@
 
 (cffi:defcfun ("GetOverlappedResult" get-overlapped-result) :int
   (handle :pointer)
-  (overlapped (:pointer overlapped))
+  (overlapped (:pointer (:struct overlapped)))
   (bytes-transfered (:pointer :uint32))
   (wait :int))
 
@@ -917,16 +991,99 @@
   (buffer :pointer)
   (bytes-to-read :uint32)
   (bytes-read (:pointer :uint32))
-  (overlapped (:pointer overlapped)))
+  (overlapped (:pointer (:struct overlapped))))
 
 (cffi:defcfun ("RealizePalette" realize-palette) :uint32
   (dc :pointer))
+
+(cffi:defcfun ("RegCloseKey" reg-close-key) :long
+  (hkey :pointer))
+
+(cffi:defcfun ("RegCreateKeyW" reg-create-key) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (phkey-result (:pointer :pointer)))
+
+(cffi:defcfun ("RegCreateKeyExW" reg-create-key-ex) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (reserved :uint32)
+  (class (:string :encoding #.+win32-string-encoding+))
+  (options :uint32)
+  (sam-desired :uint32)
+  (security-attributes (:pointer (:struct security-attributes)))
+  (phkey-result (:pointer :pointer))
+  (disposition (:pointer :uint32)))
+
+(cffi:defcfun ("RegDeleteKeyW" reg-delete-key) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("RegDeleteKeyExW" reg-delete-key-ex) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (sam-desired :uint32)
+  (reserved :uint32))
+
+(cffi:defcfun ("RegDeleteTreeW" reg-delete-tree) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+)))
+
+(cffi:defcfun ("RegGetValueW" reg-get-value) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (value-name (:string :encoding #.+win32-string-encoding+))
+  (flags :uint32)
+  (type (:pointer :uint32))
+  (data :pointer)
+  (data-size (:pointer :uint32)))
 
 (cffi:defcfun ("RegisterClassW" register-class) :uint16
   (wndclass :pointer))
 
 (cffi:defcfun ("RegisterClassExW" register-class-ex) :uint16
   (wndclassex :pointer))
+
+(cffi:defcfun ("RegOpenKeyW" reg-open-key) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (phkey-result (:pointer :pointer)))
+
+(cffi:defcfun ("RegOpenKeyExW" reg-open-key-ex) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (options :uint32)
+  (sam-desired :uint32)
+  (phkey-result (:pointer :pointer)))
+
+(cffi:defcfun ("RegQueryValueW" reg-query-value) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (value (:pointer (:string :encoding #.+win32-string-encoding+)))
+  (value-size (:pointer :long)))
+
+(cffi:defcfun ("RegQueryValueExW" reg-query-value-ex) :long
+  (hkey :pointer)
+  (value-name (:string :encoding #.+win32-string-encoding+))
+  (reserved (:pointer :uint32))
+  (type (:pointer :uint32))
+  (data (:pointer :uint8))
+  (data-size (:pointer :uint32)))
+
+(cffi:defcfun ("RegSetValueW" reg-set-value) :long
+  (hkey :pointer)
+  (sub-key (:string :encoding #.+win32-string-encoding+))
+  (type :uint32)
+  (data (:string :encoding #.+win32-string-encoding+))
+  (data-size :uint32))
+
+(cffi:defcfun ("RegSetValueExW" reg-set-value-ex) :long
+  (hkey :pointer)
+  (value-name (:string :encoding #.+win32-string-encoding+))
+  (reserved :uint32)
+  (type :uint32)
+  (data (:pointer :uint8))
+  (data-size :uint32))
 
 (cffi:defcfun ("ReleaseDC" release-dc) :boolean
   (hwnd :pointer)
@@ -1090,4 +1247,4 @@
   (buffer :pointer)
   (bytes-to-write :uint32)
   (bytes-written (:pointer :uint32))
-  (overlapped (:pointer overlapped)))
+  (overlapped (:pointer (:struct overlapped))))
