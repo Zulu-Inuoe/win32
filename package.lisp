@@ -18,27 +18,24 @@
 ;;;
 ;;;3. This notice may not be removed or altered from any source distribution.
 
-(cl:in-package #:cl-user)
-
 (defpackage #:win32
   (:use #:cl)
   (:export
-   
    #:+win32-string-encoding+
-   
+
    #:+create-new+
    #:+create-always+
    #:+open-existing+
    #:+open-always+
    #:+truncate-existing+
-   
+
    #:+pfd-type-rgba+
    #:+pfd-type-colorindex+
-   
+
    #:+pfd-main-plane+
    #:+pfd-overlay-plane+
    #:+pfd-underlay-plane+
-   
+
    #:+pfd-doublebuffer+
    #:+pfd-stereo+
    #:+pfd-draw-to-window+
@@ -58,7 +55,7 @@
    #:+pfd-depth-dontcare+
    #:+pfd-doublebuffer-dontcare+
    #:+pfd-stereo-dontcare+
-   
+
    ;;Window Styles
    #:+ws-overlapped+
    #:+ws-popup+
@@ -72,7 +69,7 @@
    #:+ws-thickframe+
    #:+ws-sysmenu+
    #:+ws-overlappedwindow+
-   
+
    ;;Window ex styles
    #:+ws-ex-left+
    #:+ws-ex-ltrreading+
@@ -98,12 +95,12 @@
    #:+ws-ex-layoutrtl+
    #:+ws-ex-composited+
    #:+ws-ex-noactivate+
-   
+
    ;;Edit control types
    #:+es-left+
    #:+es-center+
    #:+es-right+
-   
+
    #:+wm-null+
    #:+wm-create+
    #:+wm-destroy+
@@ -312,32 +309,32 @@
    #:+wm-dde-last+
    #:+wm-user+
    #:+wm-app+
-   
+
    #:+time-cancel+
    #:+time-hover+
    #:+time-leave+
    #:+time-nonclient+
    #:+time-query+
-   
+
    #:+cw-usedefault+
-   
+
    #:+cs-vredraw+
    #:+cs-hredraw+
    #:+cs-owndc+
-   
+
    #:+sw-show+
-   
+
    #:+idi-application+
    #:+idc-arrow+
-   
+
    #:+white-brush+
    #:+black-brush+
    #:+dc-brush+
-   
+
    #:+gcl-hbrbackground+
    #:+gcl-wndproc+
    #:+gcw-atom+
-   
+
    #:+gwl-wndproc+
    #:+gwl-id+
    #:+gwl-style+
@@ -351,43 +348,43 @@
    #:+swp-hidewindow+
    #:+swp-noownerzorder+
    #:+swp-noreposition+
-   
+
    #:+infinite+
-   
+
    #:+wait-object-0+
    #:+wait-abandoned+
    #:+wait-timeout+
    #:+wait-failed+
-   
+
    #:+hwnd-top+
    #:+hwnd-bottom+
    #:+hwnd-message+
    #:+hwnd-notopmost+
    #:+hwnd-topmost+
-   
+
    #:+winevent-outofcontext+
    #:+winevent-skipownthread+
    #:+winevent-skipownprocess+
    #:+winevent-incontext+
-   
+
    #:+wh-mouse+
-   #:+wh-mouse-ll+   
-   
+   #:+wh-mouse-ll+
+
    #:+delete+
    #:+read-control+
    #:+write-dac+
    #:+write-owner+
    #:+synchronize+
-   
+
    #:+standard-rights-required+
-   
+
    #:+standard-rights-read+
    #:+standard-rights-write+
    #:+standard-rights-execute+
-   
+
    #:+standard-rights-all+
    #:+specific-rights-all+
-   
+
    #:+desktop-createmenu+
    #:+desktop-createwindow+
    #:+desktop-enumerate+
@@ -397,12 +394,12 @@
    #:+desktop-readobjects+
    #:+desktop-switchdesktop+
    #:+desktop-writeobjects+
-   
+
    #:+generic-read+
    #:+generic-write+
    #:+generic-execute+
    #:+generic-all+
-   
+
    #:+movefile-replace-existing+
    #:+movefile-copy-allowed+
    #:+movefile-delay-until-reboot+
@@ -415,43 +412,145 @@
    #:+copy-file-open-source-for-write+
    #:+copy-file-allow-decrypted-destination+
    #:+copy-file-copy-symlink+
-   #:+copy-file-no-buffering+   
-   
+   #:+copy-file-no-buffering+
+
+   #:+hkey-classes-root+
+   #:+hkey-current-user+
+   #:+hkey-local-machine+
+   #:+hkey-users+
+   #:+hkey-performance-data+
+   #:+hkey-current-config+
+   #:+hkey-dyn-data+
+   #:+hkey-performance-text+
+   #:+hkey-performance-nlstext+
+
+   #:+reg-none+
+   #:+reg-sz+
+   #:+reg-expand-sz+
+   #:+reg-binary+
+   #:+reg-dword+
+   #:+reg-dword-little-endian+
+   #:+reg-dword-big-endian+
+   #:+reg-link+
+   #:+reg-multi-sz+
+   #:+reg-resource-list+
+   #:+reg-full-resource-descriptor+
+   #:+reg-resource-requirements-list+
+   #:+reg-qword+
+   #:+reg-qword-little-endian+
+
+   #:+rrf-rt-any+
+   #:+rrf-rt-dword+
+   #:+rrf-rt-qword+
+   #:+rrf-rt-reg-binary+
+   #:+rrf-rt-reg-dword+
+   #:+rrf-rt-reg-expand-sz+
+   #:+rrf-rt-reg-multi-sz+
+   #:+rrf-rt-reg-none+
+   #:+rrf-rt-reg-qword+
+   #:+rrf-rt-reg-sz+
+
+   #:+rrf-noexpand+
+   #:+rrf-zeroonfailure+
+   #:+rrf-subkey-wow6464key+
+   #:+rrf-subkey-wow6432key+
+
+   #:+reg-option-reserved+
+   #:+reg-option-backup-restore+
+   #:+reg-option-create-link+
+   #:+reg-option-non-volatile+
+   #:+reg-option-volatile+
+   #:+reg-option-open-link+
+
+   #:+reg-created-new-key+
+   #:+reg-opened-existing-key+
+
+   #:+key-all-access+
+   #:+key-create-link+
+   #:+key-create-sub-key+
+   #:+key-enumerate-sub-keys+
+   #:+key-execute+
+   #:+key-notify+
+   #:+key-query-value+
+   #:+key-read+
+   #:+key-set-value+
+   #:+key-wow64-32key+
+   #:+key-wow64-64key+
+   #:+key-write+
+
+   #:+color-3ddkshadow+
+   #:+color-3dface+
+   #:+color-3dhighlight+
+   #:+color-3dhilight+
+   #:+color-3dlight+
+   #:+color-3dshadow+
+   #:+color-activeborder+
+   #:+color-activecaption+
+   #:+color-appworkspace+
+   #:+color-background+
+   #:+color-btnface+
+   #:+color-btnhighlight+
+   #:+color-btnhilight+
+   #:+color-btnshadow+
+   #:+color-btntext+
+   #:+color-captiontext+
+   #:+color-desktop+
+   #:+color-gradientactivecaption+
+   #:+color-gradientinactivecaption+
+   #:+color-graytext+
+   #:+color-highlight+
+   #:+color-highlighttext+
+   #:+color-hotlight+
+   #:+color-inactiveborder+
+   #:+color-inactivecaption+
+   #:+color-inactivecaptiontext+
+   #:+color-infobk+
+   #:+color-infotext+
+   #:+color-menu+
+   #:+color-menuhilight+
+   #:+color-menubar+
+   #:+color-menutext+
+   #:+color-scrollbar+
+   #:+color-window+
+   #:+color-windowframe+
+   #:+color-windowtext+
+
    #:logpalette
    #:paletteentry
    #:paintstruct
    #:pixelformatdescriptor
    #:point
    #:rect
+   #:security-attributes
    #:trackmouseevent
    #:wndclass
    #:wndclassex
    #:msg
    #:createstruct
    #:overlapped
-   
+
    #:dc
    #:erase
    #:paint
    #:restore
    #:incupdate
    #:rgbreserved
-   
+
    #:num-entries
    #:palette-entries
-   
+
    #:red
    #:green
    #:blue
-   
+
    #:x
    #:y
-   
+
    #:left
    #:top
    #:right
    #:bottom
-   
+
    #:cbsize
    #:flags
    #:hwnd
@@ -467,7 +566,7 @@
    #:menu-name
    #:wndclass-name
    #:iconsm
-   
+
    #:size
    #:version
    #:pixel-type
@@ -493,12 +592,12 @@
    #:layer-mask
    #:visible-mask
    #:damage-mask
-   
+
    #:message
    #:wparam
    #:lparam
    #:time
-   
+
    #:create-params
    #:instance
    #:menu
@@ -508,13 +607,13 @@
    #:name
    #:class
    #:exstyle
-   
+
    #:internal
    #:internal-high
    #:offset
    #:offset-high
    #:event
-   
+
    #:beep
    #:begin-paint
    #:call-next-hook
@@ -562,6 +661,7 @@
    #:get-pixel-format
    #:get-shell-window
    #:get-stock-object
+   #:get-sys-color
    #:get-top-window
    #:get-window-long
    #:get-window-rect
@@ -584,8 +684,21 @@
    #:post-thread-message
    #:read-file
    #:realize-palette
+   #:reg-close-key
+   #:reg-create-key
+   #:reg-create-key-ex
+   #:reg-delete-key
+   #:reg-delete-key-ex
+   #:reg-delete-tree
+   #:reg-get-value
    #:register-class
    #:register-class-ex
+   #:reg-open-key
+   #:reg-open-key-ex
+   #:reg-query-value
+   #:reg-query-value-ex
+   #:reg-set-value
+   #:reg-set-value-ex
    #:release-dc
    #:reset-event
    #:resize-palette
@@ -620,7 +733,4 @@
    #:wgl-delete-context
    #:wgl-make-current
    #:window-from-point
-   #:write-file
-   ))
-
-(cl:in-package #:win32)
+   #:write-file))

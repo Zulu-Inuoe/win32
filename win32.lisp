@@ -570,6 +570,43 @@
 (defconstant +key-wow64-64key+        #x00100)
 (defconstant +key-write+              #x20006)
 
+(defconstant +color-3ddkshadow+ 21)
+(defconstant +color-3dface+ 15)
+(defconstant +color-3dhighlight+ 20)
+(defconstant +color-3dhilight+ 20)
+(defconstant +color-3dlight+ 22)
+(defconstant +color-3dshadow+ 16)
+(defconstant +color-activeborder+ 10)
+(defconstant +color-activecaption+ 2)
+(defconstant +color-appworkspace+ 12)
+(defconstant +color-background+ 1)
+(defconstant +color-btnface+ 15)
+(defconstant +color-btnhighlight+ 20)
+(defconstant +color-btnhilight+ 20)
+(defconstant +color-btnshadow+ 16)
+(defconstant +color-btntext+ 18)
+(defconstant +color-captiontext+ 9)
+(defconstant +color-desktop+ 1)
+(defconstant +color-gradientactivecaption+ 27)
+(defconstant +color-gradientinactivecaption+ 28)
+(defconstant +color-graytext+ 17)
+(defconstant +color-highlight+ 13)
+(defconstant +color-highlighttext+ 14)
+(defconstant +color-hotlight+ 26)
+(defconstant +color-inactiveborder+ 11)
+(defconstant +color-inactivecaption+ 3)
+(defconstant +color-inactivecaptiontext+ 19)
+(defconstant +color-infobk+ 24)
+(defconstant +color-infotext+ 23)
+(defconstant +color-menu+ 4)
+(defconstant +color-menuhilight+ 29)
+(defconstant +color-menubar+ 30)
+(defconstant +color-menutext+ 7)
+(defconstant +color-scrollbar+ 0)
+(defconstant +color-window+ 5)
+(defconstant +color-windowframe+ 6)
+(defconstant +color-windowtext+ 8)
+
 (cffi:defcstruct rect
   (left :int32)
   (top :int32)
@@ -897,6 +934,9 @@
 
 (cffi:defcfun ("GetStockObject" get-stock-object) :pointer
   (object :uint32))
+
+(cffi:defcfun ("GetSysColor" get-sys-color) :uint32
+  (index :int))
 
 (cffi:defcfun ("GetTopWindow" get-top-window) :pointer
   (hwnd :pointer))
