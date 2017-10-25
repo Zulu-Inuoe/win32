@@ -639,6 +639,38 @@
    #:+color-windowframe+
    #:+color-windowtext+
 
+   #:+smto-abortifhung+
+   #:+smto-block+
+   #:+smto-normal+
+   #:+smto-notimeoutifnothung+
+   #:+smto-erroronexit+
+
+   #:+bsf-allowsfw+
+   #:+bsf-flushdisk+
+   #:+bsf-forceifhung+
+   #:+bsf-ignorecurrenttask+
+   #:+bsf-luid+
+   #:+bsf-nohang+
+   #:+bsf-notimeoutifnothung+
+   #:+bsf-postmessage+
+   #:+bsf-returnhdesk+
+   #:+bsf-query+
+   #:+bsf-sendnotifymessage+
+
+   #:+bsm-allcomponents+
+   #:+bsm-alldesktops+
+   #:+bsm-applications+
+
+   #:+ismex-callback+
+   #:+ismex-notify+
+   #:+ismex-replied+
+   #:+ismex-send+
+
+   #:unicode-string
+   #:length
+   #:maximum-length
+   #:buffer
+
    #:luid
    #:low-part
    #:high-part
@@ -750,6 +782,8 @@
 
    #:beep
    #:begin-paint
+   #:broadcast-system-message
+   #:broadcast-system-message-ex
    #:call-next-hook
    #:cancel-io
    #:choose-pixel-format
@@ -787,12 +821,17 @@
    #:get-current-thread-id
    #:get-dc
    #:get-desktop-window
+   #:get-input-state
    #:get-last-error
    #:get-message
+   #:get-message-exta-info
+   #:get-message-pos
+   #:get-message-time
    #:get-module-handle
    #:get-overlapped-result
    #:get-parent
    #:get-pixel-format
+   #:get-queue-status
    #:get-shell-window
    #:get-stock-object
    #:get-sys-color
@@ -801,6 +840,8 @@
    #:get-window-rect
    #:get-window-text
    #:get-window-thread-process-id
+   #:in-send-message
+   #:in-send-message-ex
    #:invalidate-rect
    #:is-gui-thread
    #:is-window
@@ -832,11 +873,17 @@
    #:reg-set-value-ex
    #:register-class
    #:register-class-ex
+   #:register-window-message
    #:release-dc
+   #:reply-message
    #:reset-event
    #:resize-palette
    #:rgb
    #:select-palette
+   #:send-message
+   #:send-message-callback
+   #:send-message-timeout
+   #:send-notify-message
    #:set-class-long
    #:set-class-long-ptr
    #:set-class-word
@@ -845,6 +892,7 @@
    #:set-event
    #:set-foreground-window
    #:set-layered-window-attributes
+   #:set-message-extra-info
    #:set-parent
    #:set-pixel-format
    #:set-win-event-hook

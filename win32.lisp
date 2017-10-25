@@ -725,6 +725,33 @@
 (defconstant +color-windowframe+ 6)
 (defconstant +color-windowtext+ 8)
 
+(defconstant +smto-abortifhung+        #x0002)
+(defconstant +smto-block+              #x0001)
+(defconstant +smto-normal+             #x0000)
+(defconstant +smto-notimeoutifnothung+ #x0008)
+(defconstant +smto-erroronexit+        #x0020)
+
+(defconstant +bsf-allowsfw+           #x00000080)
+(defconstant +bsf-flushdisk+          #x00000004)
+(defconstant +bsf-forceifhung+        #x00000020)
+(defconstant +bsf-ignorecurrenttask+  #x00000002)
+(defconstant +bsf-luid+               #x00000400)
+(defconstant +bsf-nohang+             #x00000008)
+(defconstant +bsf-notimeoutifnothung+ #x00000040)
+(defconstant +bsf-postmessage+        #x00000010)
+(defconstant +bsf-returnhdesk+        #x00000200)
+(defconstant +bsf-query+              #x00000001)
+(defconstant +bsf-sendnotifymessage+  #x00000100)
+
+(defconstant +bsm-allcomponents+ #x00000000)
+(defconstant +bsm-alldesktops+   #x00000010)
+(defconstant +bsm-applications+  #x00000008)
+
+(defconstant +ismex-callback+ #x00000004)
+(defconstant +ismex-notify+   #x00000002)
+(defconstant +ismex-replied+  #x00000008)
+(defconstant +ismex-send+     #x00000001)
+
 (defcstruct unicode-string
   (length ushort)
   (maximum-length ushort)
@@ -870,6 +897,21 @@
 (defcfun ("BeginPaint" begin-paint) :pointer
   (hwnd :pointer)
   (paint :pointer))
+
+(defcfun ("BroadcastSystemMessageW" broadcast-system-message) :long
+  (flags dword)
+  (recipients (:pointer dword))
+  (message uint)
+  (wparam wparam)
+  (lparam lparam))
+
+(defcfun ("BroadcastSystemMessageExW" broadcast-system-message) :long
+  (flags dword)
+  (recipients (:pointer dword))
+  (message uint)
+  (wparam wparam)
+  (lparam lparam)
+  (bsminfo (:pointer (:struct bsminfo))))
 
 (defcfun ("CallNextHookEx" call-next-hook) :uint32
   (current-hook :pointer)
@@ -1040,6 +1082,7 @@
 
 (defcfun ("GetDesktopWindow" get-desktop-window) :pointer)
 
+(defcfun ("GetInputState" get-input-state) bool)
 
 (defcfun ("GetLastError" get-last-error) :uint32)
 
@@ -1048,6 +1091,12 @@
   (hwnd :pointer)
   (msg-min :uint32)
   (msg-max :uint32))
+
+(defcfun ("GetMessageExtraInfo" get-message-extra-info) lparam)
+
+(defcfun ("GetMessagePos" get-message-pos) dword)
+
+(defcfun ("GetMessageTime" get-message-time) long)
 
 (defcfun ("GetModuleHandleW" get-module-handle) :pointer
   (module (:string :encoding #.+win32-string-encoding+)))
@@ -1068,6 +1117,9 @@
 
 (defcfun ("GetStockObject" get-stock-object) :pointer
   (object :uint32))
+
+(defcfun ("GetQueueStatus" get-queue-status) dword
+  (flags uint))
 
 (defcfun ("GetSysColor" get-sys-color) :uint32
   (index :int))
@@ -1091,6 +1143,11 @@
 (defcfun ("GetWindowThreadProcessId" get-window-thread-process-id) :uint32
   (hwnd :pointer)
   (process-id :pointer))
+
+(defcfun ("InSendMessage" in-send-message) bool)
+
+(defcfun ("InSendMessageEx" in-send-message-ex) dword
+  (reserved :pointer))
 
 (defcfun ("InvalidateRect" invalidate-rect) :boolean
   (hwnd :pointer)
@@ -1254,9 +1311,15 @@
 (defcfun ("RegisterClassExW" register-class-ex) :uint16
   (wndclassex :pointer))
 
+(defcfun ("RegisterWindowMessageW" register-window-message) uint
+  (string lpctstr))
+
 (defcfun ("ReleaseDC" release-dc) :boolean
   (hwnd :pointer)
   (dc :pointer))
+
+(defcfun ("ReplyMessage" reply-message) bool
+  (result lresult))
 
 (defcfun ("ResetEvent" reset-event) :boolean
   (event :pointer))
@@ -1279,6 +1342,34 @@
   (num-inputs :uint32)
   (inputs :pointer)
   (cbsize :int))
+
+(defcfun ("SendMessageW" send-message) lresult
+  (hwnd hwnd)
+  (msg uint)
+  (wparam wparam)
+  (lparam lparam))
+
+(defcfun ("SendMessageCallbackW" send-message-callback) bool
+  (hwnd hwnd)
+  (msg uint)
+  (wparam wparam)
+  (lparam lparam)
+  (callback :pointer)
+  (data ulong-ptr))
+
+(defcfun ("SendMessageTimeout" send-message-timeout) lresult
+  (hwnd hwnd)
+  (msg uint)
+  (wparam wparam)
+  (flags uint)
+  (timeout uint)
+  (result (:pointer dword-ptr)))
+
+(defcfun ("SendNotifyMessageW" send-notify-message) bool
+  (hwnd hwnd)
+  (msg uint)
+  (wparam wparam)
+  (lparam lparam))
 
 (defcfun ("SetClassLongW" set-class-long) :uint32
   (hwnd :pointer)
@@ -1320,6 +1411,9 @@
   (color :uint32)
   (alpha :uint8)
   (flags :uint32))
+
+(defcfun ("SetMessageExtraInfo" set-message-extra-info) lparam
+  (lparam lparam))
 
 (defcfun ("SetParent" set-parent) :boolean
   (hwnd :pointer)
