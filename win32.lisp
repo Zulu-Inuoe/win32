@@ -18,28 +18,151 @@
 ;;;
 ;;;3. This notice may not be removed or altered from any source distribution.
 
-(cl:in-package #:win32)
+(in-package #:win32)
 
-(cffi:define-foreign-library kernel32
+(define-foreign-library kernel32
   (:win32 "Kernel32"))
 
-(cffi:define-foreign-library user32
+(define-foreign-library user32
   (:win32 "User32"))
 
-(cffi:define-foreign-library gdi32
+(define-foreign-library gdi32
   (:win32 "Gdi32"))
 
-(cffi:define-foreign-library opengl32
+(define-foreign-library opengl32
   (:win32 "Opengl32"))
 
-(cffi:define-foreign-library advapi32
-  (:win32 "advapi32.dll"))
+(define-foreign-library advapi32
+  (:win32 "Advapi32.dll"))
 
-(cffi:use-foreign-library user32)
-(cffi:use-foreign-library kernel32)
-(cffi:use-foreign-library gdi32)
-(cffi:use-foreign-library opengl32)
-(cffi:use-foreign-library advapi32)
+(use-foreign-library user32)
+(use-foreign-library kernel32)
+(use-foreign-library gdi32)
+(use-foreign-library opengl32)
+(use-foreign-library advapi32)
+
+(defconstant +win32-string-encoding+
+  #+little-endian :utf-16le
+  #+big-endian :utf-16be
+  "Not a win32 'constant' per-se, but useful to expose for usage with FOREIGN-STRING-TO-LISP and friends.")
+
+(defctype char :int8)
+(defctype uchar :uchar)
+(defctype wchar :int16)
+
+(defctype int :int)
+(defctype int-ptr #+x86 :int32 #+x86-64 :int64)
+(defctype int8 :int8)
+(defctype int16 :int16)
+(defctype int32 :int32)
+(defctype int64 :int64)
+
+(defctype uint :uint32)
+(defctype uint-ptr #+x86 :uint32 #+x86-64 :uint64)
+(defctype uint8 :uint8)
+(defctype uint16 :uint16)
+(defctype uint32 :uint32)
+(defctype uint64 :uint64)
+
+(defctype long :long)
+(defctype longlong :int64)
+(defctype long-ptr #+x86 :int32 #+x86-64 :int64)
+(defctype long32 :int32)
+(defctype long64 :int64)
+
+(defctype ulong :uint32)
+(defctype ulonglong :uint64)
+(defctype ulong-ptr #+x86 :uint32 #+x86-64 :uint64)
+(defctype ulong32 :uint32)
+(defctype ulong64 :uint64)
+
+(defctype short :short)
+(defctype ushort :ushort)
+
+(defctype byte :uint8)
+(defctype word :uint16)
+(defctype dword :uint32)
+(defctype dwordlong :uint64)
+(defctype dword-ptr ulong-ptr)
+(defctype dword32 :uint32)
+(defctype dword64 :uint64)
+(defctype qword :uint64)
+
+(defctype bool :int)
+(defctype boolean byte)
+
+(defctype tbyte wchar)
+(defctype tchar wchar)
+
+(defctype float :float)
+
+(defctype size-t #+x86 :uint32 #+x86-64 :uint64)
+(defctype ssize-t #+x86 :int32 #+x86-64 :int64)
+
+(defctype lpcstr (:string :encoding :ascii))
+(defctype lpcwstr (:string :encoding #.+win32-string-encoding+))
+(defctype lpstr (:string :encoding :ascii))
+(defctype lpwstr (:string :encoding #.+win32-string-encoding+))
+(defctype pcstr (:string :encoding :ascii))
+(defctype pcwstr (:string :encoding #.+win32-string-encoding+))
+(defctype pstr (:string :encoding :ascii))
+(defctype pwstr (:string :encoding #.+win32-string-encoding+))
+
+(defctype handle :pointer)
+
+(defctype atom :uint16)
+(defctype half-ptr #+x86 :int #+x86-64 :short)
+(defctype uhalf-ptr #+x86 :uint #+x86-64 :ushort)
+(defctype colorref :uint32)
+(defctype haccel handle)
+(defctype hbitmap handle)
+(defctype hbrush handle)
+(defctype hcolorspace handle)
+(defctype hconv handle)
+(defctype hconvlist handle)
+(defctype hcursor handle)
+(defctype hdc handle)
+(defctype hddedata handle)
+(defctype hdesk handle)
+(defctype hdrop handle)
+(defctype hdwp handle)
+(defctype henhmetafile handle)
+(defctype hfile :int)
+(defctype hfont handle)
+(defctype hgdiobj handle)
+(defctype hglobal handle)
+(defctype hhook handle)
+(defctype hicon handle)
+(defctype hinstance handle)
+(defctype hkey handle)
+(defctype hkl handle)
+(defctype hlocal handle)
+(defctype hmenu handle)
+(defctype hmetafile handle)
+(defctype hmodule hinstance)
+(defctype hmonitor handle)
+(defctype hpalette handle)
+(defctype hpen handle)
+(defctype hresult long)
+(defctype hrgn handle)
+(defctype hrsrc handle)
+(defctype hsz handle)
+(defctype hwinsta handle)
+(defctype hwnd handle)
+(defctype langid word)
+(defctype lcid dword)
+(defctype lgrpid dword)
+(defctype lparam long-ptr)
+(defctype lpctstr lpcwstr)
+(defctype lptstr lpwstr)
+(defctype lresult long-ptr)
+(defctype pctstr pcwstr)
+(defctype ptstr pwstr)
+(defctype sc-handle handle)
+(defctype sc-lock :pointer)
+(defctype service-status-handle handle)
+(defctype usn longlong)
+(defctype wparam uint-ptr)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
@@ -56,11 +179,6 @@
        value)
       (t
        (error "The value ~A cannot be converted at this time, as negatives are not supported." value)))))
-
-(defconstant +win32-string-encoding+
-  #+little-endian :utf-16le
-  #+big-endian :utf-16be
-  "Not a win32 'constant' per-se, but useful to expose for usage with CFFI:FOREIGN-STRING-TO-LISP and friends.")
 
 ;;CreateFile Creation Disposition
 (defconstant +create-new+        1)
@@ -376,8 +494,8 @@
 
 (defconstant +sw-show+ 5)
 
-(defvar +idi-application+ (cffi:make-pointer 32512))
-(defvar +idc-arrow+ (cffi:make-pointer 32512))
+(defvar +idi-application+ (make-pointer 32512))
+(defvar +idc-arrow+ (make-pointer 32512))
 
 (defconstant +white-brush+ 0)
 (defconstant +black-brush+ 4)
@@ -607,19 +725,34 @@
 (defconstant +color-windowframe+ 6)
 (defconstant +color-windowtext+ 8)
 
-(cffi:defcstruct rect
+(defcstruct unicode-string
+  (length ushort)
+  (maximum-length ushort)
+  (buffer pwstr))
+
+(defcstruct luid
+  (low-part dword)
+  (high-part long))
+
+(defcstruct bsminfo
+  (size uint)
+  (hdesk hdesk)
+  (hwnd hwnd)
+  (luid (:struct luid)))
+
+(defcstruct rect
   (left :int32)
   (top :int32)
   (right :int32)
   (bottom :int32))
 
-(cffi:defcstruct paletteentry
+(defcstruct paletteentry
   (red :uint8)
   (green :uint8)
   (blue :uint8)
   (flags :uint8))
 
-(cffi:defcstruct paintstruct
+(defcstruct paintstruct
   (dc :pointer)
   (erase :boolean)
   (paint (:struct rect))
@@ -627,12 +760,12 @@
   (incupdate :boolean)
   (rgbreserved :uint8 :count 32))
 
-(cffi:defcstruct logpalette
+(defcstruct logpalette
   (version :uint16)
   (num-entries :uint16)
   (palette-entries (:struct paletteentry) :count 1))
 
-(cffi:defcstruct pixelformatdescriptor
+(defcstruct pixelformatdescriptor
   (size :uint16)
   (version :uint16)
   (flags :uint32)
@@ -660,17 +793,17 @@
   (visible-mask :uint32)
   (damage-mask :uint32))
 
-(cffi:defcstruct point
+(defcstruct point
   (x :int32)
   (y :int32))
 
-(cffi:defcstruct trackmouseevent
+(defcstruct trackmouseevent
   (cbsize :uint32)
   (flags :uint32)
   (hwnd :pointer)
   (hover-time :uint32))
 
-(cffi:defcstruct wndclass
+(defcstruct wndclass
   (style :uint32)
   (wndproc :pointer)
   (clsextra :int32)
@@ -682,7 +815,7 @@
   (menu-name (:string :encoding #.+win32-string-encoding+))
   (wndclass-name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcstruct wndclassex
+(defcstruct wndclassex
   (cbsize :uint32)
   (style :uint32)
   (wndproc :pointer)
@@ -696,7 +829,7 @@
   (wndclass-name (:string :encoding #.+win32-string-encoding+))
   (iconsm :pointer))
 
-(cffi:defcstruct msg
+(defcstruct msg
   (hwnd :pointer)
   (message :uint32)
   (wparam :pointer)
@@ -704,7 +837,7 @@
   (time :uint32)
   (point (:struct point)))
 
-(cffi:defcstruct createstruct
+(defcstruct createstruct
   (create-params :pointer)
   (instance :pointer)
   (menu :pointer)
@@ -718,58 +851,58 @@
   (class (:string :encoding #.+win32-string-encoding+))
   (exstyle :uint32))
 
-(cffi:defcstruct overlapped
+(defcstruct overlapped
   (internal :pointer)
   (internal-high :pointer)
   (offset :uint32)
   (offset-high :uint32)
   (event :pointer))
 
-(cffi:defcstruct security-attributes
+(defcstruct security-attributes
   (length :uint32)
   (security-descriptor :pointer)
   (inherit :boolean))
 
-(cffi:defcfun ("Beep" beep) :boolean
+(defcfun ("Beep" beep) :boolean
   (frequency :uint32)
   (duration :uint32))
 
-(cffi:defcfun ("BeginPaint" begin-paint) :pointer
+(defcfun ("BeginPaint" begin-paint) :pointer
   (hwnd :pointer)
   (paint :pointer))
 
-(cffi:defcfun ("CallNextHookEx" call-next-hook) :uint32
+(defcfun ("CallNextHookEx" call-next-hook) :uint32
   (current-hook :pointer)
   (code :int32)
   (wparam :uint32)
   (lparam :uint32))
 
-(cffi:defcfun ("CancelIo" cancel-io) :int
+(defcfun ("CancelIo" cancel-io) :int
   (handle :pointer))
 
-(cffi:defcfun ("ChoosePixelFormat" choose-pixel-format) :int
+(defcfun ("ChoosePixelFormat" choose-pixel-format) :int
   (dc :pointer)
   (pixel-format :pointer))
 
-(cffi:defcfun ("ClientToScreen" client-to-screen) :boolean
+(defcfun ("ClientToScreen" client-to-screen) :boolean
   (hwnd :pointer)
   (point :pointer))
 
-(cffi:defcfun ("ClipCursor" clip-cursor) :boolean
+(defcfun ("ClipCursor" clip-cursor) :boolean
   (rect :pointer))
 
-(cffi:defcfun ("CloseHandle" close-handle) :boolean
+(defcfun ("CloseHandle" close-handle) :boolean
   (handle :pointer))
 
-(cffi:defcfun ("CloseWindow" close-window) :boolean
+(defcfun ("CloseWindow" close-window) :boolean
   (hwnd :pointer))
 
-(cffi:defcfun ("CopyFileW" copy-file) :boolean
+(defcfun ("CopyFileW" copy-file) :boolean
   (existing-name (:string :encoding #.+win32-string-encoding+))
   (new-name (:string :encoding #.+win32-string-encoding+))
   (fail-if-exists :boolean))
 
-(cffi:defcfun ("CopyFileExW" copy-file-ex) :boolean
+(defcfun ("CopyFileExW" copy-file-ex) :boolean
   (existing-name (:string :encoding #.+win32-string-encoding+))
   (new-name (:string :encoding #.+win32-string-encoding+))
   (progress-routine :pointer)
@@ -777,7 +910,7 @@
   (cancel :pointer)
   (flags :uint32))
 
-(cffi:defcfun ("CreateDesktopW" create-desktop) :pointer
+(defcfun ("CreateDesktopW" create-desktop) :pointer
   (desktop (:string :encoding #.+win32-string-encoding+))
   (device :pointer)
   (devmode :pointer)
@@ -785,13 +918,13 @@
   (desired-access :uint32)
   (security-attributes :pointer))
 
-(cffi:defcfun ("CreateEventW" create-event) :pointer
+(defcfun ("CreateEventW" create-event) :pointer
   (security-attributes :pointer)
   (manual-reset :boolean)
   (initial-state :boolean)
   (name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("CreateFileW" create-file) :pointer
+(defcfun ("CreateFileW" create-file) :pointer
   (path (:string :encoding #.+win32-string-encoding+))
   (file-access :uint)
   (share-access :uint)
@@ -800,21 +933,21 @@
   (flags :uint)
   (template :pointer))
 
-(cffi:defcfun ("CreateMutexW" create-mutex) :pointer
+(defcfun ("CreateMutexW" create-mutex) :pointer
   (security-attributes :pointer)
   (initial-owner :boolean)
   (name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("CreatePalette" create-palette) :pointer
+(defcfun ("CreatePalette" create-palette) :pointer
   (log-palette :pointer))
 
-(cffi:defcfun ("CreateSemaphoreW" create-semaphore) :pointer
+(defcfun ("CreateSemaphoreW" create-semaphore) :pointer
   (security-attributes :pointer)
   (initial-count :int32)
   (maximum-count :int32)
   (name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("CreateWindowExW" create-window-ex) :pointer
+(defcfun ("CreateWindowExW" create-window-ex) :pointer
   (ex-style :uint32)
   (wndclass-name (:string :encoding #.+win32-string-encoding+))
   (window-name (:string :encoding #.+win32-string-encoding+))
@@ -828,223 +961,219 @@
   (module-instance :pointer)
   (param :pointer))
 
-(cffi:defcfun ("DefWindowProcW" def-window-proc) :uint32
+(defcfun ("DefWindowProcW" def-window-proc) :uint32
   (hwnd :pointer)
   (msg :uint32)
   (wparam :pointer)
   (lparam :pointer))
 
-(cffi:defcfun ("DeleteObject" delete-object) :int
+(defcfun ("DeleteObject" delete-object) :int
   (object :pointer))
 
-(cffi:defcfun ("DescribePixelFormat" describe-pixel-format) :int
+(defcfun ("DescribePixelFormat" describe-pixel-format) :int
   (dc :pointer)
   (format-index :int)
   (bytes :uint32)
   (pixel-format :pointer))
 
-(cffi:defcfun ("DestroyCursor" destroy-cursor) :boolean
+(defcfun ("DestroyCursor" destroy-cursor) :boolean
   (cursor :pointer))
 
-(cffi:defcfun ("DestroyWindow" destroy-window) :boolean
+(defcfun ("DestroyWindow" destroy-window) :boolean
   (hwnd :pointer))
 
-(cffi:defcfun ("DispatchMessageW" dispatch-message) :int32
+(defcfun ("DispatchMessageW" dispatch-message) :int32
   (msg :pointer))
 
-(cffi:defcfun ("EnableWindow" enable-window) :boolean
+(defcfun ("EnableWindow" enable-window) :boolean
   (hwnd :pointer)
   (enable :boolean))
 
-(cffi:defcfun ("EndPaint" end-paint) :boolean
+(defcfun ("EndPaint" end-paint) :boolean
   (hwnd :pointer)
   (paint :pointer))
 
-(cffi:defcfun ("EnumWindows" enum-windows) :boolean
+(defcfun ("EnumWindows" enum-windows) :boolean
   (callback :pointer)
   (lparam :pointer))
 
-(cffi:defcfun ("FindWindowW" find-window) :pointer
+(defcfun ("FindWindowW" find-window) :pointer
   (wndclass-name (:string :encoding #.+win32-string-encoding+))
   (window-name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("GetClassLongW" get-class-long) :long
+(defcfun ("GetClassLongW" get-class-long) :long
   (hwnd :pointer)
   (index :int))
 
 #+x86
-(cffi:defcfun ("GetClassLongW" get-class-long-ptr) :pointer
+(defcfun ("GetClassLongW" get-class-long-ptr) :pointer
   (hwnd :pointer)
   (index :int))
 
 #+x86-64
-(cffi:defcfun ("GetClassLongPtrW" get-class-long-ptr) :pointer
+(defcfun ("GetClassLongPtrW" get-class-long-ptr) :pointer
   (hwnd :pointer)
   (index :int))
 
-(cffi:defcfun ("GetClassWord" get-class-word) :uint16
+(defcfun ("GetClassWord" get-class-word) :uint16
   (hwnd :pointer)
   (index :int))
 
-(cffi:defcfun ("GetClientRect" get-client-rect) :boolean
+(defcfun ("GetClientRect" get-client-rect) :boolean
   (hwnd :pointer)
   (rect :pointer))
 
-(cffi:defcfun ("GetCommandLineW" get-command-line)
+(defcfun ("GetCommandLineW" get-command-line)
     (:string :encoding #.+win32-string-encoding+))
 
-(cffi:defcfun ("GetCurrentProcess" get-current-process) :pointer)
+(defcfun ("GetCurrentProcess" get-current-process) :pointer)
 
-(cffi:defcfun ("GetCurrentProcessId" get-current-process-id) :uint32)
+(defcfun ("GetCurrentProcessId" get-current-process-id) :uint32)
 
-(cffi:defcfun ("GetCurrentProcessorNumber" get-current-processor-number)
+(defcfun ("GetCurrentProcessorNumber" get-current-processor-number)
     :uint32)
 
-(cffi:defcfun ("GetCurrentThreadId" get-current-thread-id) :uint32)
+(defcfun ("GetCurrentThreadId" get-current-thread-id) :uint32)
 
-(cffi:defcfun ("GetDC" get-dc) :pointer
+(defcfun ("GetDC" get-dc) :pointer
   (hwnd :pointer))
 
-(cffi:defcfun ("GetDesktopWindow" get-desktop-window) :pointer)
+(defcfun ("GetDesktopWindow" get-desktop-window) :pointer)
 
-(cffi:defcfun ("GetLastError" get-last-error) :uint32)
 
-(cffi:defcfun ("GetMessageW" get-message) :boolean
+(defcfun ("GetLastError" get-last-error) :uint32)
+
+(defcfun ("GetMessageW" get-message) :boolean
   (msg :pointer)
   (hwnd :pointer)
   (msg-min :uint32)
   (msg-max :uint32))
 
-(cffi:defcfun ("GetModuleHandleW" get-module-handle) :pointer
+(defcfun ("GetModuleHandleW" get-module-handle) :pointer
   (module (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("GetOverlappedResult" get-overlapped-result) :int
+(defcfun ("GetOverlappedResult" get-overlapped-result) :int
   (handle :pointer)
   (overlapped (:pointer (:struct overlapped)))
   (bytes-transfered (:pointer :uint32))
   (wait :int))
 
-(cffi:defcfun ("GetParent" get-parent) :pointer
+(defcfun ("GetParent" get-parent) :pointer
   (hwnd :pointer))
 
-(cffi:defcfun ("GetPixelFormat" get-pixel-format) :int
+(defcfun ("GetPixelFormat" get-pixel-format) :int
   (dc :pointer))
 
-(cffi:defcfun ("GetShellWindow" get-shell-window) :pointer)
+(defcfun ("GetShellWindow" get-shell-window) :pointer)
 
-(cffi:defcfun ("GetStockObject" get-stock-object) :pointer
+(defcfun ("GetStockObject" get-stock-object) :pointer
   (object :uint32))
 
-(cffi:defcfun ("GetSysColor" get-sys-color) :uint32
+(defcfun ("GetSysColor" get-sys-color) :uint32
   (index :int))
 
-(cffi:defcfun ("GetTopWindow" get-top-window) :pointer
+(defcfun ("GetTopWindow" get-top-window) :pointer
   (hwnd :pointer))
 
-(cffi:defcfun ("GetWindowLongW" get-window-long) :int32
+(defcfun ("GetWindowLongW" get-window-long) :int32
   (hwnd :pointer)
   (index :int32))
 
-(cffi:defcfun ("GetWindowRect" get-window-rect) :boolean
+(defcfun ("GetWindowRect" get-window-rect) :boolean
   (hwnd :pointer)
   (rect :pointer))
 
-(cffi:defcfun ("GetWindowTextW" get-window-text) :int
+(defcfun ("GetWindowTextW" get-window-text) :int
   (hwnd :pointer)
   (string (:string :encoding #.+win32-string-encoding+))
   (size :int))
 
-(cffi:defcfun ("GetWindowThreadProcessId" get-window-thread-process-id) :uint32
+(defcfun ("GetWindowThreadProcessId" get-window-thread-process-id) :uint32
   (hwnd :pointer)
   (process-id :pointer))
 
-(cffi:defcfun ("InvalidateRect" invalidate-rect) :boolean
+(defcfun ("InvalidateRect" invalidate-rect) :boolean
   (hwnd :pointer)
   (rect :pointer)
   (erase :boolean))
 
-(cffi:defcfun ("IsGUIThread" is-gui-thread) :boolean
+(defcfun ("IsGUIThread" is-gui-thread) :boolean
   (convert :boolean))
 
-(cffi:defcfun ("IsWindow" is-window) :boolean
+(defcfun ("IsWindow" is-window) :boolean
   (hwnd :pointer))
 
-(cffi:defcfun ("LoadCursorW" load-cursor) :pointer
+(defcfun ("LoadCursorW" load-cursor) :pointer
   (instance :pointer)
   (name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("LoadCursorFromFileW" load-cursor-from-file) :pointer
+(defcfun ("LoadCursorFromFileW" load-cursor-from-file) :pointer
   (file-name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("LoadIconW" load-icon) :pointer
+(defcfun ("LoadIconW" load-icon) :pointer
   (instance :pointer)
   (name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("memset" memset) :pointer
-  (ptr :pointer)
-  (val :int)
-  (num :int))
-
-(cffi:defcfun ("MoveFileW" move-file) :boolean
+(defcfun ("MoveFileW" move-file) :boolean
   (old-name (:string :encoding #.+win32-string-encoding+))
   (new-name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("MoveFileExW" move-file-ex) :boolean
+(defcfun ("MoveFileExW" move-file-ex) :boolean
   (old-name (:string :encoding #.+win32-string-encoding+))
   (new-name (:string :encoding #.+win32-string-encoding+))
   (flags :uint32))
 
-(cffi:defcfun ("OpenEventW" open-event) :pointer
+(defcfun ("OpenEventW" open-event) :pointer
   (access :uint32)
   (inherit-handle :boolean)
   (name (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("OpenInputDesktop" open-input-desktop) :pointer
+(defcfun ("OpenInputDesktop" open-input-desktop) :pointer
   (flags :uint32)
   (inherit :boolean)
   (desired-access :uint32))
 
-(cffi:defcfun ("PeekMessageW" peek-message) :int
+(defcfun ("PeekMessageW" peek-message) :int
   (msg :pointer)
   (hwnd :pointer)
   (msg-min :uint32)
   (msg-max :uint32)
   (remove :uint32))
 
-(cffi:defcfun ("PostMessageW" post-message) :boolean
+(defcfun ("PostMessageW" post-message) :boolean
   (hwnd :pointer)
   (msg :uint32)
   (wparam :pointer)
   (lparam :pointer))
 
-(cffi:defcfun ("PostQuitMessage" post-quit-message) :void
+(defcfun ("PostQuitMessage" post-quit-message) :void
   (exit-code :int32))
 
-(cffi:defcfun ("PostThreadMessageW" post-thread-message) :boolean
+(defcfun ("PostThreadMessageW" post-thread-message) :boolean
   (thread-id :uint32)
   (msg :uint32)
   (wparam :pointer)
   (lparam :pointer))
 
-(cffi:defcfun ("ReadFile" read-file) :int
+(defcfun ("ReadFile" read-file) :int
   (handle :pointer)
   (buffer :pointer)
   (bytes-to-read :uint32)
   (bytes-read (:pointer :uint32))
   (overlapped (:pointer (:struct overlapped))))
 
-(cffi:defcfun ("RealizePalette" realize-palette) :uint32
+(defcfun ("RealizePalette" realize-palette) :uint32
   (dc :pointer))
 
-(cffi:defcfun ("RegCloseKey" reg-close-key) :long
+(defcfun ("RegCloseKey" reg-close-key) :long
   (hkey :pointer))
 
-(cffi:defcfun ("RegCreateKeyW" reg-create-key) :long
+(defcfun ("RegCreateKeyW" reg-create-key) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (phkey-result (:pointer :pointer)))
 
-(cffi:defcfun ("RegCreateKeyExW" reg-create-key-ex) :long
+(defcfun ("RegCreateKeyExW" reg-create-key-ex) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (reserved :uint32)
@@ -1055,21 +1184,21 @@
   (phkey-result (:pointer :pointer))
   (disposition (:pointer :uint32)))
 
-(cffi:defcfun ("RegDeleteKeyW" reg-delete-key) :long
+(defcfun ("RegDeleteKeyW" reg-delete-key) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("RegDeleteKeyExW" reg-delete-key-ex) :long
+(defcfun ("RegDeleteKeyExW" reg-delete-key-ex) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (sam-desired :uint32)
   (reserved :uint32))
 
-(cffi:defcfun ("RegDeleteTreeW" reg-delete-tree) :long
+(defcfun ("RegDeleteTreeW" reg-delete-tree) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("RegGetValueW" reg-get-value) :long
+(defcfun ("RegGetValueW" reg-get-value) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (value-name (:string :encoding #.+win32-string-encoding+))
@@ -1078,31 +1207,25 @@
   (data :pointer)
   (data-size (:pointer :uint32)))
 
-(cffi:defcfun ("RegisterClassW" register-class) :uint16
-  (wndclass :pointer))
-
-(cffi:defcfun ("RegisterClassExW" register-class-ex) :uint16
-  (wndclassex :pointer))
-
-(cffi:defcfun ("RegOpenKeyW" reg-open-key) :long
+(defcfun ("RegOpenKeyW" reg-open-key) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (phkey-result (:pointer :pointer)))
 
-(cffi:defcfun ("RegOpenKeyExW" reg-open-key-ex) :long
+(defcfun ("RegOpenKeyExW" reg-open-key-ex) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (options :uint32)
   (sam-desired :uint32)
   (phkey-result (:pointer :pointer)))
 
-(cffi:defcfun ("RegQueryValueW" reg-query-value) :long
+(defcfun ("RegQueryValueW" reg-query-value) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (value (:pointer (:string :encoding #.+win32-string-encoding+)))
   (value-size (:pointer :long)))
 
-(cffi:defcfun ("RegQueryValueExW" reg-query-value-ex) :long
+(defcfun ("RegQueryValueExW" reg-query-value-ex) :long
   (hkey :pointer)
   (value-name (:string :encoding #.+win32-string-encoding+))
   (reserved (:pointer :uint32))
@@ -1110,14 +1233,14 @@
   (data (:pointer :uint8))
   (data-size (:pointer :uint32)))
 
-(cffi:defcfun ("RegSetValueW" reg-set-value) :long
+(defcfun ("RegSetValueW" reg-set-value) :long
   (hkey :pointer)
   (sub-key (:string :encoding #.+win32-string-encoding+))
   (type :uint32)
   (data (:string :encoding #.+win32-string-encoding+))
   (data-size :uint32))
 
-(cffi:defcfun ("RegSetValueExW" reg-set-value-ex) :long
+(defcfun ("RegSetValueExW" reg-set-value-ex) :long
   (hkey :pointer)
   (value-name (:string :encoding #.+win32-string-encoding+))
   (reserved :uint32)
@@ -1125,14 +1248,20 @@
   (data (:pointer :uint8))
   (data-size :uint32))
 
-(cffi:defcfun ("ReleaseDC" release-dc) :boolean
+(defcfun ("RegisterClassW" register-class) :uint16
+  (wndclass :pointer))
+
+(defcfun ("RegisterClassExW" register-class-ex) :uint16
+  (wndclassex :pointer))
+
+(defcfun ("ReleaseDC" release-dc) :boolean
   (hwnd :pointer)
   (dc :pointer))
 
-(cffi:defcfun ("ResetEvent" reset-event) :boolean
+(defcfun ("ResetEvent" reset-event) :boolean
   (event :pointer))
 
-(cffi:defcfun ("ResizePalette" resize-palette) :boolean
+(defcfun ("ResizePalette" resize-palette) :boolean
   (palette :pointer)
   (entries :int))
 
@@ -1141,67 +1270,67 @@
           (ash g 8)
           (ash r 0)))
 
-(cffi:defcfun ("SelectPalette" select-palette) :pointer
+(defcfun ("SelectPalette" select-palette) :pointer
   (dc :pointer)
   (palette :pointer)
   (force-background :boolean))
 
-(cffi:defcfun ("SendInput" send-input) :uint32
+(defcfun ("SendInput" send-input) :uint32
   (num-inputs :uint32)
   (inputs :pointer)
   (cbsize :int))
 
-(cffi:defcfun ("SetClassLongW" set-class-long) :uint32
+(defcfun ("SetClassLongW" set-class-long) :uint32
   (hwnd :pointer)
   (index :int)
   (value :long))
 
 #+x86
-(cffi:defcfun ("SetClassLongW" set-class-long-ptr) :pointer
+(defcfun ("SetClassLongW" set-class-long-ptr) :pointer
   (hwnd :pointer)
   (index :int)
   (value :pointer))
 
 #+x86-64
-(cffi:defcfun ("SetClassLongPtrW" set-class-long-ptr) :pointer
+(defcfun ("SetClassLongPtrW" set-class-long-ptr) :pointer
   (hwnd :pointer)
   (index :int)
   (value :pointer))
 
-(cffi:defcfun ("SetClassWord" set-class-word) :pointer
+(defcfun ("SetClassWord" set-class-word) :pointer
   (hwnd :pointer)
   (index :int)
   (value :uint16))
 
-(cffi:defcfun ("SetCursor" set-cursor) :pointer
+(defcfun ("SetCursor" set-cursor) :pointer
   (cursor :pointer))
 
-(cffi:defcfun ("SetCursorPos" set-cursor-pos) :boolean
+(defcfun ("SetCursorPos" set-cursor-pos) :boolean
   (x :int)
   (y :int))
 
-(cffi:defcfun ("SetEvent" set-event) :boolean
+(defcfun ("SetEvent" set-event) :boolean
   (event :pointer))
 
-(cffi:defcfun ("SetForegroundWindow" set-foreground-window) :boolean
+(defcfun ("SetForegroundWindow" set-foreground-window) :boolean
   (hwnd :pointer))
 
-(cffi:defcfun ("SetLayeredWindowAttributes" set-layered-window-attributes) :boolean
+(defcfun ("SetLayeredWindowAttributes" set-layered-window-attributes) :boolean
   (hwnd :pointer)
   (color :uint32)
   (alpha :uint8)
   (flags :uint32))
 
-(cffi:defcfun ("SetParent" set-parent) :boolean
+(defcfun ("SetParent" set-parent) :boolean
   (hwnd :pointer)
   (new-parent :pointer))
 
-(cffi:defcfun ("SetPixelFormat" set-pixel-format) :boolean
+(defcfun ("SetPixelFormat" set-pixel-format) :boolean
   (dc :pointer)
   (format-index :int)
   (pixel-format :pointer))
 
-(cffi:defcfun ("SetWinEventHook" set-win-event-hook) :pointer
+(defcfun ("SetWinEventHook" set-win-event-hook) :pointer
   (event-min :uint32)
   (event-max :uint32)
   (proc-module :pointer)
@@ -1209,12 +1338,12 @@
   (id-thread :uint32)
   (flags :uint32))
 
-(cffi:defcfun ("SetWindowLongW" set-window-long) :int32
+(defcfun ("SetWindowLongW" set-window-long) :int32
   (hwnd :pointer)
   (index :int32)
   (newval :int32))
 
-(cffi:defcfun ("SetWindowPos" set-window-pos) :boolean
+(defcfun ("SetWindowPos" set-window-pos) :boolean
   (hwnd :pointer)
   (insert-after :pointer)
   (x :int32)
@@ -1223,66 +1352,66 @@
   (cy :int32)
   (flags :uint32))
 
-(cffi:defcfun ("SetWindowTextW" set-window-text) :boolean
+(defcfun ("SetWindowTextW" set-window-text) :boolean
   (hwnd :pointer)
   (text (:string :encoding #.+win32-string-encoding+)))
 
-(cffi:defcfun ("SetWindowsHookExW" set-windows-hook-ex) :pointer
+(defcfun ("SetWindowsHookExW" set-windows-hook-ex) :pointer
   (id-hook :int32)
   (hook :pointer)
   (module :pointer)
   (thread-id :uint32))
 
-(cffi:defcfun ("ShowCursor" show-cursor) :int
+(defcfun ("ShowCursor" show-cursor) :int
   (show :boolean))
 
-(cffi:defcfun ("ShowWindow" show-window) :int
+(defcfun ("ShowWindow" show-window) :int
   (hwnd :pointer)
   (cmd :int32))
 
-(cffi:defcfun ("SwapBuffers" swap-buffers) :boolean
+(defcfun ("SwapBuffers" swap-buffers) :boolean
   (dc :pointer))
 
-(cffi:defcfun ("SwitchDesktop" switch-desktop) :boolean
+(defcfun ("SwitchDesktop" switch-desktop) :boolean
   (desktop :pointer))
 
-(cffi:defcfun ("TrackMouseEvent" track-mouse-event) :boolean
+(defcfun ("TrackMouseEvent" track-mouse-event) :boolean
   (trackmousevent :pointer))
 
-(cffi:defcfun ("TranslateMessage" translate-message) :int
+(defcfun ("TranslateMessage" translate-message) :int
   (msg :pointer))
 
-(cffi:defcfun ("UnregisterClassW" unregister-class) :boolean
+(defcfun ("UnregisterClassW" unregister-class) :boolean
   (wndclass-name (:string :encoding #.+win32-string-encoding+))
   (instance :pointer))
 
-(cffi:defcfun ("UpdateWindow" update-window) :int
+(defcfun ("UpdateWindow" update-window) :int
   (hwnd :pointer))
 
-(cffi:defcfun ("ValidateRect" validate-rect) :boolean
+(defcfun ("ValidateRect" validate-rect) :boolean
   (hwnd :pointer)
   (rect :pointer))
 
-(cffi:defcfun ("WaitForSingleObject" wait-for-single-object) :uint32
+(defcfun ("WaitForSingleObject" wait-for-single-object) :uint32
   (handle :pointer)
   (milliseconds :uint32))
 
-(cffi:defcfun ("wglCreateContext" wgl-create-context) :pointer
+(defcfun ("wglCreateContext" wgl-create-context) :pointer
   (dc :pointer))
 
-(cffi:defcfun ("wglDeleteContext" wgl-delete-context) :boolean
+(defcfun ("wglDeleteContext" wgl-delete-context) :boolean
   (context :pointer))
 
-(cffi:defcfun ("wglMakeCurrent" wgl-make-current) :boolean
+(defcfun ("wglMakeCurrent" wgl-make-current) :boolean
   (dc :pointer)
   (gl-rc :pointer))
 
 ;;;TODO This function actually takes in a struct point, but we need cffi-libffi for that
-(cffi:defcfun ("WindowFromPoint" window-from-point) :pointer
+(defcfun ("WindowFromPoint" window-from-point) :pointer
   (x :int32)
   (y :int32))
 
-(cffi:defcfun ("WriteFile" hid_write-file) :int
+(defcfun ("WriteFile" hid_write-file) :int
   (handle :pointer)
   (buffer :pointer)
   (bytes-to-write :uint32)

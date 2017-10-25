@@ -19,9 +19,133 @@
 ;;;3. This notice may not be removed or altered from any source distribution.
 
 (defpackage #:win32
-  (:use #:cl)
+  (:use #:cffi #:cl)
+  (:shadow
+   #:atom
+   #:boolean
+   #:byte
+   #:char
+   #:float)
   (:export
    #:+win32-string-encoding+
+
+   #:char
+   #:uchar
+   #:wchar
+
+   #:int
+   #:int-ptr
+   #:int8
+   #:int16
+   #:int32
+   #:int64
+
+   #:uint
+   #:uint-ptr
+   #:uint8
+   #:uint16
+   #:uint32
+   #:uint64
+
+   #:long
+   #:longlong
+   #:long-ptr
+   #:long32
+   #:long64
+
+   #:ulong
+   #:ulonglong
+   #:ulong-ptr
+   #:ulong32
+   #:ulong64
+
+   #:short
+   #:ushort
+
+   #:byte
+   #:word
+   #:dword
+   #:dwordlong
+   #:dword-ptr
+   #:dword32
+   #:dword64
+   #:qword
+
+   #:bool
+   #:boolean
+
+   #:tbyte
+   #:tchar
+
+   #:float
+
+   #:size-t
+   #:ssize-t
+
+   #:lpcstr
+   #:lpcwstr
+   #:lpstr
+   #:lpwstr
+   #:pcstr
+   #:pcwstr
+   #:pstr
+   #:pwstr
+
+   #:handle
+
+   #:atom
+   #:half-ptr
+   #:uhalf-ptr
+   #:colorref
+   #:haccel
+   #:hbitmap
+   #:hbrush
+   #:hcolorspace
+   #:hconv
+   #:hconvlist
+   #:hcursor
+   #:hdc
+   #:hddedata
+   #:hdesk
+   #:hdrop
+   #:hdwp
+   #:henhmetafile
+   #:hfile
+   #:hfont
+   #:hgdiobj
+   #:hglobal
+   #:hhook
+   #:hicon
+   #:hinstance
+   #:hkey
+   #:hkl
+   #:hlocal
+   #:hmenu
+   #:hmetafile
+   #:hmodule
+   #:hmonitor
+   #:hpalette
+   #:hpen
+   #:hresult
+   #:hrgn
+   #:hrsrc
+   #:hsz
+   #:hwinsta
+   #:hwnd
+   #:langid
+   #:lcid
+   #:lgrpid
+   #:lparam
+   #:lpctstr
+   #:lptstr
+   #:lresult
+   #:pctstr
+   #:ptstr
+   #:sc-handle
+   #:sc-lock
+   #:service-status-handle
+   #:usn
+   #:wparam
 
    #:+create-new+
    #:+create-always+
@@ -515,6 +639,16 @@
    #:+color-windowframe+
    #:+color-windowtext+
 
+   #:luid
+   #:low-part
+   #:high-part
+
+   #:bsminfo
+   #:size
+   #:hdesk
+   #:hwnd
+   #:luid
+
    #:logpalette
    #:paletteentry
    #:paintstruct
@@ -673,7 +807,6 @@
    #:load-cursor
    #:load-cursor-from-file
    #:load-icon
-   #:memset
    #:move-file
    #:move-file-ex
    #:open-event
@@ -691,14 +824,14 @@
    #:reg-delete-key-ex
    #:reg-delete-tree
    #:reg-get-value
-   #:register-class
-   #:register-class-ex
    #:reg-open-key
    #:reg-open-key-ex
    #:reg-query-value
    #:reg-query-value-ex
    #:reg-set-value
    #:reg-set-value-ex
+   #:register-class
+   #:register-class-ex
    #:release-dc
    #:reset-event
    #:resize-palette
