@@ -919,6 +919,13 @@
   (wparam :uint32)
   (lparam :uint32))
 
+(defcfun ("CallWindowProcW" call-window-proc) lresult
+  (prev-wndproc :pointer)
+  (hwnd hwnd)
+  (msg uint)
+  (wparam wparam)
+  (lparam lparam))
+
 (defcfun ("CancelIo" cancel-io) :int
   (handle :pointer))
 
@@ -1003,11 +1010,11 @@
   (module-instance :pointer)
   (param :pointer))
 
-(defcfun ("DefWindowProcW" def-window-proc) :uint32
-  (hwnd :pointer)
-  (msg :uint32)
-  (wparam :pointer)
-  (lparam :pointer))
+(defcfun ("DefWindowProcW" def-window-proc) lresult
+  (hwnd hwnd)
+  (msg uint)
+  (wparam wparam)
+  (lparam lparam))
 
 (defcfun ("DeleteObject" delete-object) :int
   (object :pointer))

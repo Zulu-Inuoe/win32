@@ -785,6 +785,7 @@
    #:broadcast-system-message
    #:broadcast-system-message-ex
    #:call-next-hook
+   #:call-window-proc
    #:cancel-io
    #:choose-pixel-format
    #:client-to-screen
