@@ -666,6 +666,342 @@
    #:+ismex-replied+
    #:+ismex-send+
 
+   #:+sm-arrange+
+   #:+sm-cleanboot+
+   #:+sm-cmonitors+
+   #:+sm-cmousebuttons+
+   #:+sm-convertibleslatemode+
+   #:+sm-cxborder+
+   #:+sm-cxcursor+
+   #:+sm-cxdlgframe+
+   #:+sm-cxdoubleclk+
+   #:+sm-cxdrag+
+   #:+sm-cxedge+
+   #:+sm-cxfixedframe+
+   #:+sm-cxfocusborder+
+   #:+sm-cxframe+
+   #:+sm-cxfullscreen+
+   #:+sm-cxhscroll+
+   #:+sm-cxhthumb+
+   #:+sm-cxicon+
+   #:+sm-cxiconspacing+
+   #:+sm-cxmaximized+
+   #:+sm-cxmaxtrack+
+   #:+sm-cxmenucheck+
+   #:+sm-cxmenusize+
+   #:+sm-cxmin+
+   #:+sm-cxminimized+
+   #:+sm-cxminspacing+
+   #:+sm-cxmintrack+
+   #:+sm-cxpaddedborder+
+   #:+sm-cxscreen+
+   #:+sm-cxsize+
+   #:+sm-cxsizeframe+
+   #:+sm-cxsmicon+
+   #:+sm-cxsmsize+
+   #:+sm-cxvirtualscreen+
+   #:+sm-cxvscroll+
+   #:+sm-cyborder+
+   #:+sm-cycaption+
+   #:+sm-cycursor+
+   #:+sm-cydlgframe+
+   #:+sm-cydoubleclk+
+   #:+sm-cydrag+
+   #:+sm-cyedge+
+   #:+sm-cyfixedframe+
+   #:+sm-cyfocusborder+
+   #:+sm-cyframe+
+   #:+sm-cyfullscreen+
+   #:+sm-cyhscroll+
+   #:+sm-cyicon+
+   #:+sm-cyiconspacing+
+   #:+sm-cykanjiwindow+
+   #:+sm-cymaximized+
+   #:+sm-cymaxtrack+
+   #:+sm-cymenu+
+   #:+sm-cymenucheck+
+   #:+sm-cymenusize+
+   #:+sm-cymin+
+   #:+sm-cyminimized+
+   #:+sm-cyminspacing+
+   #:+sm-cymintrack+
+   #:+sm-cyscreen+
+   #:+sm-cysize+
+   #:+sm-cysizeframe+
+   #:+sm-cysmcaption+
+   #:+sm-cysmicon+
+   #:+sm-cysmsize+
+   #:+sm-cyvirtualscreen+
+   #:+sm-cyvscroll+
+   #:+sm-cyvthumb+
+   #:+sm-dbcsenabled+
+   #:+sm-debug+
+   #:+sm-digitizer+
+   #:+sm-immenabled+
+   #:+sm-maximumtouches+
+   #:+sm-mediacenter+
+   #:+sm-menudropalignment+
+   #:+sm-mideastenabled+
+   #:+sm-mousepresent+
+   #:+sm-mousehorizontalwheelpresent+
+   #:+sm-mousewheelpresent+
+   #:+sm-network+
+   #:+sm-penwindows+
+   #:+sm-remotecontrol+
+   #:+sm-remotesession+
+   #:+sm-samedisplayformat+
+   #:+sm-secure+
+   #:+sm-serverr2+
+   #:+sm-showsounds+
+   #:+sm-shuttingdown+
+   #:+sm-slowmachine+
+   #:+sm-starter+
+   #:+sm-swapbutton+
+   #:+sm-systemdocked+
+   #:+sm-tabletpc+
+   #:+sm-xvirtualscreen+
+   #:+sm-yvirtualscreen+
+
+   #:+spi-getaccesstimeout+
+   #:+spi-getaudiodescription+
+   #:+spi-getclientareaanimation+
+   #:+spi-getdisableoverlappedcontent+
+   #:+spi-getfilterkeys+
+   #:+spi-getfocusborderheight+
+   #:+spi-getfocusborderwidth+
+   #:+spi-gethighcontrast+
+   #:+spi-getlogicaldpioverride+
+   #:+spi-getmessageduration+
+   #:+spi-getmouseclicklock+
+   #:+spi-getmouseclicklocktime+
+   #:+spi-getmousekeys+
+   #:+spi-getmousesonar+
+   #:+spi-getmousevanish+
+   #:+spi-getscreenreader+
+   #:+spi-getserialkeys+
+   #:+spi-getshowsounds+
+   #:+spi-getsoundsentry+
+   #:+spi-getstickykeys+
+   #:+spi-gettogglekeys+
+   #:+spi-setaccesstimeout+
+   #:+spi-setaudiodescription+
+   #:+spi-setclientareaanimation+
+   #:+spi-setdisableoverlappedcontent+
+   #:+spi-setfilterkeys+
+   #:+spi-setfocusborderheight+
+   #:+spi-setfocusborderwidth+
+   #:+spi-sethighcontrast+
+   #:+spi-setlogicaldpioverride+
+   #:+spi-setmessageduration+
+   #:+spi-setmouseclicklock+
+   #:+spi-setmouseclicklocktime+
+   #:+spi-setmousekeys+
+   #:+spi-setmousesonar+
+   #:+spi-setmousevanish+
+   #:+spi-setscreenreader+
+   #:+spi-setserialkeys+
+   #:+spi-setshowsounds+
+   #:+spi-setsoundsentry+
+   #:+spi-setstickykeys+
+   #:+spi-settogglekeys+
+
+   ;;;Desktop parameters
+   #:+spi-getcleartype+
+   #:+spi-getdeskwallpaper+
+   #:+spi-getdropshadow+
+   #:+spi-getflatmenu+
+   #:+spi-getfontsmoothing+
+   #:+spi-getfontsmoothingcontrast+
+   #:+spi-getfontsmoothingorientation+
+   #:+spi-getfontsmoothingtype+
+   #:+spi-getworkarea+
+   #:+spi-setcleartype+
+   #:+spi-setcursors+
+   #:+spi-setdeskpattern+
+   #:+spi-setdeskwallpaper+
+   #:+spi-setdropshadow+
+   #:+spi-setflatmenu+
+   #:+spi-setfontsmoothing+
+   #:+spi-setfontsmoothingcontrast+
+   #:+spi-setfontsmoothingorientation+
+   #:+spi-setfontsmoothingtype+
+   #:+spi-setworkarea+
+
+   ;;;Icon parameters
+   #:+spi-geticonmetrics+
+   #:+spi-geticontitlelogfont+
+   #:+spi-geticontitlewrap+
+   #:+spi-iconhorizontalspacing+
+   #:+spi-iconverticalspacing+
+   #:+spi-seticonmetrics+
+   #:+spi-seticons+
+   #:+spi-seticontitlelogfont+
+   #:+spi-seticontitlewrap+
+
+;;Input parameters
+   #:+spi-getbeep+
+   #:+spi-getblocksendinputresets+
+   #:+spi-getcontactvisualization+
+   #:+spi-getdefaultinputlang+
+   #:+spi-getgesturevisualization+
+   #:+spi-getkeyboardcues+
+   #:+spi-getkeyboarddelay+
+   #:+spi-getkeyboardpref+
+   #:+spi-getkeyboardspeed+
+   #:+spi-getmouse+
+   #:+spi-getmousehoverheight+
+   #:+spi-getmousehovertime+
+   #:+spi-getmousehoverwidth+
+   #:+spi-getmousespeed+
+   #:+spi-getmousetrails+
+   #:+spi-getmousewheelrouting+
+   #:+spi-getpenvisualization+
+   #:+spi-getsnaptodefbutton+
+   #:+spi-getsystemlanguagebar+
+   #:+spi-getthreadlocalinputsettings+
+   #:+spi-getwheelscrollchars+
+   #:+spi-getwheelscrolllines+
+   #:+spi-setbeep+
+   #:+spi-setblocksendinputresets+
+   #:+spi-setcontactvisualization+
+   #:+spi-setdefaultinputlang+
+   #:+spi-setdoubleclicktime+
+   #:+spi-setdoubleclkheight+
+   #:+spi-setdoubleclkwidth+
+   #:+spi-setgesturevisualization+
+   #:+spi-setkeyboardcues+
+   #:+spi-setkeyboarddelay+
+   #:+spi-setkeyboardpref+
+   #:+spi-setkeyboardspeed+
+   #:+spi-setlangtoggle+
+   #:+spi-setmouse+
+   #:+spi-setmousebuttonswap+
+   #:+spi-setmousehoverheight+
+   #:+spi-setmousehovertime+
+   #:+spi-setmousehoverwidth+
+   #:+spi-setmousespeed+
+   #:+spi-setmousetrails+
+   #:+spi-setmousewheelrouting+
+   #:+spi-setpenvisualization+
+   #:+spi-setsnaptodefbutton+
+   #:+spi-setsystemlanguagebar+
+   #:+spi-setthreadlocalinputsettings+
+   #:+spi-setwheelscrollchars+
+   #:+spi-setwheelscrolllines+
+
+   ;;;Menu parameters
+   #:+spi-getmenudropalignment+
+   #:+spi-getmenufade+
+   #:+spi-getmenushowdelay+
+   #:+spi-setmenudropalignment+
+   #:+spi-setmenufade+
+   #:+spi-setmenushowdelay+
+
+   ;;;Power parameters
+   #:+spi-getlowpoweractive+
+   #:+spi-getlowpowertimeout+
+   #:+spi-getpoweroffactive+
+   #:+spi-getpowerofftimeout+
+   #:+spi-setlowpoweractive+
+   #:+spi-setlowpowertimeout+
+   #:+spi-setpoweroffactive+
+   #:+spi-setpowerofftimeout+
+
+   ;;;Screen saver parameters
+   #:+spi-getscreensaveactive+
+   #:+spi-getscreensaverrunning+
+   #:+spi-getscreensavesecure+
+   #:+spi-getscreensavetimeout+
+   #:+spi-setscreensaveactive+
+   #:+spi-setscreensavesecure+
+   #:+spi-setscreensavetimeout+
+
+   ;;;Time-out parameters for applications/services
+   #:+spi-gethungapptimeout+
+   #:+spi-getwaittokilltimeout+
+   #:+spi-getwaittokillservicetimeout+
+   #:+spi-sethungapptimeout+
+   #:+spi-setwaittokilltimeout+
+   #:+spi-setwaittokillservicetimeout+
+
+   ;;;UI effects parameters
+   #:+spi-getcomboboxanimation+
+   #:+spi-getcursorshadow+
+   #:+spi-getgradientcaptions+
+   #:+spi-gethottracking+
+   #:+spi-getlistboxsmoothscrolling+
+   #:+spi-getmenuanimation+
+   #:+spi-getmenuunderlines+
+   #:+spi-getselectionfade+
+   #:+spi-gettooltipanimation+
+   #:+spi-gettooltipfade+
+   #:+spi-getuieffects+
+   #:+spi-setcomboboxanimation+
+   #:+spi-setcursorshadow+
+   #:+spi-setgradientcaptions+
+   #:+spi-sethottracking+
+   #:+spi-setlistboxsmoothscrolling+
+   #:+spi-setmenuanimation+
+   #:+spi-setmenuunderlines+
+   #:+spi-setselectionfade+
+   #:+spi-settooltipanimation+
+   #:+spi-settooltipfade+
+   #:+spi-setuieffects+
+
+   ;;;Window parameters
+   #:+spi-getactivewindowtracking+
+   #:+spi-getactivewndtrkzorder+
+   #:+spi-getactivewndtrktimeout+
+   #:+spi-getanimation+
+   #:+spi-getborder+
+   #:+spi-getcaretwidth+
+   #:+spi-getdockmoving+
+   #:+spi-getdragfrommaximize+
+   #:+spi-getdragfullwindows+
+   #:+spi-getforegroundflashcount+
+   #:+spi-getforegroundlocktimeout+
+   #:+spi-getminimizedmetrics+
+   #:+spi-getmousedockthreshold+
+   #:+spi-getmousedragoutthreshold+
+   #:+spi-getmousesidemovethreshold+
+   #:+spi-getnonclientmetrics+
+   #:+spi-getpendockthreshold+
+   #:+spi-getpendragoutthreshold+
+   #:+spi-getpensidemovethreshold+
+   #:+spi-getshowimeui+
+   #:+spi-getsnapsizing+
+   #:+spi-getwinarranging+
+   #:+spi-setactivewindowtracking+
+   #:+spi-setactivewndtrkzorder+
+   #:+spi-setactivewndtrktimeout+
+   #:+spi-setanimation+
+   #:+spi-setborder+
+   #:+spi-setcaretwidth+
+   #:+spi-setdockmoving+
+   #:+spi-setdragfrommaximize+
+   #:+spi-setdragfullwindows+
+   #:+spi-setdragheight+
+   #:+spi-setdragwidth+
+   #:+spi-setforegroundflashcount+
+   #:+spi-setforegroundlocktimeout+
+   #:+spi-setminimizedmetrics+
+   #:+spi-setmousedockthreshold+
+   #:+spi-setmousedragoutthreshold+
+   #:+spi-setmousesidemovethreshold+
+   #:+spi-setnonclientmetrics+
+   #:+spi-setpendockthreshold+
+   #:+spi-setpendragoutthreshold+
+   #:+spi-setpensidemovethreshold+
+   #:+spi-setshowimeui+
+   #:+spi-setsnapsizing+
+   #:+spi-setwinarranging+
+
+   #:+spif-updateinifile+
+   #:+spif-sendchange+
+   #:+spif-sendwininichange+
+
+   #:+lf-facesize+
+
    #:unicode-string
    #:length
    #:maximum-length
@@ -780,6 +1116,56 @@
    #:offset-high
    #:event
 
+   #:animationinfo
+   #:size
+   #:minanimate
+
+   #:audiodescription
+   #:size
+   #:enabled
+   #:locale
+
+   #:minimizedmetrics
+   #:size
+   #:width
+   #:horzgap
+   #:vertgap
+   #:arrange
+
+   #:logfont
+   #:height
+   #:width
+   #:escapement
+   #:orientation
+   #:weight
+   #:italic
+   #:underline
+   #:strikeout
+   #:charset
+   #:outprecision
+   #:clipprecision
+   #:quality
+   #:pitchandfamily
+   #:facename
+
+   #:nonclientmetrics
+   #:size
+   #:borderwidth
+   #:scrollwidth
+   #:scrollheight
+   #:captionwidth
+   #:captionheight
+   #:captionfont
+   #:smcaptionwidth
+   #:smcaptionheight
+   #:smcaptionfont
+   #:menuwidth
+   #:menuheight
+   #:menufont
+   #:statusfont
+   #:messagefont
+   #:paddedborderwidth
+
    #:beep
    #:begin-paint
    #:broadcast-system-message
@@ -836,6 +1222,8 @@
    #:get-shell-window
    #:get-stock-object
    #:get-sys-color
+   #:get-sys-color-brush
+   #:get-system-metrics
    #:get-top-window
    #:get-window-long
    #:get-window-rect
@@ -896,6 +1284,7 @@
    #:set-message-extra-info
    #:set-parent
    #:set-pixel-format
+   #:set-sys-colors
    #:set-win-event-hook
    #:set-window-long
    #:set-window-pos
@@ -905,6 +1294,7 @@
    #:show-window
    #:swap-buffers
    #:switch-desktop
+   #:system-parameters-info
    #:track-mouse-event
    #:translate-message
    #:unregister-class
