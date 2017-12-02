@@ -2519,9 +2519,17 @@
   (callback :pointer)
   (lparam :pointer))
 
-(defcfun ("FindWindowW" find-window) :pointer
-  (wndclass-name (:string :encoding #.+win32-string-encoding+))
-  (window-name (:string :encoding #.+win32-string-encoding+)))
+(defcfun ("FindWindowW" find-window) hwnd
+  (wndclass-name lpctstr)
+  (window-name lpctstr))
+
+(defcfun ("FindWindowExW" find-window-ex) hwnd
+  (hwnd-parent hwnd)
+  (hwnd-child-after hwnd)
+  (class lpctstr)
+  (window lpctstr))
+
+(defcfun ("GetACP" get-acp) uint)
 
 (defcfun ("GetClassLongW" get-class-long) :long
   (hwnd :pointer)
@@ -2545,8 +2553,7 @@
   (hwnd :pointer)
   (rect :pointer))
 
-(defcfun ("GetCommandLineW" get-command-line)
-    (:string :encoding #.+win32-string-encoding+))
+(defcfun ("GetCommandLineW" get-command-line) lptstr)
 
 (defcfun ("GetCurrentProcess" get-current-process) :pointer)
 

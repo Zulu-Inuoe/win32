@@ -2285,6 +2285,8 @@
    #:end-paint
    #:enum-windows
    #:find-window
+   #:find-window-ex
+   #:get-acp
    #:get-class-long
    #:get-class-long-ptr
    #:get-class-word
