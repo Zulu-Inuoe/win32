@@ -13,6 +13,12 @@
   :version "0.0.0.2"
   :author "Wilfredo Velázquez-Rodríguez <zulu.inuoe@gmail.com>"
   :license "CC0 <http://creativecommons.org/publicdomain/zero/1.0/>"
-  :components ((:file "package")
-               (:file "win32" :depends-on ("package")))
-  :depends-on (#:cffi #:trivial-features))
+  :serial t
+  :components
+  ((:file "package")
+   (:file "win32"))
+  :depends-on
+  (#:cffi
+   #:cffi-libffi
+   #:defpackage-plus
+   #:trivial-features))
