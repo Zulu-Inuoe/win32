@@ -10,6 +10,12 @@
 
 (in-package #:win32)
 
+(define-foreign-library api-ms-win-core-version-l1-1-0
+  (:win32 "Api-ms-win-core-version-l1-1-0.dll"))
+
+(define-foreign-library api-ms-win-core-localization-l1-2-1
+  (:win32 "Api-ms-win-core-localization-l1-2-1.dll"))
+
 (define-foreign-library kernel32
   (:win32 "Kernel32.dll"))
 
@@ -28,6 +34,8 @@
 (define-foreign-library setupapi
   (:win32 "setupapi.dll"))
 
+(use-foreign-library api-ms-win-core-version-l1-1-0)
+(use-foreign-library api-ms-win-core-localization-l1-2-1)
 (use-foreign-library user32)
 (use-foreign-library kernel32)
 (use-foreign-library gdi32)
@@ -2515,6 +2523,38 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +cchdevicename+ 32)
 (defwin32constant +cchformname+ 32)
 
+(defwin32constant +file-ver-get-localised+ #x01)
+(defwin32constant +file-ver-get-neutral+ #x02)
+(defwin32constant +file-ver-get-prefetched+ #x04)
+
+(defwin32constant +vfff-issharedfile+ #x0001)
+
+(defwin32constant +viff-forceinstall+ #x0001)
+(defwin32constant +viff-dontdeleteold+ #x0002)
+
+(defwin32constant +vif-accessviolation+ #x00000200)
+
+(defwin32constant +vif-bufftoosmall+      #x00040000)
+(defwin32constant +vif-cannotcreate+      #x00000800)
+(defwin32constant +vif-cannotdelete+      #x00001000)
+(defwin32constant +vif-cannotdeletecur+   #x00004000)
+(defwin32constant +vif-cannotloadcabinet+ #x00100000)
+(defwin32constant +vif-cannotloadlz32+    #x00080000)
+(defwin32constant +vif-cannotreaddst+     #x00020000)
+(defwin32constant +vif-cannotreadsrc+     #x00010000)
+(defwin32constant +vif-cannotrename+      #x00002000)
+(defwin32constant +vif-diffcodepg+        #x00000010)
+(defwin32constant +vif-difflang+          #x00000008)
+(defwin32constant +vif-difftype+          #x00000020)
+(defwin32constant +vif-fileinuse+         #x00000080)
+(defwin32constant +vif-mismatch+          #x00000002)
+(defwin32constant +vif-outofmemory+       #x00008000)
+(defwin32constant +vif-outofspace+        #x00000100)
+(defwin32constant +vif-sharingviolation+  #x00000400)
+(defwin32constant +vif-srcold+            #x00000004)
+(defwin32constant +vif-tempfile+          #x00000001)
+(defwin32constant +vif-writeprot+         #x00000040)
+
 (defwin32struct devmode
   (device-name wchar :count #.+cchdevicename+)
   (spec-version word)
@@ -2886,6 +2926,59 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (creation-time (:pointer filetime))
   (last-access-time (:pointer filetime))
   (last-write-time (:pointer filetime)))
+
+(defwin32fun ("GetFileVersionInfoW" get-file-version-info api-ms-win-core-version-l1-1-0) bool
+  (str-file-name lpctstr)
+  (handle dword)
+  (len dword)
+  (data :pointer))
+
+(defwin32fun ("GetFileVersionInfoExW" get-file-version-info-ex api-ms-win-core-version-l1-1-0) bool
+  (flags dword)
+  (str-file-name lpctstr)
+  (handle dword)
+  (len dword)
+  (data :pointer))
+
+(defwin32fun ("GetFileVersionInfoSizeW" get-file-version-info-size pi-ms-win-core-version-l1-1-0) dword
+  (str-file-name lpctstr)
+  (handle (:pointer dword)))
+
+(defwin32fun ("GetFileVersionInfoSizeExW" get-file-version-info-size-ex api-ms-win-core-version-l1-1-0) dword
+  (flags dword)
+  (str-file-name lpctstr)
+  (handle (:pointer dword)))
+
+(defwin32fun ("VerFindFileW" ver-find-file api-ms-win-core-version-l1-1-0) dword
+  (flags dword)
+  (file-name lpctstr)
+  (win-dir lpctstr)
+  (app-dir lpctstr)
+  (cur-dir lpwstr)
+  (cur-dir-len (:pointer uint))
+  (dst-dir lptstr)
+  (dest-dir-len (:pointer uint)))
+
+(defwin32fun ("VerInstallFileW" ver-install-file api-ms-win-core-version-l1-1-0) dword
+  (flags dword)
+  (src-file-name lpctstr)
+  (dst-file-name lpctstr)
+  (src-dir lpctstr)
+  (dst-dir lpctstr)
+  (cur-dir lpctstr)
+  (tmp-file lptstr)
+  (tmp-file-len (:pointer uint)))
+
+(defwin32fun ("VerLanguageNameW" ver-language-name api-ms-win-core-localization-l1-2-1) dword
+  (wlang dword)
+  (szlang lptstr)
+  (cchlang dword))
+
+(defwin32fun ("VerQueryValueW" ver-query-value api-ms-win-core-version-l1-1-0) bool
+  (block :pointer)
+  (sub-block lpctstr)
+  (buffer :pointer)
+  (len (:pointer uint)))
 
 (defwin32fun ("GetInputState" get-input-state user32) bool)
 
