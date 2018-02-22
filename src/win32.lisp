@@ -2578,6 +2578,40 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (type dword)
   (input input_input-union))
 
+(defwin32struct filetime
+  (low-date-time dword)
+  (high-date-time dword))
+
+(defwin32struct systemtime
+  (year word)
+  (month word)
+  (day-of-week word)
+  (day word)
+  (hour word)
+  (minute word)
+  (second word)
+  (milliseconds word))
+
+(defwin32struct dynamic-time-zone-information
+  (bias long)
+  (standard-name wchar :count 32)
+  (standard-date systemtime)
+  (standard-bias long)
+  (daylight-name wchar :count 32)
+  (daylight-date systemtime)
+  (daylight-bias long)
+  (time-zone-key-name wchar :count 128)
+  (dynamic-daylight-time-disabled boolean))
+
+(defwin32struct time-zone-information
+  (bias long)
+  (standard-name wchar :count 32)
+  (standard-date systemtime)
+  (standard-bias long)
+  (daylight-name wchar :count 32)
+  (daylight-date systemtime)
+  (daylight-bias long))
+
 (defwin32fun ("Beep" beep kernel32) bool
   (freq dword)
   (duration dword))
@@ -2629,6 +2663,20 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CommandLineToArgvW" command-line-to-argv shell32) (:pointer lpwstr)
   (cmd-line lpcwstr)
   (num-args (:pointer :int)))
+
+(defwin32fun ("CompareFileTime" compare-file-time kernel32) long
+  (file-time-1 (:pointer filetime))
+  (file-time-2 (:pointer filetime)))
+
+(defwin32fun ("ConvertAuxiliaryCounterToPerformanceCounter" convert-auxiliary-counter-to-performance-counter kernel32) hresult
+  (auxiliary-counter-value ulonglong)
+  (performance-counter-value (:pointer ulonglong))
+  (conversion-error (:pointer ulonglong)))
+
+(defwin32fun ("ConvertPerformanceCounterToAuxiliaryCounter" convert-performance-counter-to-auxiliary-counter kernel32) hresult
+  (performance-counter-value ulonglong)
+  (auxiliary-counter-value (:pointer ulonglong))
+  (conversion-error (:pointer ulonglong)))
 
 (defwin32fun ("CopyFileW" copy-file kernel32) bool
   (existing-name lpcwstr)
@@ -2742,6 +2790,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("DispatchMessageW" dispatch-message user32) lresult
   (msg (:pointer msg)))
 
+(defwin32fun ("DosDateTimeToFileTime" dos-date-time-to-file-time kernel32) bool
+  (fat-date word)
+  (fat-time word)
+  (file-time (:pointer filetime)))
+
 (defwin32fun ("EnableWindow" enable-window user32) bool
   (hwnd hwnd)
   (enable bool))
@@ -2750,9 +2803,26 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (paint (:pointer paintstruct)))
 
+(defwin32fun ("EnumDynamicTimeZoneInformation" enum-dynamic-time-zone-information kernel32) dword
+  (index dword)
+  (time-zone-information (:pointer dynamic-time-zone-information)))
+
 (defwin32fun ("EnumWindows" enum-windows user32) bool
   (callback :pointer)
   (lparam lparam))
+
+(defwin32fun ("FileTimeToDosDateTime" file-time-to-dos-date-time kernel32) bool
+  (file-time (:pointer filetime))
+  (fat-date (:pointer word))
+  (fat-time (:pointer word)))
+
+(defwin32fun ("FileTimeToLocalFileTime" file-time-to-local-file-time kernel32) bool
+  (file-time (:pointer filetime))
+  (local-file-time (:pointer filetime)))
+
+(defwin32fun ("FileTimeToSystemTime" file-time-to-system-time kernel32) bool
+  (file-time (:pointer filetime))
+  (system-time (:pointer systemtime)))
 
 (defwin32fun ("FindWindowW" find-window user32) hwnd
   (wndclass-name lpcwstr)
@@ -2803,9 +2873,26 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetDesktopWindow" get-desktop-window user32) hwnd)
 
+(defwin32fun ("GetDynamicTimeZoneInformation" get-dynamic-time-zone-information kernel32) dword
+  (time-zone-information (:pointer dynamic-time-zone-information)))
+
+(defwin32fun ("GetDynamicTimeZoneInformationEffectiveYears" get-dynamic-time-zone-information-effective-years kernel32) dword
+  (time-zone-information (:pointer dynamic-time-zone-information))
+  (first-year (:pointer dword))
+  (last-year (:pointer dword)))
+
+(defwin32fun ("GetFileTime" get-file-time kernel32) bool
+  (file handle)
+  (creation-time (:pointer filetime))
+  (last-access-time (:pointer filetime))
+  (last-write-time (:pointer filetime)))
+
 (defwin32fun ("GetInputState" get-input-state user32) bool)
 
 (defwin32fun ("GetLastError" get-last-error user32) dword)
+
+(defwin32fun ("GetLocalTime" get-local-time kernel32) :void
+  (system-time (:pointer systemtime)))
 
 (defwin32fun ("GetMessageW" get-message user32) bool
   (msg (:pointer msg))
@@ -2850,6 +2937,37 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetSystemMetrics" get-system-metrics user32) :int
   (index :int))
+
+(defwin32fun ("GetSystemTime" get-system-time kernel32) :void
+  (system-time (:pointer systemtime)))
+
+(defwin32fun ("GetSystemTimeAdjustment" get-system-time-adjustment kernel32) bool
+  (time-adjust (:pointer dword))
+  (time-increment (:pointer dword))
+  (time-adjustment-disabled (:pointer bool)))
+
+(defwin32fun ("GetSystemTimeAsFileTime" get-system-time-as-file-time kernel32) :void
+  (system-time-as-file-time (:pointer filetime)))
+
+(defwin32fun ("GetSystemTimePreciseAsFileTime" get-system-time-precise-as-file-time kernel32) :void
+  (system-time-as-file-time (:pointer filetime)))
+
+(defwin32fun ("GetSystemTimes" get-system-times kernel32) bool
+  (idle-time (:pointer filetime))
+  (kernel-time (:pointer filetime))
+  (user-time (:pointer filetime)))
+
+(defwin32fun ("GetTickCount" get-tick-count kernel32) dword)
+
+(defwin32fun ("GetTickCount64" get-tick-count-64 kernel32) ulonglong)
+
+(defwin32fun ("GetTimeZoneInformation" get-time-zone-information kernel32) dword
+  (time-zone-information (:pointer time-zone-information)))
+
+(defwin32fun ("GetTimeZoneInformationForYear" get-time-zone-information-for-year kernel32) bool
+  (year ushort)
+  (dtzi (:pointer dynamic-time-zone-information))
+  (tzi (:pointer time-zone-information)))
 
 (defwin32fun ("GetTopWindow" get-top-window user32) hwnd
   (hwnd hwnd))
@@ -2897,6 +3015,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("LoadIconW" load-icon user32) hicon
   (instance hinstance)
   (name lpctstr))
+
+(defwin32fun ("LocalFileTimeToFileTime" local-file-time-to-file-time kernel32) bool
+  (local-file-time (:pointer filetime))
+  (file-time (:pointer filetime)))
 
 (defwin32fun ("MoveFileW" move-file kernel32) bool
   (existing-file-name lpctstr)
@@ -2946,6 +3068,21 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (msg uint)
   (wparam wparam)
   (lparam lparam))
+
+(defwin32fun ("QueryAuxiliaryCounterFrequency" query-auxiliary-counter-frequency kernel32) hresult
+  (auxiliary-counter-frequency (:pointer ulonglong)))
+
+(defwin32fun ("QueryInterruptTime" query-interrupt-time kernel32) :void
+  (interrupt-time (:pointer ulonglong)))
+
+(defwin32fun ("QueryInterruptTimePrecise" query-interrupt-time-precise kernel32) :void
+  (interrupt-time-precise (:pointer ulonglong)))
+
+(defwin32fun ("QueryUnbiasedInterruptTime" query-unbiased-interrupt-time kernel32) bool
+  (unbiased-interrupt-time (:pointer ulonglong)))
+
+(defwin32fun ("QueryUnbiasedInterruptTimePrecise" query-unbiased-interrupt-time-precise kernel32) :void
+  (unbiased-interrupt-time-precise (:pointer ulonglong)))
 
 (defwin32fun ("ReadFile" read-file kernel32) bool
   (handle handle)
@@ -3143,8 +3280,30 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (x :int)
   (y :int))
 
+(defwin32fun ("SetDynamicTimeZoneInformation" set-dynamic-time-zone-information kernel32) bool
+  (time-zone-information (:pointer dynamic-time-zone-information)))
+
 (defwin32fun ("SetEvent" set-event kernel32) bool
   (event handle))
+
+(defwin32fun ("SetFileTime" set-file-time kernel32) bool
+  (file handle)
+  (creation-time (:pointer filetime))
+  (last-access-time (:pointer filetime))
+  (last-write-time (:pointer filetime)))
+
+(defwin32fun ("SetLocalTime" set-local-time kernel32) bool
+  (system-time (:pointer systemtime)))
+
+(defwin32fun ("SetSystemTime" set-system-time kernel32) bool
+  (system-time (:pointer systemtime)))
+
+(defwin32fun ("SetSystemTimeAdjustment" set-system-time-adjustment kernel32) bool
+  (time-adjustment dword)
+  (time-adjustment-disabled bool))
+
+(defwin32fun ("SetTimeZoneInformation" set-time-zone-information kernel32) bool
+  (time-zone-information (:pointer time-zone-information)))
 
 (defwin32fun ("SetForegroundWindow" set-foreground-window user32) bool
   (hwnd hwnd))
@@ -3267,11 +3426,35 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (pvparam :pointer)
   (win-ini uint))
 
+(defwin32fun ("SystemTimeToFileTime" system-time-to-file-time kernel32) bool
+  (system-time (:pointer systemtime))
+  (filetime (:pointer filetime)))
+
+(defwin32fun ("SystemTimeToTzSpecificLocalTime" system-time-to-tz-specific-local-time kernel32) bool
+  (time-zone (:pointer time-zone-information))
+  (universal-time (:pointer systemtime))
+  (local-time (:pointer systemtime)))
+
+(defwin32fun ("SystemTimeToTzSpecificLocalTimeEx" system-time-to-tz-specific-local-time-ex kernel32) bool
+  (time-zone-information (:pointer dynamic-time-zone-information))
+  (universal-time (:pointer systemtime))
+  (local-time (:pointer systemtime)))
+
 (defwin32fun ("TrackMouseEvent" track-mouse-event user32) bool
   (event-track (:pointer trackmouseevent)))
 
 (defwin32fun ("TranslateMessage" translate-message user32) bool
   (msg (:pointer msg)))
+
+(defwin32fun ("TzSpecificLocalTimeToSystemTime" tz-specific-local-time-to-system-time kernel32) bool
+  (time-zone-information (:pointer time-zone-information))
+  (local-time (:pointer systemtime))
+  (universal-time (:pointer systemtime)))
+
+(defwin32fun ("TzSpecificLocalTimeToSystemTimeEx" tz-specific-local-time-to-system-time-ex kernel32) bool
+  (time-zone-information (:pointer dynamic-time-zone-information))
+  (local-time (:pointer systemtime))
+  (universal-time (:pointer systemtime)))
 
 (defwin32fun ("UnregisterClassW" unregister-class user32) bool
   (wndclass-name lpctstr)
