@@ -17,4 +17,6 @@
    #:boolean
    #:byte
    #:char
-   #:float))
+   #:float)
+  (:export
+   #:+win32-string-encoding+))
