@@ -3580,10 +3580,6 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (dc hdc)
   (hglrc hglrc))
 
-#+fsbv
-(defwin32fun ("WindowFromPoint" window-from-point user32) hwnd
-  (point point))
-
 (defwin32fun ("WriteFile" write-file kernel32) bool
   (file handle)
   (buffer :pointer)
