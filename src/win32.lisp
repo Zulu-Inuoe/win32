@@ -267,6 +267,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type hwineventhook handle)
 (defwin32type hglrc handle)
 
+(defwin32type access-mask dword)
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
     "Makes it easier to declare certain high values which in C are int32, in hex.
@@ -667,6 +669,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +standard-rights-all+      #x001F0000)
 (defwin32constant +specific-rights-all+      #x0000FFFF)
 
+(defwin32constant +access-system-security+ #x01000000)
+
+(defwin32constant +maximum-allowed+ #x01000000)
+
 (defwin32constant +desktop-createmenu+      #x0004
   "Required to create a menu on the desktop.")
 (defwin32constant +desktop-createwindow+    #x0002
@@ -712,6 +718,55 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
                                         +desktop-writeobjects+
                                         +standard-rights-required+))
 
+(defwin32constant +file-read-data+ #x0001)
+(defwin32constant +file-list-directory+ #x0001)
+
+(defwin32constant +file-write-data+ #x0002)
+(defwin32constant +file-add-file+ #x0002)
+
+(defwin32constant +file-append-data+ #x0004)
+(defwin32constant +file-add-subdirectory+ #x0004)
+(defwin32constant +file-create-pipe-instance+ #x0004)
+
+(defwin32constant +file-read-ea+ #x0008)
+
+(defwin32constant +file-write-ea+ #x0010)
+
+(defwin32constant +file-execute+ #x0020)
+(defwin32constant +file-traverse+ #x0020)
+
+(defwin32constant +file-delete-child+ #x0040)
+
+(defwin32constant +file-read-attributes+ #x0080)
+
+(defwin32constant +file-write-attributes+ #x0100)
+
+(defwin32constant +file-all-access+
+    (logior +standard-rights-required+
+            +synchronize+
+            #x1ff))
+
+(defwin32constant +file-generic-read+
+    (logior +standard-rights-read+
+            +file-read-data+
+            +file-read-attributes+
+            +file-read-ea+
+            +synchronize+))
+
+(defwin32constant +file-generic-write+
+    (logior +standard-rights-write+
+            +file-write-data+
+            +file-write-attributes+
+            +file-write-ea+
+            +file-append-data+
+            +synchronize+))
+
+(defwin32constant +file-generic-execute+
+    (logior +standard-rights-execute+
+            +file-read-attributes+
+            +file-execute+
+            +synchronize+))
+
 (defwin32constant +file-share-delete+ #x00000004)
 (defwin32constant +file-share-read+   #x00000001)
 (defwin32constant +file-share-write+  #x00000002)
@@ -736,17 +791,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +file-attribute-temporary+ #x100)
 (defwin32constant +file-attribute-virtual+ #x10000)
 
-(defwin32constant +file-flag-backup-semantics+   #x02000000)
-(defwin32constant +file-flag-delete-on-close+    #x04000000)
-(defwin32constant +file-flag-no-buffering+       #x20000000)
-(defwin32constant +file-flag-open-no-recall+     #x00100000)
-(defwin32constant +file-flag-open-reparse-point+ #x00200000)
-(defwin32constant +file-flag-overlapped+         #x40000000)
-(defwin32constant +file-flag-posix-semantics+    #x00100000)
-(defwin32constant +file-flag-random-access+      #x10000000)
-(defwin32constant +file-flag-session-aware+      #x00800000)
-(defwin32constant +file-flag-sequential-scan+    #x08000000)
-(defwin32constant +file-flag-write-through+      #x80000000)
+(defwin32constant +file-flag-backup-semantics+    #x02000000)
+(defwin32constant +file-flag-delete-on-close+     #x04000000)
+(defwin32constant +file-flag-no-buffering+        #x20000000)
+(defwin32constant +file-flag-open-no-recall+      #x00100000)
+(defwin32constant +file-flag-open-reparse-point+  #x00200000)
+(defwin32constant +file-flag-overlapped+          #x40000000)
+(defwin32constant +file-flag-posix-semantics+     #x00100000)
+(defwin32constant +file-flag-random-access+       #x10000000)
+(defwin32constant +file-flag-session-aware+       #x00800000)
+(defwin32constant +file-flag-sequential-scan+     #x08000000)
+(defwin32constant +file-flag-write-through+       #x80000000)
+(defwin32constant +file-flag-first-pipe-instance+ #x00080000)
 
 (defwin32constant +movefile-replace-existing+      #x01)
 (defwin32constant +movefile-copy-allowed+          #x02)
@@ -2265,6 +2321,28 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +nte-fail+ #x80090020)
 (defwin32constant +nte-sys-err+ #x80090021)
 
+(defwin32constant +pipe-access-duplex+ 3)
+(defwin32constant +pipe-access-inbound+ 1)
+(defwin32constant +pipe-access-outbound+ 2)
+
+(defwin32constant +pipe-client-end+ 0)
+(defwin32constant +pipe-server-end+ 1)
+
+(defwin32constant +pipe-wait+ 0)
+(defwin32constant +pipe-nowait+ 1)
+(defwin32constant +pipe-readmode-byte+ 0)
+(defwin32constant +pipe-readmode-message+ 2)
+(defwin32constant +pipe-type-byte+ 0)
+(defwin32constant +pipe-type-message+ 4)
+(defwin32constant +pipe-accept-remote-clients+ 0)
+(defwin32constant +pipe-reject-remote-clients+ 0)
+
+(defwin32constant +pipe-unlimited-instances+ 255)
+
+(defwin32constant +nmpwait-wait-forever+ #xffffffff)
+(defwin32constant +nmpwait-nowait+ #x00000001)
+(defwin32constant +nmpwait-use-default-wait+ #x00000000)
+
 (defwin32struct unicode-string
   (length ushort)
   (maximum-length ushort)
@@ -2667,6 +2745,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wparam wparam)
   (lparam lparam))
 
+(defwin32fun ("CallNamedPipeA" call-named-pipe kernel32) bool
+  (named-pipe-name lpcstr)
+  (in-buffer (:pointer :void))
+  (in-buffer-size dword)
+  (out-buffer (:pointer :void))
+  (out-buffer-size dword)
+  (bytes-read (:pointer dword))
+  (timeout dword))
+
 (defwin32fun ("CallNextHookEx" call-next-hook user32) lresult
   (hk hhook)
   (code :int)
@@ -2707,6 +2794,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CompareFileTime" compare-file-time kernel32) long
   (file-time-1 (:pointer filetime))
   (file-time-2 (:pointer filetime)))
+
+(defwin32fun ("ConnectNamedPipe" connect-named-pipe kernel32) bool
+  (hnamed-pipe handle)
+  (overlapped (:pointer overlapped)))
 
 (defwin32fun ("ConvertAuxiliaryCounterToPerformanceCounter" convert-auxiliary-counter-to-performance-counter kernel32) hresult
   (auxiliary-counter-value ulonglong)
@@ -2780,6 +2871,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (initial-owner bool)
   (name lpcwstr))
 
+(defwin32fun ("CreateNamedPipeA" create-named-pipe kernel32) handle
+  (name lpcstr)
+  (open-mode dword)
+  (pipe-mode dword)
+  (max-instances dword)
+  (out-buffer-size dword)
+  (in-buffer-size dword)
+  (default-timeout dword)
+  (security-attributes (:pointer security-attributes)))
+
 (defwin32fun ("CreatePalette" create-palette gdi32) hpalette
   (log-palette (:pointer logpalette)))
 
@@ -2827,6 +2928,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("DestroyWindow" destroy-window user32) bool
   (hwnd hwnd))
 
+(defwin32fun ("DisconnectNamedPipe" disconnect-named-pipe kernel32) bool
+  (hnamed-pipe handle))
+
 (defwin32fun ("DispatchMessageW" dispatch-message user32) lresult
   (msg (:pointer msg)))
 
@@ -2873,6 +2977,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd-child-after hwnd)
   (class lpcwstr)
   (window lpcwstr))
+
+(defwin32fun ("FlushFileBuffers" flush-file-buffers kernel32) bool
+  (hfile handle))
 
 (defwin32fun ("GetACP" get-acp kernel32) uint)
 
@@ -3002,6 +3109,43 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetModuleHandleW" get-module-handle kernel32) hmodule
   (module lpcwstr))
 
+(defwin32fun ("GetNamedPipeClientComputerNameA" get-named-pipe-client-computer-name kernel32) bool
+  (pipe handle)
+  (client-computer-name lpstr)
+  (client-computer-name-length ulong))
+
+(defwin32fun ("GetNamedPipeClientProcessId" get-named-pipe-client-process-id kernel32) bool
+  (pipe handle)
+  (client-process-id (:pointer ulong)))
+
+(defwin32fun ("GetNamedPipeClientSessionId" get-named-pipe-client-session-id kernel32) bool
+  (pipe handle)
+  (client-session-id (:pointer ulong)))
+
+(defwin32fun ("GetNamedPipeHandleStateA" get-named-pipe-handle-state kernel32) bool
+  (named-pipe handle)
+  (state (:pointer dword))
+  (cur-instances (:pointer dword))
+  (max-collection-count (:pointer dword))
+  (collect-data-timeout (:pointer dword))
+  (user-name lpstr)
+  (max-user-name-size dword))
+
+(defwin32fun ("GetNamedPipeInfo" get-named-pipe-info kernel32) bool
+  (named-pipe handle)
+  (flags (:pointer dword))
+  (out-buffer-size (:pointer dword))
+  (in-buffer-size (:pointer dword))
+  (max-instances (:pointer dword)))
+
+(defwin32fun ("GetNamedPipeServerProcessId" get-named-pipe-server-process-id kernel32) bool
+  (pipe handle)
+  (server-process-id (:pointer ulong)))
+
+(defwin32fun ("GetNamedPipeServerSessionId" get-named-pipe-server-session-id kernel32) bool
+  (pipe handle)
+  (server-session-id (:pointer ulong)))
+
 (defwin32fun ("GetOverlappedResult" get-overlapped-result kernel32) bool
   (file handle)
   (overlapped (:pointer overlapped))
@@ -3082,6 +3226,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (process-id (:pointer dword)))
 
+(defwin32fun ("ImpersonateNamedPipeClient" impersonate-named-pipe-client advapi32) bool
+  (named-pipe handle))
+
 (defwin32fun ("InSendMessage" in-send-message user32) bool)
 
 (defwin32fun ("InSendMessageEx" in-send-message-ex user32) dword
@@ -3146,6 +3293,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (msg-min uint)
   (msg-max uint)
   (remove uint))
+
+(defwin32fun ("PeekNamedPipe" peek-named-pipe kernel32) bool
+  (named-pipe handle)
+  (buffer (:pointer :void))
+  (buffer-size dword)
+  (bytes-read (:pointer dword))
+  (total-bytes-avail (:pointer dword))
+  (bytes-left-this-message (:pointer dword)))
 
 (defwin32fun ("PostMessageW" post-message user32) bool
   (hwnd hwnd)
@@ -3388,6 +3543,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SetLocalTime" set-local-time kernel32) bool
   (system-time (:pointer systemtime)))
 
+(defwin32fun ("SetNamedPipeHandleState" set-named-pipe-handle-state kernel32) bool
+  (hnamed-pipe handle)
+  (mode (:pointer dword))
+  (max-collection-count (:pointer dword))
+  (collected-data-timeout (:pointer dword)))
+
 (defwin32fun ("SetSystemTime" set-system-time kernel32) bool
   (system-time (:pointer systemtime)))
 
@@ -3536,6 +3697,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("TrackMouseEvent" track-mouse-event user32) bool
   (event-track (:pointer trackmouseevent)))
 
+(defwin32fun ("TransactNamedPipe" transact-named-pipe kernel32) bool
+  (named-pipe handle)
+  (in-buffer (:pointer :void))
+  (in-buffer-size (:pointer dword))
+  (out-buffer (:pointer :void))
+  (out-buffer-size (:pointer dword))
+  (bytes-read (:pointer dword))
+  (overlapped (:pointer overlapped)))
+
 (defwin32fun ("TranslateMessage" translate-message user32) bool
   (msg (:pointer msg)))
 
@@ -3569,6 +3739,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (handles (:pointer handle))
   (wait-all bool)
   (milliseconds dword))
+
+(defwin32fun ("WaitNamedPipeA" wait-named-pipe kernel32) bool
+  (named-pipe-name lpcstr)
+  (timeout dword))
 
 (defwin32fun ("wglCreateContext" wgl-create-context opengl32) hglrc
   (dc hdc))
