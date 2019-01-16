@@ -48,12 +48,15 @@
   #+big-endian :utf-16be
   "Not a win32 'constant' per-se, but useful to expose for usage with FOREIGN-STRING-TO-LISP and friends.")
 
+(defconstant +pointer-bit-size+ (* (cffi:foreign-type-size :pointer) 8))
+
 (defmacro defwin32constant (name value &optional doc)
   "Wrapper around `defconstant' which exports the constant."
   `(progn
      (eval-when (:compile-toplevel :load-toplevel :execute)
        (defparameter ,name ,value ,doc))
-     (export ',name)))
+     (export ',name)
+     ',name))
 
 (defmacro defwin32enum (name &body enum-list)
   "Wrapper around `defcenum' which exports the enum type and each enum name within."
@@ -283,8 +286,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
       ((>= value 0)
        value)
       (t
-       (error "The value ~A cannot be converted at this time, as negatives are not supported." value)))))
+       (error "The value ~A cannot be converted at this time, as negatives are not supported." value))))
 
+  (defun %as-ptr (value)
+    (cffi:make-pointer (ldb (cl:byte #.+pointer-bit-size+ 0) value)))
+
+  (defun %as-dword (value)
+    (ldb (cl:byte 32 0) value)))
 ;;CreateFile Creation Disposition
 (defwin32constant +create-new+        1)
 (defwin32constant +create-always+     2)
@@ -626,6 +634,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +swp-noreposition+   #x0200)
 
 (defwin32constant +infinite+       #xFFFFFFFF)
+
+(defwin32constant +invalid-handle-value+ (%as-ptr -1))
+(defwin32constant +invalid-file-size+ #xFFFFFFFF)
+(defwin32constant +invalid-set-file-pointer+ (%as-dword -1))
+(defwin32constant +invalid-file-attributes+ (%as-dword -1))
 
 (defwin32constant +wait-object-0+  #x00000000)
 (defwin32constant +wait-abandoned+ #x00000080)
