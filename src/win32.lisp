@@ -3497,37 +3497,6 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (str-file-name lpctstr)
   (handle (:pointer dword)))
 
-(defwin32fun ("VerFindFileW" ver-find-file api-ms-win-core-version-l1-1-0) dword
-  (flags dword)
-  (file-name lpctstr)
-  (win-dir lpctstr)
-  (app-dir lpctstr)
-  (cur-dir lpwstr)
-  (cur-dir-len (:pointer uint))
-  (dst-dir lptstr)
-  (dest-dir-len (:pointer uint)))
-
-(defwin32fun ("VerInstallFileW" ver-install-file api-ms-win-core-version-l1-1-0) dword
-  (flags dword)
-  (src-file-name lpctstr)
-  (dst-file-name lpctstr)
-  (src-dir lpctstr)
-  (dst-dir lpctstr)
-  (cur-dir lpctstr)
-  (tmp-file lptstr)
-  (tmp-file-len (:pointer uint)))
-
-(defwin32fun ("VerLanguageNameW" ver-language-name api-ms-win-core-localization-l1-2-1) dword
-  (wlang dword)
-  (szlang lptstr)
-  (cchlang dword))
-
-(defwin32fun ("VerQueryValueW" ver-query-value api-ms-win-core-version-l1-1-0) bool
-  (block :pointer)
-  (sub-block lpctstr)
-  (buffer :pointer)
-  (len (:pointer uint)))
-
 (defwin32fun ("GetInputState" get-input-state user32) bool)
 
 (defwin32fun ("GetLastError" get-last-error user32) dword)
@@ -4195,6 +4164,37 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("ValidateRect" validate-rect user32) bool
   (hwnd hwnd)
   (rect (:pointer rect)))
+
+(defwin32fun ("VerFindFileW" ver-find-file api-ms-win-core-version-l1-1-0) dword
+  (flags dword)
+  (file-name lpctstr)
+  (win-dir lpctstr)
+  (app-dir lpctstr)
+  (cur-dir lpwstr)
+  (cur-dir-len (:pointer uint))
+  (dst-dir lptstr)
+  (dest-dir-len (:pointer uint)))
+
+(defwin32fun ("VerInstallFileW" ver-install-file api-ms-win-core-version-l1-1-0) dword
+  (flags dword)
+  (src-file-name lpctstr)
+  (dst-file-name lpctstr)
+  (src-dir lpctstr)
+  (dst-dir lpctstr)
+  (cur-dir lpctstr)
+  (tmp-file lptstr)
+  (tmp-file-len (:pointer uint)))
+
+(defwin32fun ("VerLanguageNameW" ver-language-name api-ms-win-core-localization-l1-2-1) dword
+  (wlang dword)
+  (szlang lptstr)
+  (cchlang dword))
+
+(defwin32fun ("VerQueryValueW" ver-query-value api-ms-win-core-version-l1-1-0) bool
+  (block :pointer)
+  (sub-block lpctstr)
+  (buffer :pointer)
+  (len (:pointer uint)))
 
 (defwin32fun ("WaitForSingleObject" wait-for-single-object kernel32) dword
   (handle handle)
