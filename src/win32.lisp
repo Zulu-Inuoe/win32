@@ -2378,6 +2378,403 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +nmpwait-nowait+ #x00000001)
 (defwin32constant +nmpwait-use-default-wait+ #x00000000)
 
+(defwin32constant +lang-neutral+                     #x00)
+(defwin32constant +lang-invariant+                   #x7f)
+
+(defwin32constant +lang-afrikaans+                   #x36)
+(defwin32constant +lang-albanian+                    #x1c)
+(defwin32constant +lang-alsatian+                    #x84)
+(defwin32constant +lang-amharic+                     #x5e)
+(defwin32constant +lang-arabic+                      #x01)
+(defwin32constant +lang-armenian+                    #x2b)
+(defwin32constant +lang-assamese+                    #x4d)
+(defwin32constant +lang-azeri+                       #x2c)   ; for Azerbaijani, LANG_AZERBAIJANI is preferred
+(defwin32constant +lang-azerbaijani+                 #x2c)
+(defwin32constant +lang-bangla+                      #x45)
+(defwin32constant +lang-bashkir+                     #x6d)
+(defwin32constant +lang-basque+                      #x2d)
+(defwin32constant +lang-belarusian+                  #x23)
+(defwin32constant +lang-bengali+                     #x45)   ; Some prefer to use LANG_BANGLA
+(defwin32constant +lang-breton+                      #x7e)
+(defwin32constant +lang-bosnian+                     #x1a)   ; Use with SUBLANG_BOSNIAN_* Sublanguage IDs
+(defwin32constant +lang-bosnian-neutral+           #x781a)   ; Use with the ConvertDefaultLocale function
+(defwin32constant +lang-bulgarian+                   #x02)
+(defwin32constant +lang-catalan+                     #x03)
+(defwin32constant +lang-central-kurdish+             #x92)
+(defwin32constant +lang-cherokee+                    #x5c)
+(defwin32constant +lang-chinese+                     #x04)   ; Use with SUBLANG_CHINESE_* Sublanguage IDs
+(defwin32constant +lang-chinese-simplified+          #x04)   ; Use with the ConvertDefaultLocale function
+(defwin32constant +lang-chinese-traditional+       #x7c04)   ; Use with the ConvertDefaultLocale function
+(defwin32constant +lang-corsican+                    #x83)
+(defwin32constant +lang-croatian+                    #x1a)
+(defwin32constant +lang-czech+                       #x05)
+(defwin32constant +lang-danish+                      #x06)
+(defwin32constant +lang-dari+                        #x8c)
+(defwin32constant +lang-divehi+                      #x65)
+(defwin32constant +lang-dutch+                       #x13)
+(defwin32constant +lang-english+                     #x09)
+(defwin32constant +lang-estonian+                    #x25)
+(defwin32constant +lang-faeroese+                    #x38)
+(defwin32constant +lang-farsi+                       #x29)   ; Deprecated: use LANG_PERSIAN instead
+(defwin32constant +lang-filipino+                    #x64)
+(defwin32constant +lang-finnish+                     #x0b)
+(defwin32constant +lang-french+                      #x0c)
+(defwin32constant +lang-frisian+                     #x62)
+(defwin32constant +lang-fulah+                       #x67)
+(defwin32constant +lang-galician+                    #x56)
+(defwin32constant +lang-georgian+                    #x37)
+(defwin32constant +lang-german+                      #x07)
+(defwin32constant +lang-greek+                       #x08)
+(defwin32constant +lang-greenlandic+                 #x6f)
+(defwin32constant +lang-gujarati+                    #x47)
+(defwin32constant +lang-hausa+                       #x68)
+(defwin32constant +lang-hawaiian+                    #x75)
+(defwin32constant +lang-hebrew+                      #x0d)
+(defwin32constant +lang-hindi+                       #x39)
+(defwin32constant +lang-hungarian+                   #x0e)
+(defwin32constant +lang-icelandic+                   #x0f)
+(defwin32constant +lang-igbo+                        #x70)
+(defwin32constant +lang-indonesian+                  #x21)
+(defwin32constant +lang-inuktitut+                   #x5d)
+(defwin32constant +lang-irish+                       #x3c)   ; Use with the SUBLANG_IRISH_IRELAND Sublanguage ID
+(defwin32constant +lang-italian+                     #x10)
+(defwin32constant +lang-japanese+                    #x11)
+(defwin32constant +lang-kannada+                     #x4b)
+(defwin32constant +lang-kashmiri+                    #x60)
+(defwin32constant +lang-kazak+                       #x3f)
+(defwin32constant +lang-khmer+                       #x53)
+(defwin32constant +lang-kiche+                       #x86)
+(defwin32constant +lang-kinyarwanda+                 #x87)
+(defwin32constant +lang-konkani+                     #x57)
+(defwin32constant +lang-korean+                      #x12)
+(defwin32constant +lang-kyrgyz+                      #x40)
+(defwin32constant +lang-lao+                         #x54)
+(defwin32constant +lang-latvian+                     #x26)
+(defwin32constant +lang-lithuanian+                  #x27)
+(defwin32constant +lang-lower-sorbian+               #x2e)
+(defwin32constant +lang-luxembourgish+               #x6e)
+(defwin32constant +lang-macedonian+                  #x2f)   ; the Former Yugoslav Republic of Macedonia
+(defwin32constant +lang-malay+                       #x3e)
+(defwin32constant +lang-malayalam+                   #x4c)
+(defwin32constant +lang-maltese+                     #x3a)
+(defwin32constant +lang-manipuri+                    #x58)
+(defwin32constant +lang-maori+                       #x81)
+(defwin32constant +lang-mapudungun+                  #x7a)
+(defwin32constant +lang-marathi+                     #x4e)
+(defwin32constant +lang-mohawk+                      #x7c)
+(defwin32constant +lang-mongolian+                   #x50)
+(defwin32constant +lang-nepali+                      #x61)
+(defwin32constant +lang-norwegian+                   #x14)
+(defwin32constant +lang-occitan+                     #x82)
+(defwin32constant +lang-odia+                        #x48)
+(defwin32constant +lang-oriya+                       #x48)   ; Deprecated: use LANG_ODIA, instead.
+(defwin32constant +lang-pashto+                      #x63)
+(defwin32constant +lang-persian+                     #x29)
+(defwin32constant +lang-polish+                      #x15)
+(defwin32constant +lang-portuguese+                  #x16)
+(defwin32constant +lang-pular+                       #x67)   ; Deprecated: use LANG_FULAH instead
+(defwin32constant +lang-punjabi+                     #x46)
+(defwin32constant +lang-quechua+                     #x6b)
+(defwin32constant +lang-romanian+                    #x18)
+(defwin32constant +lang-romansh+                     #x17)
+(defwin32constant +lang-russian+                     #x19)
+(defwin32constant +lang-sakha+                       #x85)
+(defwin32constant +lang-sami+                        #x3b)
+(defwin32constant +lang-sanskrit+                    #x4f)
+(defwin32constant +lang-scottish-gaelic+             #x91)
+(defwin32constant +lang-serbian+                     #x1a)   ; Use with the SUBLANG_SERBIAN_* Sublanguage IDs
+(defwin32constant +lang-serbian-neutral+           #x7c1a)   ; Use with the ConvertDefaultLocale function
+(defwin32constant +lang-sindhi+                      #x59)
+(defwin32constant +lang-sinhalese+                   #x5b)
+(defwin32constant +lang-slovak+                      #x1b)
+(defwin32constant +lang-slovenian+                   #x24)
+(defwin32constant +lang-sotho+                       #x6c)
+(defwin32constant +lang-spanish+                     #x0a)
+(defwin32constant +lang-swahili+                     #x41)
+(defwin32constant +lang-swedish+                     #x1d)
+(defwin32constant +lang-syriac+                      #x5a)
+(defwin32constant +lang-tajik+                       #x28)
+(defwin32constant +lang-tamazight+                   #x5f)
+(defwin32constant +lang-tamil+                       #x49)
+(defwin32constant +lang-tatar+                       #x44)
+(defwin32constant +lang-telugu+                      #x4a)
+(defwin32constant +lang-thai+                        #x1e)
+(defwin32constant +lang-tibetan+                     #x51)
+(defwin32constant +lang-tigrigna+                    #x73)
+(defwin32constant +lang-tigrinya+                    #x73)   ; Preferred spelling in locale
+(defwin32constant +lang-tswana+                      #x32)
+(defwin32constant +lang-turkish+                     #x1f)
+(defwin32constant +lang-turkmen+                     #x42)
+(defwin32constant +lang-uighur+                      #x80)
+(defwin32constant +lang-ukrainian+                   #x22)
+(defwin32constant +lang-upper-sorbian+               #x2e)
+(defwin32constant +lang-urdu+                        #x20)
+(defwin32constant +lang-uzbek+                       #x43)
+(defwin32constant +lang-valencian+                   #x03)
+(defwin32constant +lang-vietnamese+                  #x2a)
+(defwin32constant +lang-welsh+                       #x52)
+(defwin32constant +lang-wolof+                       #x88)
+(defwin32constant +lang-xhosa+                       #x34)
+(defwin32constant +lang-yakut+                       #x85)   ; Deprecated: use LANG_SAKHA,instead
+(defwin32constant +lang-yi+                          #x78)
+(defwin32constant +lang-yoruba+                      #x6a)
+(defwin32constant +lang-zulu+                        #x35)
+
+(defwin32constant +sublang-neutral+                             #x00)    ; language neutral
+(defwin32constant +sublang-default+                             #x01)    ; user default
+(defwin32constant +sublang-sys-default+                         #x02)    ; system default
+(defwin32constant +sublang-custom-default+                      #x03)    ; default custom language/locale
+(defwin32constant +sublang-custom-unspecified+                  #x04)    ; custom language/locale
+(defwin32constant +sublang-ui-custom-default+                   #x05)    ; Default custom MUI language/locale
+
+
+(defwin32constant +sublang-afrikaans-south-africa+              #x01)    ; Afrikaans (South Africa) 0x0436 af-ZA
+(defwin32constant +sublang-albanian-albania+                    #x01)    ; Albanian (Albania) 0x041c sq-AL
+(defwin32constant +sublang-alsatian-france+                     #x01)    ; Alsatian (France) 0x0484
+(defwin32constant +sublang-amharic-ethiopia+                    #x01)    ; Amharic (Ethiopia) 0x045e
+(defwin32constant +sublang-arabic-saudi-arabia+                 #x01)    ; Arabic (Saudi Arabia)
+(defwin32constant +sublang-arabic-iraq+                         #x02)    ; Arabic (Iraq)
+(defwin32constant +sublang-arabic-egypt+                        #x03)    ; Arabic (Egypt)
+(defwin32constant +sublang-arabic-libya+                        #x04)    ; Arabic (Libya)
+(defwin32constant +sublang-arabic-algeria+                      #x05)    ; Arabic (Algeria)
+(defwin32constant +sublang-arabic-morocco+                      #x06)    ; Arabic (Morocco)
+(defwin32constant +sublang-arabic-tunisia+                      #x07)    ; Arabic (Tunisia)
+(defwin32constant +sublang-arabic-oman+                         #x08)    ; Arabic (Oman)
+(defwin32constant +sublang-arabic-yemen+                        #x09)    ; Arabic (Yemen)
+(defwin32constant +sublang-arabic-syria+                        #x0a)    ; Arabic (Syria)
+(defwin32constant +sublang-arabic-jordan+                       #x0b)    ; Arabic (Jordan)
+(defwin32constant +sublang-arabic-lebanon+                      #x0c)    ; Arabic (Lebanon)
+(defwin32constant +sublang-arabic-kuwait+                       #x0d)    ; Arabic (Kuwait)
+(defwin32constant +sublang-arabic-uae+                          #x0e)    ; Arabic (U.A.E)
+(defwin32constant +sublang-arabic-bahrain+                      #x0f)    ; Arabic (Bahrain)
+(defwin32constant +sublang-arabic-qatar+                        #x10)    ; Arabic (Qatar)
+(defwin32constant +sublang-armenian-armenia+                    #x01)    ; Armenian (Armenia) 0x042b hy-AM
+(defwin32constant +sublang-assamese-india+                      #x01)    ; Assamese (India) 0x044d
+(defwin32constant +sublang-azeri-latin+                         #x01)    ; Azeri (Latin) - for Azerbaijani, SUBLANG_AZERBAIJANI_AZERBAIJAN_LATIN preferred
+(defwin32constant +sublang-azeri-cyrillic+                      #x02)    ; Azeri (Cyrillic) - for Azerbaijani, SUBLANG_AZERBAIJANI_AZERBAIJAN_CYRILLIC preferred
+(defwin32constant +sublang-azerbaijani-azerbaijan-latin+        #x01)    ; Azerbaijani (Azerbaijan, Latin)
+(defwin32constant +sublang-azerbaijani-azerbaijan-cyrillic+     #x02)    ; Azerbaijani (Azerbaijan, Cyrillic)
+(defwin32constant +sublang-bangla-india+                        #x01)    ; Bangla (India)
+(defwin32constant +sublang-bangla-bangladesh+                   #x02)    ; Bangla (Bangladesh)
+(defwin32constant +sublang-bashkir-russia+                      #x01)    ; Bashkir (Russia) 0x046d ba-RU
+(defwin32constant +sublang-basque-basque+                       #x01)    ; Basque (Basque) 0x042d eu-ES
+(defwin32constant +sublang-belarusian-belarus+                  #x01)    ; Belarusian (Belarus) 0x0423 be-BY
+(defwin32constant +sublang-bengali-india+                       #x01)    ; Bengali (India) - Note some prefer SUBLANG_BANGLA_INDIA
+(defwin32constant +sublang-bengali-bangladesh+                  #x02)    ; Bengali (Bangladesh) - Note some prefer SUBLANG_BANGLA_BANGLADESH
+(defwin32constant +sublang-bosnian-bosnia-herzegovina-latin+    #x05)    ; Bosnian (Bosnia and Herzegovina - Latin) 0x141a bs-BA-Latn
+(defwin32constant +sublang-bosnian-bosnia-herzegovina-cyrillic+ #x08)    ; Bosnian (Bosnia and Herzegovina - Cyrillic) 0x201a bs-BA-Cyrl
+(defwin32constant +sublang-breton-france+                       #x01)    ; Breton (France) 0x047e
+(defwin32constant +sublang-bulgarian-bulgaria+                  #x01)    ; Bulgarian (Bulgaria) 0x0402
+(defwin32constant +sublang-catalan-catalan+                     #x01)    ; Catalan (Catalan) 0x0403
+(defwin32constant +sublang-central-kurdish-iraq+                #x01)    ; Central Kurdish (Iraq) 0x0492 ku-Arab-IQ
+(defwin32constant +sublang-cherokee-cherokee+                   #x01)    ; Cherokee (Cherokee) 0x045c chr-Cher-US
+(defwin32constant +sublang-chinese-traditional+                 #x01)    ; Chinese (Taiwan) 0x0404 zh-TW
+(defwin32constant +sublang-chinese-simplified+                  #x02)    ; Chinese (PR China) 0x0804 zh-CN
+(defwin32constant +sublang-chinese-hongkong+                    #x03)    ; Chinese (Hong Kong S.A.R., P.R.C.) 0x0c04 zh-HK
+(defwin32constant +sublang-chinese-singapore+                   #x04)    ; Chinese (Singapore) 0x1004 zh-SG
+(defwin32constant +sublang-chinese-macau+                       #x05)    ; Chinese (Macau S.A.R.) 0x1404 zh-MO
+(defwin32constant +sublang-corsican-france+                     #x01)    ; Corsican (France) 0x0483
+(defwin32constant +sublang-czech-czech-republic+                #x01)    ; Czech (Czech Republic) 0x0405
+(defwin32constant +sublang-croatian-croatia+                    #x01)    ; Croatian (Croatia)
+(defwin32constant +sublang-croatian-bosnia-herzegovina-latin+   #x04)    ; Croatian (Bosnia and Herzegovina - Latin) 0x101a hr-BA
+(defwin32constant +sublang-danish-denmark+                      #x01)    ; Danish (Denmark) 0x0406
+(defwin32constant +sublang-dari-afghanistan+                    #x01)    ; Dari (Afghanistan)
+(defwin32constant +sublang-divehi-maldives+                     #x01)    ; Divehi (Maldives) 0x0465 div-MV
+(defwin32constant +sublang-dutch+                               #x01)    ; Dutch
+(defwin32constant +sublang-dutch-belgian+                       #x02)    ; Dutch (Belgian)
+(defwin32constant +sublang-english-us+                          #x01)    ; English (USA)
+(defwin32constant +sublang-english-uk+                          #x02)    ; English (UK)
+(defwin32constant +sublang-english-aus+                         #x03)    ; English (Australian)
+(defwin32constant +sublang-english-can+                         #x04)    ; English (Canadian)
+(defwin32constant +sublang-english-nz+                          #x05)    ; English (New Zealand)
+(defwin32constant +sublang-english-eire+                        #x06)    ; English (Irish)
+(defwin32constant +sublang-english-south-africa+                #x07)    ; English (South Africa)
+(defwin32constant +sublang-english-jamaica+                     #x08)    ; English (Jamaica)
+(defwin32constant +sublang-english-caribbean+                   #x09)    ; English (Caribbean)
+(defwin32constant +sublang-english-belize+                      #x0a)    ; English (Belize)
+(defwin32constant +sublang-english-trinidad+                    #x0b)    ; English (Trinidad)
+(defwin32constant +sublang-english-zimbabwe+                    #x0c)    ; English (Zimbabwe)
+(defwin32constant +sublang-english-philippines+                 #x0d)    ; English (Philippines)
+(defwin32constant +sublang-english-india+                       #x10)    ; English (India)
+(defwin32constant +sublang-english-malaysia+                    #x11)    ; English (Malaysia)
+(defwin32constant +sublang-english-singapore+                   #x12)    ; English (Singapore)
+(defwin32constant +sublang-estonian-estonia+                    #x01)    ; Estonian (Estonia) 0x0425 et-EE
+(defwin32constant +sublang-faeroese-faroe-islands+              #x01)    ; Faroese (Faroe Islands) 0x0438 fo-FO
+(defwin32constant +sublang-filipino-philippines+                #x01)    ; Filipino (Philippines) 0x0464 fil-PH
+(defwin32constant +sublang-finnish-finland+                     #x01)    ; Finnish (Finland) 0x040b
+(defwin32constant +sublang-french+                              #x01)    ; French
+(defwin32constant +sublang-french-belgian+                      #x02)    ; French (Belgian)
+(defwin32constant +sublang-french-canadian+                     #x03)    ; French (Canadian)
+(defwin32constant +sublang-french-swiss+                        #x04)    ; French (Swiss)
+(defwin32constant +sublang-french-luxembourg+                   #x05)    ; French (Luxembourg)
+(defwin32constant +sublang-french-monaco+                       #x06)    ; French (Monaco)
+(defwin32constant +sublang-frisian-netherlands+                 #x01)    ; Frisian (Netherlands) 0x0462 fy-NL
+(defwin32constant +sublang-fulah-senegal+                       #x02)    ; Fulah (Senegal) 0x0867 ff-SN
+(defwin32constant +sublang-galician-galician+                   #x01)    ; Galician (Galician) 0x0456 gl-ES
+(defwin32constant +sublang-georgian-georgia+                    #x01)    ; Georgian (Georgia) 0x0437 ka-GE
+(defwin32constant +sublang-german+                              #x01)    ; German
+(defwin32constant +sublang-german-swiss+                        #x02)    ; German (Swiss)
+(defwin32constant +sublang-german-austrian+                     #x03)    ; German (Austrian)
+(defwin32constant +sublang-german-luxembourg+                   #x04)    ; German (Luxembourg)
+(defwin32constant +sublang-german-liechtenstein+                #x05)    ; German (Liechtenstein)
+(defwin32constant +sublang-greek-greece+                        #x01)    ; Greek (Greece)
+(defwin32constant +sublang-greenlandic-greenland+               #x01)    ; Greenlandic (Greenland) 0x046f kl-GL
+(defwin32constant +sublang-gujarati-india+                      #x01)    ; Gujarati (India (Gujarati Script)) 0x0447 gu-IN
+(defwin32constant +sublang-hausa-nigeria-latin+                 #x01)    ; Hausa (Latin, Nigeria) 0x0468 ha-NG-Latn
+(defwin32constant +sublang-hawaiian-us+                         #x01)    ; Hawiian (US) 0x0475 haw-US
+(defwin32constant +sublang-hebrew-israel+                       #x01)    ; Hebrew (Israel) 0x040d
+(defwin32constant +sublang-hindi-india+                         #x01)    ; Hindi (India) 0x0439 hi-IN
+(defwin32constant +sublang-hungarian-hungary+                   #x01)    ; Hungarian (Hungary) 0x040e
+(defwin32constant +sublang-icelandic-iceland+                   #x01)    ; Icelandic (Iceland) 0x040f
+(defwin32constant +sublang-igbo-nigeria+                        #x01)    ; Igbo (Nigeria) 0x0470 ig-NG
+(defwin32constant +sublang-indonesian-indonesia+                #x01)    ; Indonesian (Indonesia) 0x0421 id-ID
+(defwin32constant +sublang-inuktitut-canada+                    #x01)    ; Inuktitut (Syllabics) (Canada) 0x045d iu-CA-Cans
+(defwin32constant +sublang-inuktitut-canada-latin+              #x02)    ; Inuktitut (Canada - Latin)
+(defwin32constant +sublang-irish-ireland+                       #x02)    ; Irish (Ireland)
+(defwin32constant +sublang-italian+                             #x01)    ; Italian
+(defwin32constant +sublang-italian-swiss+                       #x02)    ; Italian (Swiss)
+(defwin32constant +sublang-japanese-japan+                      #x01)    ; Japanese (Japan) 0x0411
+(defwin32constant +sublang-kannada-india+                       #x01)    ; Kannada (India (Kannada Script)) 0x044b kn-IN
+(defwin32constant +sublang-kashmiri-sasia+                      #x02)    ; Kashmiri (South Asia)
+(defwin32constant +sublang-kashmiri-india+                      #x02)    ; For app compatibility only
+(defwin32constant +sublang-kazak-kazakhstan+                    #x01)    ; Kazakh (Kazakhstan) 0x043f kk-KZ
+(defwin32constant +sublang-khmer-cambodia+                      #x01)    ; Khmer (Cambodia) 0x0453 kh-KH
+(defwin32constant +sublang-kiche-guatemala+                     #x01)    ; K'iche (Guatemala)
+(defwin32constant +sublang-kinyarwanda-rwanda+                  #x01)    ; Kinyarwanda (Rwanda) 0x0487 rw-RW
+(defwin32constant +sublang-konkani-india+                       #x01)    ; Konkani (India) 0x0457 kok-IN
+(defwin32constant +sublang-korean+                              #x01)    ; Korean (Extended Wansung)
+(defwin32constant +sublang-kyrgyz-kyrgyzstan+                   #x01)    ; Kyrgyz (Kyrgyzstan) 0x0440 ky-KG
+(defwin32constant +sublang-lao-lao+                             #x01)    ; Lao (Lao PDR) 0x0454 lo-LA
+(defwin32constant +sublang-latvian-latvia+                      #x01)    ; Latvian (Latvia) 0x0426 lv-LV
+(defwin32constant +sublang-lithuanian+                          #x01)    ; Lithuanian
+(defwin32constant +sublang-lower-sorbian-germany+               #x02)    ; Lower Sorbian (Germany) 0x082e wee-DE
+(defwin32constant +sublang-luxembourgish-luxembourg+            #x01)    ; Luxembourgish (Luxembourg) 0x046e lb-LU
+(defwin32constant +sublang-macedonian-macedonia+                #x01)    ; Macedonian (Macedonia (FYROM)) 0x042f mk-MK
+(defwin32constant +sublang-malay-malaysia+                      #x01)    ; Malay (Malaysia)
+(defwin32constant +sublang-malay-brunei-darussalam+             #x02)    ; Malay (Brunei Darussalam)
+(defwin32constant +sublang-malayalam-india+                     #x01)    ; Malayalam (India (Malayalam Script) ) 0x044c ml-IN
+(defwin32constant +sublang-maltese-malta+                       #x01)    ; Maltese (Malta) 0x043a mt-MT
+(defwin32constant +sublang-maori-new-zealand+                   #x01)    ; Maori (New Zealand) 0x0481 mi-NZ
+(defwin32constant +sublang-mapudungun-chile+                    #x01)    ; Mapudungun (Chile) 0x047a arn-CL
+(defwin32constant +sublang-marathi-india+                       #x01)    ; Marathi (India) 0x044e mr-IN
+(defwin32constant +sublang-mohawk-mohawk+                       #x01)    ; Mohawk (Mohawk) 0x047c moh-CA
+(defwin32constant +sublang-mongolian-cyrillic-mongolia+         #x01)    ; Mongolian (Cyrillic, Mongolia)
+(defwin32constant +sublang-mongolian-prc+                       #x02)    ; Mongolian (PRC)
+(defwin32constant +sublang-nepali-india+                        #x02)    ; Nepali (India)
+(defwin32constant +sublang-nepali-nepal+                        #x01)    ; Nepali (Nepal) 0x0461 ne-NP
+(defwin32constant +sublang-norwegian-bokmal+                    #x01)    ; Norwegian (Bokmal)
+(defwin32constant +sublang-norwegian-nynorsk+                   #x02)    ; Norwegian (Nynorsk)
+(defwin32constant +sublang-occitan-france+                      #x01)    ; Occitan (France) 0x0482 oc-FR
+(defwin32constant +sublang-odia-india+                          #x01)    ; Odia (India (Odia Script)) 0x0448 or-IN
+(defwin32constant +sublang-oriya-india+                         #x01)    ; Deprecated: use SUBLANG_ODIA_INDIA instead
+(defwin32constant +sublang-pashto-afghanistan+                  #x01)    ; Pashto (Afghanistan)
+(defwin32constant +sublang-persian-iran+                        #x01)    ; Persian (Iran) 0x0429 fa-IR
+(defwin32constant +sublang-polish-poland+                       #x01)    ; Polish (Poland) 0x0415
+(defwin32constant +sublang-portuguese+                          #x02)    ; Portuguese
+(defwin32constant +sublang-portuguese-brazilian+                #x01)    ; Portuguese (Brazil)
+(defwin32constant +sublang-pular-senegal+                       #x02)    ; Deprecated: Use SUBLANG_FULAH_SENEGAL instead
+(defwin32constant +sublang-punjabi-india+                       #x01)    ; Punjabi (India (Gurmukhi Script)) 0x0446 pa-IN
+(defwin32constant +sublang-punjabi-pakistan+                    #x02)    ; Punjabi (Pakistan (Arabic Script)) 0x0846 pa-Arab-PK
+(defwin32constant +sublang-quechua-bolivia+                     #x01)    ; Quechua (Bolivia)
+(defwin32constant +sublang-quechua-ecuador+                     #x02)    ; Quechua (Ecuador)
+(defwin32constant +sublang-quechua-peru+                        #x03)    ; Quechua (Peru)
+(defwin32constant +sublang-romanian-romania+                    #x01)    ; Romanian (Romania) 0x0418
+(defwin32constant +sublang-romansh-switzerland+                 #x01)    ; Romansh (Switzerland) 0x0417 rm-CH
+(defwin32constant +sublang-russian-russia+                      #x01)    ; Russian (Russia) 0x0419
+(defwin32constant +sublang-sakha-russia+                        #x01)    ; Sakha (Russia) 0x0485 sah-RU
+(defwin32constant +sublang-sami-northern-norway+                #x01)    ; Northern Sami (Norway)
+(defwin32constant +sublang-sami-northern-sweden+                #x02)    ; Northern Sami (Sweden)
+(defwin32constant +sublang-sami-northern-finland+               #x03)    ; Northern Sami (Finland)
+(defwin32constant +sublang-sami-lule-norway+                    #x04)    ; Lule Sami (Norway)
+(defwin32constant +sublang-sami-lule-sweden+                    #x05)    ; Lule Sami (Sweden)
+(defwin32constant +sublang-sami-southern-norway+                #x06)    ; Southern Sami (Norway)
+(defwin32constant +sublang-sami-southern-sweden+                #x07)    ; Southern Sami (Sweden)
+(defwin32constant +sublang-sami-skolt-finland+                  #x08)    ; Skolt Sami (Finland)
+(defwin32constant +sublang-sami-inari-finland+                  #x09)    ; Inari Sami (Finland)
+(defwin32constant +sublang-sanskrit-india+                      #x01)    ; Sanskrit (India) 0x044f sa-IN
+(defwin32constant +sublang-scottish-gaelic+                     #x01)    ; Scottish Gaelic (United Kingdom) 0x0491 gd-GB
+(defwin32constant +sublang-serbian-bosnia-herzegovina-latin+    #x06)    ; Serbian (Bosnia and Herzegovina - Latin)
+(defwin32constant +sublang-serbian-bosnia-herzegovina-cyrillic+ #x07)    ; Serbian (Bosnia and Herzegovina - Cyrillic)
+(defwin32constant +sublang-serbian-montenegro-latin+            #x0b)    ; Serbian (Montenegro - Latn)
+(defwin32constant +sublang-serbian-montenegro-cyrillic+         #x0c)    ; Serbian (Montenegro - Cyrillic)
+(defwin32constant +sublang-serbian-serbia-latin+                #x09)    ; Serbian (Serbia - Latin)
+(defwin32constant +sublang-serbian-serbia-cyrillic+             #x0a)    ; Serbian (Serbia - Cyrillic)
+(defwin32constant +sublang-serbian-croatia+                     #x01)    ; Croatian (Croatia) 0x041a hr-HR
+(defwin32constant +sublang-serbian-latin+                       #x02)    ; Serbian (Latin)
+(defwin32constant +sublang-serbian-cyrillic+                    #x03)    ; Serbian (Cyrillic)
+(defwin32constant +sublang-sindhi-india+                        #x01)    ; Sindhi (India) reserved 0x0459
+(defwin32constant +sublang-sindhi-pakistan+                     #x02)    ; Sindhi (Pakistan) 0x0859 sd-Arab-PK
+(defwin32constant +sublang-sindhi-afghanistan+                  #x02)    ; For app compatibility only
+(defwin32constant +sublang-sinhalese-sri-lanka+                 #x01)    ; Sinhalese (Sri Lanka)
+(defwin32constant +sublang-sotho-northern-south-africa+         #x01)    ; Northern Sotho (South Africa)
+(defwin32constant +sublang-slovak-slovakia+                     #x01)    ; Slovak (Slovakia) 0x041b sk-SK
+(defwin32constant +sublang-slovenian-slovenia+                  #x01)    ; Slovenian (Slovenia) 0x0424 sl-SI
+(defwin32constant +sublang-spanish+                             #x01)    ; Spanish (Castilian)
+(defwin32constant +sublang-spanish-mexican+                     #x02)    ; Spanish (Mexico)
+(defwin32constant +sublang-spanish-modern+                      #x03)    ; Spanish (Modern)
+(defwin32constant +sublang-spanish-guatemala+                   #x04)    ; Spanish (Guatemala)
+(defwin32constant +sublang-spanish-costa-rica+                  #x05)    ; Spanish (Costa Rica)
+(defwin32constant +sublang-spanish-panama+                      #x06)    ; Spanish (Panama)
+(defwin32constant +sublang-spanish-dominican-republic+          #x07)    ; Spanish (Dominican Republic)
+(defwin32constant +sublang-spanish-venezuela+                   #x08)    ; Spanish (Venezuela)
+(defwin32constant +sublang-spanish-colombia+                    #x09)    ; Spanish (Colombia)
+(defwin32constant +sublang-spanish-peru+                        #x0a)    ; Spanish (Peru)
+(defwin32constant +sublang-spanish-argentina+                   #x0b)    ; Spanish (Argentina)
+(defwin32constant +sublang-spanish-ecuador+                     #x0c)    ; Spanish (Ecuador)
+(defwin32constant +sublang-spanish-chile+                       #x0d)    ; Spanish (Chile)
+(defwin32constant +sublang-spanish-uruguay+                     #x0e)    ; Spanish (Uruguay)
+(defwin32constant +sublang-spanish-paraguay+                    #x0f)    ; Spanish (Paraguay)
+(defwin32constant +sublang-spanish-bolivia+                     #x10)    ; Spanish (Bolivia)
+(defwin32constant +sublang-spanish-el-salvador+                 #x11)    ; Spanish (El Salvador)
+(defwin32constant +sublang-spanish-honduras+                    #x12)    ; Spanish (Honduras)
+(defwin32constant +sublang-spanish-nicaragua+                   #x13)    ; Spanish (Nicaragua)
+(defwin32constant +sublang-spanish-puerto-rico+                 #x14)    ; Spanish (Puerto Rico)
+(defwin32constant +sublang-spanish-us+                          #x15)    ; Spanish (United States)
+(defwin32constant +sublang-swahili-kenya+                       #x01)    ; Swahili (Kenya) 0x0441 sw-KE
+(defwin32constant +sublang-swedish+                             #x01)    ; Swedish
+(defwin32constant +sublang-swedish-finland+                     #x02)    ; Swedish (Finland)
+(defwin32constant +sublang-syriac-syria+                        #x01)    ; Syriac (Syria) 0x045a syr-SY
+(defwin32constant +sublang-tajik-tajikistan+                    #x01)    ; Tajik (Tajikistan) 0x0428 tg-TJ-Cyrl
+(defwin32constant +sublang-tamazight-algeria-latin+             #x02)    ; Tamazight (Latin, Algeria) 0x085f tzm-Latn-DZ
+(defwin32constant +sublang-tamazight-morocco-tifinagh+          #x04)    ; Tamazight (Tifinagh) 0x105f tzm-Tfng-MA
+(defwin32constant +sublang-tamil-india+                         #x01)    ; Tamil (India)
+(defwin32constant +sublang-tamil-sri-lanka+                     #x02)    ; Tamil (Sri Lanka) 0x0849 ta-LK
+(defwin32constant +sublang-tatar-russia+                        #x01)    ; Tatar (Russia) 0x0444 tt-RU
+(defwin32constant +sublang-telugu-india+                        #x01)    ; Telugu (India (Telugu Script)) 0x044a te-IN
+(defwin32constant +sublang-thai-thailand+                       #x01)    ; Thai (Thailand) 0x041e th-TH
+(defwin32constant +sublang-tibetan-prc+                         #x01)    ; Tibetan (PRC)
+(defwin32constant +sublang-tigrigna-eritrea+                    #x02)    ; Tigrigna (Eritrea)
+(defwin32constant +sublang-tigrinya-eritrea+                    #x02)    ; Tigrinya (Eritrea) 0x0873 ti-ER (preferred spelling)
+(defwin32constant +sublang-tigrinya-ethiopia+                   #x01)    ; Tigrinya (Ethiopia) 0x0473 ti-ET
+(defwin32constant +sublang-tswana-botswana+                     #x02)    ; Setswana / Tswana (Botswana) 0x0832 tn-BW
+(defwin32constant +sublang-tswana-south-africa+                 #x01)    ; Setswana / Tswana (South Africa) 0x0432 tn-ZA
+(defwin32constant +sublang-turkish-turkey+                      #x01)    ; Turkish (Turkey) 0x041f tr-TR
+(defwin32constant +sublang-turkmen-turkmenistan+                #x01)    ; Turkmen (Turkmenistan) 0x0442 tk-TM
+(defwin32constant +sublang-uighur-prc+                          #x01)    ; Uighur (PRC) 0x0480 ug-CN
+(defwin32constant +sublang-ukrainian-ukraine+                   #x01)    ; Ukrainian (Ukraine) 0x0422 uk-UA
+(defwin32constant +sublang-upper-sorbian-germany+               #x01)    ; Upper Sorbian (Germany) 0x042e wen-DE
+(defwin32constant +sublang-urdu-pakistan+                       #x01)    ; Urdu (Pakistan)
+(defwin32constant +sublang-urdu-india+                          #x02)    ; Urdu (India)
+(defwin32constant +sublang-uzbek-latin+                         #x01)    ; Uzbek (Latin)
+(defwin32constant +sublang-uzbek-cyrillic+                      #x02)    ; Uzbek (Cyrillic)
+(defwin32constant +sublang-valencian-valencia+                  #x02)    ; Valencian (Valencia) 0x0803 ca-ES-Valencia
+(defwin32constant +sublang-vietnamese-vietnam+                  #x01)    ; Vietnamese (Vietnam) 0x042a vi-VN
+(defwin32constant +sublang-welsh-united-kingdom+                #x01)    ; Welsh (United Kingdom) 0x0452 cy-GB
+(defwin32constant +sublang-wolof-senegal+                       #x01)    ; Wolof (Senegal)
+(defwin32constant +sublang-xhosa-south-africa+                  #x01)    ; isiXhosa / Xhosa (South Africa) 0x0434 xh-ZA
+(defwin32constant +sublang-yakut-russia+                        #x01)    ; Deprecated: use SUBLANG_SAKHA_RUSSIA instead
+(defwin32constant +sublang-yi-prc+                              #x01)    ; Yi (PRC)) 0x0478
+(defwin32constant +sublang-yoruba-nigeria+                      #x01)    ; Yoruba (Nigeria) 046a yo-NG
+(defwin32constant +sublang-zulu-south-africa+                   #x01)    ; isiZulu / Zulu (South Africa) 0x0435 zu-ZA
+
+(defwin32constant +format-message-ignore-inserts+  #x00000200)
+(defwin32constant +format-message-from-string+     #x00000400)
+(defwin32constant +format-message-from-hmodule+    #x00000800)
+(defwin32constant +format-message-from-system+     #x00001000)
+(defwin32constant +format-message-argument-array+  #x00002000)
+(defwin32constant +format-message-max-width-mask+  #x000000FF)
+(defwin32constant +format-message-allocate-buffer+ #x00000100)
+
 (defwin32struct unicode-string
   (length ushort)
   (maximum-length ushort)
@@ -3016,6 +3413,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("FlushFileBuffers" flush-file-buffers kernel32) bool
   (hfile handle))
 
+(defwin32fun ("FormatMessageW" format-message kernel32) dword
+  (flags dword)
+  (source (:pointer :void))
+  (message-id dword)
+  (language-id dword)
+  (buffer lpwstr)
+  (size dword)
+  (arguments :pointer))
+
 (defwin32fun ("GetACP" get-acp kernel32) uint)
 
 (defwin32fun ("GetClassLongW" get-class-long user32) dword
@@ -3310,6 +3716,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (bytes size-t)
   (flags uint))
 
+(defwin32-lispfun make-lang-id (p s)
+  (declare (type (unsigned-byte 16) p s))
+  (logior (ash s 10) p))
+
 (defwin32fun ("MoveFileW" move-file kernel32) bool
   (existing-file-name lpctstr)
   (new-file-name lpctstr))
@@ -3366,6 +3776,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (msg uint)
   (wparam wparam)
   (lparam lparam))
+
+(defwin32-lispfun primary-lang-id (lgid)
+  (ldb (cl:byte 10 0) lgid))
+
+(defwin32-lispfun sub-lang-id (lgid)
+  (ldb (cl:byte 6 10) lgid))
 
 (defwin32fun ("QueryAuxiliaryCounterFrequency" query-auxiliary-counter-frequency kernel32) hresult
   (auxiliary-counter-frequency (:pointer ulonglong)))
