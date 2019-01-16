@@ -272,6 +272,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32type access-mask dword)
 
+(defwin32type dll-directory-cookie :pointer)
+(defwin32type far-proc :pointer)
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
     "Makes it easier to declare certain high values which in C are int32, in hex.
@@ -2775,6 +2778,25 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +format-message-max-width-mask+  #x000000FF)
 (defwin32constant +format-message-allocate-buffer+ #x00000100)
 
+(defwin32constant +find-startswith+           #x00100000)  ; see if value is at the beginning of source
+(defwin32constant +find-endswith+             #x00200000)  ; see if value is at the end of source
+(defwin32constant +find-fromstart+            #x00400000)  ; look for value in source, starting at the beginning
+(defwin32constant +find-fromend+              #x00800000)  ; look for value in source, starting at the end
+
+(defwin32constant +dont-resolve-dll-references+         #x00000001)
+(defwin32constant +load-library-as-datafile+            #x00000002)
+;;  reserved for internal LOAD_PACKAGED_LIBRARY: 0x00000004
+(defwin32constant +load-with-altered-search-path+       #x00000008)
+(defwin32constant +load-ignore-code-authz-level+        #x00000010)
+(defwin32constant +load-library-as-image-resource+      #x00000020)
+(defwin32constant +load-library-as-datafile-exclusive+  #x00000040)
+(defwin32constant +load-library-require-signed-target+  #x00000080)
+(defwin32constant +load-library-search-dll-load-dir+    #x00000100)
+(defwin32constant +load-library-search-application-dir+ #x00000200)
+(defwin32constant +load-library-search-user-dirs+       #x00000400)
+(defwin32constant +load-library-search-system32+        #x00000800)
+(defwin32constant +load-library-search-default-dirs+    #x00001000)
+
 (defwin32struct unicode-string
   (length ushort)
   (maximum-length ushort)
@@ -3162,6 +3184,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (daylight-date systemtime)
   (daylight-bias long))
 
+(defwin32fun ("AddDllDirectory" add-dll-directory kernel32) dll-directory-cookie
+  (new-directory pcwstr))
+
 (defwin32fun ("Beep" beep kernel32) bool
   (freq dword)
   (duration dword))
@@ -3360,6 +3385,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("DestroyWindow" destroy-window user32) bool
   (hwnd hwnd))
 
+(defwin32fun ("DisableThreadLibraryCalls" disable-thread-library-calls kernel32) bool
+  (lib-module hmodule))
+
 (defwin32fun ("DisconnectNamedPipe" disconnect-named-pipe kernel32) bool
   (hnamed-pipe handle))
 
@@ -3400,6 +3428,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (file-time (:pointer filetime))
   (system-time (:pointer systemtime)))
 
+(defwin32fun ("FindStringOrdinal" find-string-ordinal kernel32) :int
+  (find-string-ordinal-flags dword)
+  (string-source lpcwstr)
+  (ch-source :int)
+  (string-value lpcwstr)
+  (ch-value :int)
+  (ignore-case bool))
+
 (defwin32fun ("FindWindowW" find-window user32) hwnd
   (wndclass-name lpcwstr)
   (window-name lpcwstr))
@@ -3421,6 +3457,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (buffer lpwstr)
   (size dword)
   (arguments :pointer))
+
+(defwin32fun ("FreeLibrary" free-library kernel32) bool
+  (lib-module hmodule))
+
+(defwin32fun ("FreeLibraryAndExitThread" free-library-and-exit-thread kernel32) :void
+  (lib-module hmodule)
+  (exit-code dword))
 
 (defwin32fun ("GetACP" get-acp kernel32) uint)
 
@@ -3516,8 +3559,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetMessageTime" get-message-time user32) long)
 
+(defwin32fun ("GetModuleFileNameW" get-module-file-name kernel32) dword
+  (module hmodule)
+  (buffer lptstr)
+  (size dword))
+
 (defwin32fun ("GetModuleHandleW" get-module-handle kernel32) hmodule
   (module lpcwstr))
+
+(defwin32fun ("GetModuleHandleExW" get-module-handle-ex kernel32) bool
+  (flags dword)
+  (module-name lpctstr)
+  (module (:pointer hmodule)))
 
 (defwin32fun ("GetNamedPipeClientComputerNameA" get-named-pipe-client-computer-name kernel32) bool
   (pipe handle)
@@ -3567,6 +3620,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetPixelFormat" get-pixel-format gdi32) :int
   (dc hdc))
+
+(defwin32fun ("GetProcAddress" get-proc-address kernel32) far-proc
+  (module hmodule)
+  (proc-name lpcstr))
+
+(defwin32-lispfun get-proc-address* (module ordinal)
+  (declare (type (unsigned-byte 16) ordinal))
+  (get-proc-address module (cffi:make-pointer ordinal)))
 
 (defwin32fun ("GetShellWindow" get-shell-window user32) hwnd)
 
@@ -3880,6 +3941,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (dc hdc))
 
+(defwin32fun ("RemoveDllDirectory" remove-dll-directory kernel32) bool
+  (cookie dll-directory-cookie))
+
 (defwin32fun ("ReplyMessage" reply-message user32) bool
   (result lresult))
 
@@ -3962,6 +4026,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SetCursorPos" set-cursor-pos user32) bool
   (x :int)
   (y :int))
+
+(defwin32fun ("SetDefaultDllDirectories" set-default-dll-directories kernel32) bool
+  (directory-flags dword))
 
 (defwin32fun ("SetDynamicTimeZoneInformation" set-dynamic-time-zone-information kernel32) bool
   (time-zone-information (:pointer dynamic-time-zone-information)))
