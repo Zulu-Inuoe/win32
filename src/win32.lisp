@@ -293,6 +293,28 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
   (defun %as-dword (value)
     (ldb (cl:byte 32 0) value)))
+
+;; Local Memory Flags
+(defwin32constant +lmem-fixed+          #x0000)
+(defwin32constant +lmem-moveable+       #x0002)
+(defwin32constant +lmem-nocompact+      #x0010)
+(defwin32constant +lmem-nodiscard+      #x0020)
+(defwin32constant +lmem-zeroinit+       #x0040)
+(defwin32constant +lmem-modify+         #x0080)
+(defwin32constant +lmem-discardable+    #x0F00)
+(defwin32constant +lmem-valid-flags+    #x0F72)
+(defwin32constant +lmem-invalid-handle+ #x8000)
+
+(defwin32constant +lhnd+                (logior +lmem-moveable+ +lmem-zeroinit+))
+(defwin32constant +lptr+                (logior +lmem-fixed+  +lmem-zeroinit+))
+
+(defwin32constant +nonzerolhnd+         +lmem-moveable+)
+(defwin32constant +nonzerolptr+         +lmem-fixed+)
+
+;; Flags returned by LocalFlags (in addition to LMEM_DISCARDABLE)
+(defwin32constant +lmem-discarded+      #x4000)
+(defwin32constant +lmem-lockcount+      #x00FF)
+
 ;;CreateFile Creation Disposition
 (defwin32constant +create-new+        1)
 (defwin32constant +create-always+     2)
@@ -3269,9 +3291,24 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (instance hinstance)
   (name lpctstr))
 
+(defwin32fun ("LocalAlloc" local-alloc kernel32) hlocal
+  (flags uint)
+  (bytes size-t))
+
+(defwin32-lispfun local-discard (h)
+  (local-re-alloc h 0 +lmem-moveable+))
+
 (defwin32fun ("LocalFileTimeToFileTime" local-file-time-to-file-time kernel32) bool
   (local-file-time (:pointer filetime))
   (file-time (:pointer filetime)))
+
+(defwin32fun ("LocalFree" local-free kernel32) hlocal
+  (hmem hlocal))
+
+(defwin32fun ("LocalReAlloc" local-re-alloc kernel32) hlocal
+  (hmem hlocal)
+  (bytes size-t)
+  (flags uint))
 
 (defwin32fun ("MoveFileW" move-file kernel32) bool
   (existing-file-name lpctstr)
