@@ -297,6 +297,86 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (defun %as-dword (value)
     (ldb (cl:byte 32 0) value)))
 
+;;
+;; _WIN32_WINNT version constants
+;;
+(defwin32constant +-win32-winnt-nt4+                    #x0400)
+(defwin32constant +-win32-winnt-win2k+                  #x0500)
+(defwin32constant +-win32-winnt-winxp+                  #x0501)
+(defwin32constant +-win32-winnt-ws03+                   #x0502)
+(defwin32constant +-win32-winnt-win6+                   #x0600)
+(defwin32constant +-win32-winnt-vista+                  #x0600)
+(defwin32constant +-win32-winnt-ws08+                   #x0600)
+(defwin32constant +-win32-winnt-longhorn+               #x0600)
+(defwin32constant +-win32-winnt-win7+                   #x0601)
+(defwin32constant +-win32-winnt-win8+                   #x0602)
+(defwin32constant +-win32-winnt-winblue+                #x0603)
+
+;;
+
+;;
+;; RtlVerifyVersionInfo() conditions
+;;
+
+(defwin32constant +ver-equal+                       1)
+(defwin32constant +ver-greater+                     2)
+(defwin32constant +ver-greater-equal+               3)
+(defwin32constant +ver-less+                        4)
+(defwin32constant +ver-less-equal+                  5)
+(defwin32constant +ver-and+                         6)
+(defwin32constant +ver-or+                          7)
+
+(defwin32constant +ver-condition-mask+              7)
+(defwin32constant +ver-num-bits-per-condition-mask+ 3)
+
+;;
+;; RtlVerifyVersionInfo() type mask bits
+;;
+
+(defwin32constant +ver-minorversion+                #x0000001)
+(defwin32constant +ver-majorversion+                #x0000002)
+(defwin32constant +ver-buildnumber+                 #x0000004)
+(defwin32constant +ver-platformid+                  #x0000008)
+(defwin32constant +ver-servicepackminor+            #x0000010)
+(defwin32constant +ver-servicepackmajor+            #x0000020)
+(defwin32constant +ver-suitename+                   #x0000040)
+(defwin32constant +ver-product-type+                #x0000080)
+
+;;
+;; RtlVerifyVersionInfo() os product type values
+;;
+
+(defwin32constant +ver-nt-workstation+              #x0000001)
+(defwin32constant +ver-nt-domain-controller+        #x0000002)
+(defwin32constant +ver-nt-server+                   #x0000003)
+
+(defwin32constant +ver-server-nt+                       #x80000000)
+(defwin32constant +ver-workstation-nt+                  #x40000000)
+(defwin32constant +ver-suite-smallbusiness+             #x00000001)
+(defwin32constant +ver-suite-enterprise+                #x00000002)
+(defwin32constant +ver-suite-backoffice+                #x00000004)
+(defwin32constant +ver-suite-communications+            #x00000008)
+(defwin32constant +ver-suite-terminal+                  #x00000010)
+(defwin32constant +ver-suite-smallbusiness-restricted+  #x00000020)
+(defwin32constant +ver-suite-embeddednt+                #x00000040)
+(defwin32constant +ver-suite-datacenter+                #x00000080)
+(defwin32constant +ver-suite-singleuserts+              #x00000100)
+(defwin32constant +ver-suite-personal+                  #x00000200)
+(defwin32constant +ver-suite-blade+                     #x00000400)
+(defwin32constant +ver-suite-embedded-restricted+       #x00000800)
+(defwin32constant +ver-suite-security-appliance+        #x00001000)
+(defwin32constant +ver-suite-storage-server+            #x00002000)
+(defwin32constant +ver-suite-compute-server+            #x00004000)
+(defwin32constant +ver-suite-wh-server+                 #x00008000)
+
+;;
+;; dwPlatformId defines:
+;;
+
+(defwin32constant +ver-platform-win32s+             0)
+(defwin32constant +ver-platform-win32-windows+      1)
+(defwin32constant +ver-platform-win32-nt+           2)
+
 ;; Local Memory Flags
 (defwin32constant +lmem-fixed+          #x0000)
 (defwin32constant +lmem-moveable+       #x0002)
@@ -2836,6 +2916,19 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +processor-architecture-unknown+ #xFFFF)
 
+(defwin32struct os-version-info-ex
+  (os-version-info-size dword)
+  (major-version dword)
+  (minor-version dword)
+  (build-number dword)
+  (platform-id dword)
+  (csd-version wchar :count 128)
+  (service-pack-major word)
+  (service-pack-minor word)
+  (suite-mask word)
+  (product-type byte)
+  (reserved byte))
+
 (defwin32struct system-info
   (processor-architecture word)
   (reserved word)
@@ -3774,6 +3867,89 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("IsWindow" is-window user32) bool
   (hwnd hwnd))
 
+(defwin32-lispfun is-windows-version-or-greater (major minor service-pack)
+  (declare (type (unsigned-byte 16) major minor service-pack))
+  (cffi:with-foreign-object (osvi 'os-version-info-ex)
+    (cffi:with-foreign-slots ((os-version-info-size
+                               major-version minor-version service-pack-major)
+                              osvi
+                              os-version-info-ex)
+      (setf os-version-info-size (cffi:foreign-type-size 'os-version-info-ex)
+            major-version major
+            minor-version minor
+            service-pack-major service-pack))
+
+    (if (zerop
+         (verify-version-info osvi
+                              (logior +ver-majorversion+ +ver-minorversion+ +ver-servicepackmajor+)
+                              (ver-set-condition-mask
+                               (ver-set-condition-mask
+                                (ver-set-condition-mask 0 +ver-majorversion+ +ver-greater-equal+)
+                                +ver-minorversion+ +ver-greater-equal+)
+                               +ver-servicepackmajor+ +ver-greater-equal+)))
+        0
+        1)))
+
+(defwin32-lispfun is-windows-xp-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-winxp+) (ldb (cl:byte 8 0) +-win32-winnt-winxp+) 0))
+
+(defwin32-lispfun is-windows-xp-sp1-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-winxp+) (ldb (cl:byte 8 0) +-win32-winnt-winxp+) 1))
+
+(defwin32-lispfun is-windows-xp-sp2-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-winxp+) (ldb (cl:byte 8 0) +-win32-winnt-winxp+) 2))
+
+(defwin32-lispfun is-windows-xp-sp3-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-winxp+) (ldb (cl:byte 8 0) +-win32-winnt-winxp+) 3))
+
+(defwin32-lispfun is-windows-vista-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-vista+) (ldb (cl:byte 8 0) +-win32-winnt-vista+) 0))
+
+(defwin32-lispfun is-windows-vista-sp1-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-vista+) (ldb (cl:byte 8 0) +-win32-winnt-vista+) 1))
+
+(defwin32-lispfun is-windows-vista-sp2-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-vista+) (ldb (cl:byte 8 0) +-win32-winnt-vista+) 2))
+
+(defwin32-lispfun is-windows-7-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-win7+) (ldb (cl:byte 8 0) +-win32-winnt-win7+) 0))
+
+(defwin32-lispfun is-windows-7-sp1-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-win7+) (ldb (cl:byte 8 0) +-win32-winnt-win7+) 1))
+
+(defwin32-lispfun is-windows-8-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-win8+) (ldb (cl:byte 8 0) +-win32-winnt-win8+) 0))
+
+(defwin32-lispfun is-windows-8-point1-or-greater ()
+  (is-windows-version-or-greater
+   (ldb (cl:byte 8 8) +-win32-winnt-winblue+) (ldb (cl:byte 8 0) +-win32-winnt-winblue+) 0))
+
+(defwin32-lispfun is-windows-server ()
+  (cffi:with-foreign-object (osvi 'os-version-info-ex)
+    (cffi:with-foreign-slots ((os-version-info-size
+                               product-type)
+                              osvi
+                              os-version-info-ex)
+      (setf os-version-info-size (cffi:foreign-type-size 'os-version-info-ex)
+            product-type +ver-nt-workstation+))
+
+    (if (zerop
+         (verify-version-info osvi
+                              +ver-product-type+
+                              +ver-equal+))
+        0
+        1)))
+
 (defwin32fun ("LoadCursorW" load-cursor user32) hcursor
   (instance hinstance)
   (name lpctstr))
@@ -4320,6 +4496,19 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (sub-block lpctstr)
   (buffer :pointer)
   (len (:pointer uint)))
+
+(defwin32-lispfun ver-set-condition (mask type-mask condition)
+  (ver-set-condition-mask mask type-mask condition))
+
+(defwin32fun ("VerSetConditionMask" ver-set-condition-mask kernel32) ulonglong
+  (condition-mask ulonglong)
+  (type-mask dword)
+  (condition byte))
+
+(defwin32fun ("VerifyVersionInfoW" verify-version-info kernel32) bool
+  (version-information (:pointer os-version-info-ex))
+  (type-mask dword)
+  (condition-mask dwordlong))
 
 (defwin32fun ("WaitForSingleObject" wait-for-single-object kernel32) dword
   (handle handle)
