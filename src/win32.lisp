@@ -3816,6 +3816,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (kernel-time (:pointer filetime))
   (user-time (:pointer filetime)))
 
+(defwin32fun ("GetSystemWow64DirectoryW" get-system-wow-64-directory kernel32) uint
+  (buffer lpwstr)
+  (size uint))
+
 (defwin32fun ("GetTickCount" get-tick-count kernel32) dword)
 
 (defwin32fun ("GetTickCount64" get-tick-count-64 kernel32) ulonglong)
@@ -3949,6 +3953,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
                               +ver-equal+))
         0
         1)))
+
+(defwin32fun ("IsWow64Process" is-wow-64-process kernel32) bool
+  (process handle)
+  (wow-64-process (:pointer bool)))
 
 (defwin32fun ("LoadCursorW" load-cursor user32) hcursor
   (instance hinstance)
