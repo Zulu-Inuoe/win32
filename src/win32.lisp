@@ -2797,6 +2797,58 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +load-library-search-system32+        #x00000800)
 (defwin32constant +load-library-search-default-dirs+    #x00001000)
 
+(defwin32constant +processor-intel-386+     386)
+(defwin32constant +processor-intel-486+     486)
+(defwin32constant +processor-intel-pentium+ 586)
+(defwin32constant +processor-intel-ia64+    2200)
+(defwin32constant +processor-amd-x8664+     8664)
+(defwin32constant +processor-mips-r4000+    4000)    ; incl R4101 & R3910 for Windows CE
+(defwin32constant +processor-alpha-21064+   21064)
+(defwin32constant +processor-ppc-601+       601)
+(defwin32constant +processor-ppc-603+       603)
+(defwin32constant +processor-ppc-604+       604)
+(defwin32constant +processor-ppc-620+       620)
+(defwin32constant +processor-hitachi-sh3+   10003)   ; Windows CE
+(defwin32constant +processor-hitachi-sh3e+  10004)   ; Windows CE
+(defwin32constant +processor-hitachi-sh4+   10005)   ; Windows CE
+(defwin32constant +processor-motorola-821+  821)     ; Windows CE
+(defwin32constant +processor-shx-sh3+       103)     ; Windows CE
+(defwin32constant +processor-shx-sh4+       104)     ; Windows CE
+(defwin32constant +processor-strongarm+     2577)    ; Windows CE - 0xA11
+(defwin32constant +processor-arm720+        1824)    ; Windows CE - 0x720
+(defwin32constant +processor-arm820+        2080)    ; Windows CE - 0x820
+(defwin32constant +processor-arm920+        2336)    ; Windows CE - 0x920
+(defwin32constant +processor-arm-7tdmi+     70001)   ; Windows CE
+(defwin32constant +processor-optil+         #x494f)  ; MSIL
+
+(defwin32constant +processor-architecture-intel+            0)
+(defwin32constant +processor-architecture-mips+             1)
+(defwin32constant +processor-architecture-alpha+            2)
+(defwin32constant +processor-architecture-ppc+              3)
+(defwin32constant +processor-architecture-shx+              4)
+(defwin32constant +processor-architecture-arm+              5)
+(defwin32constant +processor-architecture-ia64+             6)
+(defwin32constant +processor-architecture-alpha64+          7)
+(defwin32constant +processor-architecture-msil+             8)
+(defwin32constant +processor-architecture-amd64+            9)
+(defwin32constant +processor-architecture-ia32-on-win64+    10)
+(defwin32constant +processor-architecture-neutral+          11)
+
+(defwin32constant +processor-architecture-unknown+ #xFFFF)
+
+(defwin32struct system-info
+  (processor-architecture word)
+  (reserved word)
+  (page-size dword)
+  (minimum-application-address :pointer)
+  (maximum-application-address :pointer)
+  (active-processor-mask dword-ptr)
+  (number-of-processors dword)
+  (processor-type dword)
+  (allocation-granularity dword)
+  (processor-level word)
+  (processor-revision word))
+
 (defwin32struct unicode-string
   (length ushort)
   (maximum-length ushort)
@@ -3609,6 +3661,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (pipe handle)
   (server-session-id (:pointer ulong)))
 
+(defwin32fun ("GetNativeSystemInfo" get-native-system-info kernel32) :void
+  (system-info (:pointer system-info)))
+
 (defwin32fun ("GetOverlappedResult" get-overlapped-result kernel32) bool
   (file handle)
   (overlapped (:pointer overlapped))
@@ -3642,6 +3697,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetSysColorBrush" get-sys-color-brush user32) hbrush
   (index :int))
+
+(defwin32fun ("GetSystemInfo" get-system-info kernel32) :void
+  (system-info (:pointer system-info)))
 
 (defwin32fun ("GetSystemMetrics" get-system-metrics user32) :int
   (index :int))
