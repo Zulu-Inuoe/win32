@@ -22,6 +22,9 @@
 (define-foreign-library user32
   (:win32 "User32.dll"))
 
+(define-foreign-library shell32
+  (:win32 "Shell32.dll"))
+
 (define-foreign-library gdi32
   (:win32 "Gdi32.dll"))
 
@@ -36,8 +39,9 @@
 
 (use-foreign-library api-ms-win-core-version-l1-1-0)
 (use-foreign-library api-ms-win-core-localization-l1-2-1)
-(use-foreign-library user32)
 (use-foreign-library kernel32)
+(use-foreign-library user32)
+(use-foreign-library shell32)
 (use-foreign-library gdi32)
 (use-foreign-library opengl32)
 (use-foreign-library advapi32)
@@ -712,8 +716,34 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +sw-show+ 5)
 
-(defvar +idi-application+ (make-pointer 32512))
-(defvar +idc-arrow+ (make-pointer 32512))
+(defwin32constant +idi-application+     (make-pointer 32512))
+(defwin32constant +idi-hand+            (make-pointer 32513))
+(defwin32constant +idi-question+        (make-pointer 32514))
+(defwin32constant +idi-exclamation+     (make-pointer 32515))
+(defwin32constant +idi-asterisk+        (make-pointer 32516))
+(defwin32constant +idi-winlogo+         (make-pointer 32517))
+(defwin32constant +idi-shield+          (make-pointer 32518))
+
+(defwin32constant +idi-warning+     +idi-exclamation+)
+(defwin32constant +idi-error+       +idi-hand+)
+(defwin32constant +idi-information+ +idi-asterisk+)
+
+(defwin32constant +idc-arrow+           (make-pointer 32512))
+(defwin32constant +idc-ibeam+           (make-pointer 32513))
+(defwin32constant +idc-wait+            (make-pointer 32514))
+(defwin32constant +idc-cross+           (make-pointer 32515))
+(defwin32constant +idc-uparrow+         (make-pointer 32516))
+(defwin32constant +idc-size+            (make-pointer 32640)) ; OBSOLETE: use IDC_SIZEALL
+(defwin32constant +idc-icon+            (make-pointer 32641)) ; OBSOLETE: use IDC_ARROW
+(defwin32constant +idc-sizenwse+        (make-pointer 32642))
+(defwin32constant +idc-sizenesw+        (make-pointer 32643))
+(defwin32constant +idc-sizewe+          (make-pointer 32644))
+(defwin32constant +idc-sizens+          (make-pointer 32645))
+(defwin32constant +idc-sizeall+         (make-pointer 32646))
+(defwin32constant +idc-no+              (make-pointer 32648)) ; /*not in win3.1 */
+(defwin32constant +idc-hand+            (make-pointer 32649))
+(defwin32constant +idc-appstarting+     (make-pointer 32650)) ; /*not in win3.1 */
+(defwin32constant +idc-help+            (make-pointer 32651))
 
 (defwin32constant +white-brush+ 0)
 (defwin32constant +black-brush+ 4)
@@ -2916,6 +2946,142 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +processor-architecture-unknown+ #xFFFF)
 
+(defwin32constant +mf-insert+           #x00000000)
+(defwin32constant +mf-change+           #x00000080)
+(defwin32constant +mf-append+           #x00000100)
+(defwin32constant +mf-delete+           #x00000200)
+(defwin32constant +mf-remove+           #x00001000)
+
+(defwin32constant +mf-bycommand+        #x00000000)
+(defwin32constant +mf-byposition+       #x00000400)
+
+(defwin32constant +mf-separator+        #x00000800)
+
+(defwin32constant +mf-enabled+          #x00000000)
+(defwin32constant +mf-grayed+           #x00000001)
+(defwin32constant +mf-disabled+         #x00000002)
+
+(defwin32constant +mf-unchecked+        #x00000000)
+(defwin32constant +mf-checked+          #x00000008)
+(defwin32constant +mf-usecheckbitmaps+  #x00000200)
+
+(defwin32constant +mf-string+           #x00000000)
+(defwin32constant +mf-bitmap+           #x00000004)
+(defwin32constant +mf-ownerdraw+        #x00000100)
+
+(defwin32constant +mf-popup+            #x00000010)
+(defwin32constant +mf-menubarbreak+     #x00000020)
+(defwin32constant +mf-menubreak+        #x00000040)
+
+(defwin32constant +mf-unhilite+         #x00000000)
+(defwin32constant +mf-hilite+           #x00000080)
+
+
+(defwin32constant +mf-default+          #x00001000)
+
+(defwin32constant +mf-sysmenu+          #x00002000)
+(defwin32constant +mf-help+             #x00004000)
+
+(defwin32constant +mf-rightjustify+     #x00004000)
+
+
+(defwin32constant +mf-mouseselect+      #x00008000)
+
+(defwin32constant +mf-end+              #x00000080) ; Obsolete -- only used by old RES files
+
+(defwin32constant +nim-add+         #x00000000)
+(defwin32constant +nim-modify+      #x00000001)
+(defwin32constant +nim-delete+      #x00000002)
+(defwin32constant +nim-setfocus+    #x00000003)
+(defwin32constant +nim-setversion+  #x00000004)
+
+(defwin32constant +nif-message+     #x00000001)
+(defwin32constant +nif-icon+        #x00000002)
+(defwin32constant +nif-tip+         #x00000004)
+(defwin32constant +nif-state+       #x00000008)
+(defwin32constant +nif-info+        #x00000010)
+(defwin32constant +nif-guid+        #x00000020)
+(defwin32constant +nif-realtime+    #x00000040)
+(defwin32constant +nif-showtip+     #x00000080)
+
+(defwin32constant +mb-ok+                       #x00000000)
+(defwin32constant +mb-okcancel+                 #x00000001)
+(defwin32constant +mb-abortretryignore+         #x00000002)
+(defwin32constant +mb-yesnocancel+              #x00000003)
+(defwin32constant +mb-yesno+                    #x00000004)
+(defwin32constant +mb-retrycancel+              #x00000005)
+
+(defwin32constant +mb-canceltrycontinue+        #x00000006)
+
+(defwin32constant +mb-iconhand+                 #x00000010)
+(defwin32constant +mb-iconquestion+             #x00000020)
+(defwin32constant +mb-iconexclamation+          #x00000030)
+(defwin32constant +mb-iconasterisk+             #x00000040)
+
+(defwin32constant +mb-usericon+                 #x00000080)
+(defwin32constant +mb-iconwarning+              +mb-iconexclamation+)
+(defwin32constant +mb-iconerror+                +mb-iconhand+)
+
+(defwin32constant +mb-iconinformation+          +mb-iconasterisk+)
+(defwin32constant +mb-iconstop+                 +mb-iconhand+)
+
+(defwin32constant +mb-defbutton1+               #x00000000)
+(defwin32constant +mb-defbutton2+               #x00000100)
+(defwin32constant +mb-defbutton3+               #x00000200)
+
+(defwin32constant +mb-defbutton4+               #x00000300)
+
+(defwin32constant +mb-applmodal+                #x00000000)
+(defwin32constant +mb-systemmodal+              #x00001000)
+(defwin32constant +mb-taskmodal+                #x00002000)
+
+(defwin32constant +mb-help+                     #x00004000) ; Help Button
+
+(defwin32constant +mb-nofocus+                  #x00008000)
+(defwin32constant +mb-setforeground+            #x00010000)
+(defwin32constant +mb-default-desktop-only+     #x00020000)
+
+(defwin32constant +mb-topmost+                  #x00040000)
+(defwin32constant +mb-right+                    #x00080000)
+(defwin32constant +mb-rtlreading+               #x00100000)
+
+
+(defwin32constant +mb-service-notification+          #x00200000)
+(defwin32constant +mb-service-notification-nt3x+     #x00040000)
+
+(defwin32constant +mb-typemask+                 #x0000000F)
+(defwin32constant +mb-iconmask+                 #x000000F0)
+(defwin32constant +mb-defmask+                  #x00000F00)
+(defwin32constant +mb-modemask+                 #x00003000)
+(defwin32constant +mb-miscmask+                 #x0000C000)
+
+(defwin32constant +tpm-leftbutton+  #x0000)
+(defwin32constant +tpm-rightbutton+ #x0002)
+(defwin32constant +tpm-leftalign+   #x0000)
+(defwin32constant +tpm-centeralign+ #x0004)
+(defwin32constant +tpm-rightalign+  #x0008)
+
+(defwin32constant +tpm-topalign+        #x0000)
+(defwin32constant +tpm-vcenteralign+    #x0010)
+(defwin32constant +tpm-bottomalign+     #x0020)
+
+(defwin32constant +tpm-horizontal+      #x0000) ; Horz alignment matters more
+(defwin32constant +tpm-vertical+        #x0040) ; Vert alignment matters more
+(defwin32constant +tpm-nonotify+        #x0080) ; Don't send any notification msgs
+(defwin32constant +tpm-returncmd+       #x0100)
+
+(defwin32constant +tpm-recurse+         #x0001)
+(defwin32constant +tpm-horposanimation+ #x0400)
+(defwin32constant +tpm-horneganimation+ #x0800)
+(defwin32constant +tpm-verposanimation+ #x1000)
+(defwin32constant +tpm-verneganimation+ #x2000)
+
+(defwin32constant +tpm-noanimation+     #x4000)
+
+(defwin32constant +tpm-layoutrtl+       #x8000)
+
+(defwin32constant +tpm-workarea+        #x10000)
+
 (defwin32struct os-version-info-ex
   (os-version-info-size dword)
   (major-version dword)
@@ -3027,8 +3193,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32struct wndclass
   (style uint)
   (wndproc wndproc)
-  (clsextra :int)
-  (wndextra :int)
+  (cls-extra :int)
+  (wnd-extra :int)
   (instance hinstance)
   (icon hicon)
   (cursor hcursor)
@@ -3037,18 +3203,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wndclass-name lpctstr))
 
 (defwin32struct wndclassex
-  (cbsize uint)
+  (size uint)
   (style uint)
   (wndproc wndproc)
-  (clsextra :int)
-  (wndextra :int)
+  (cls-extra :int)
+  (wnd-extra :int)
   (instance hinstance)
   (icon hicon)
   (cursor hcursor)
   (background hbrush)
   (menu-name lpctstr)
   (wndclass-name lpctstr)
-  (iconsm hicon))
+  (icon-sm hicon))
 
 (defwin32struct msg
   (hwnd hwnd)
@@ -3197,6 +3363,29 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (display-flags dword)
   (nup dword))
 
+(defwin32struct notify-icon-data
+  (size dword)
+  (hwnd hwnd)
+  (id uint)
+  (flags uint)
+  (callback-message uint)
+  (icon hicon)
+  (tip wchar :count 128)
+  (state dword)
+  (state-mask dword)
+  (info wchar :count 256)
+  (version uint)
+  (info-title wchar :count 64)
+  (info-flags dword)
+  (item guid)
+  (balloon-icon hicon))
+
+(defwin32struct notify-icon-identifier
+  (size dword)
+  (hwnd hwnd)
+  (id uint)
+  (guid-item guid))
+
 (defwin32constant +cchdevicename+ 32)
 (defwin32constant +cchformname+ 32)
 
@@ -3332,6 +3521,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("AddDllDirectory" add-dll-directory kernel32) dll-directory-cookie
   (new-directory pcwstr))
 
+(defwin32fun ("AppendMenuW" append-menu user32) bool
+  (hmenu hmenu)
+  (flags uint)
+  (id-new-item uint-ptr)
+  (new-item lpcwstr))
+
 (defwin32fun ("Beep" beep kernel32) bool
   (freq dword)
   (duration dword))
@@ -3371,6 +3566,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("CancelIo" cancel-io kernel32) bool
   (handle handle))
+
+(defwin32fun ("CheckMenuItem" check-menu-item user32) dword
+  (hmenu hmenu)
+  (id-check-item uint)
+  (check uint))
 
 (defwin32fun ("ChoosePixelFormat" choose-pixel-format gdi32) :int
   (dc hdc)
@@ -3468,10 +3668,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (creation-disposition dword)
   (create-ex-params (:pointer createfile2-extended-parameters)))
 
+(defwin32fun ("CreateMenu" create-menu user32) hmenu)
+
 (defwin32fun ("CreateMutexW" create-mutex kernel32) handle
   (mutex-attributes (:pointer security-attributes))
   (initial-owner bool)
   (name lpcwstr))
+
+(defwin32fun ("CreateSystemMenu" create-system-menu user32) hmenu
+  (hwnd hwnd)
+  (revert bool))
 
 (defwin32fun ("CreateNamedPipeA" create-named-pipe kernel32) handle
   (name lpcstr)
@@ -3485,6 +3691,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("CreatePalette" create-palette gdi32) hpalette
   (log-palette (:pointer logpalette)))
+
+(defwin32fun ("CreatePopupMenu" create-popup-menu user32) hmenu)
 
 (defwin32fun ("CreateSemaphoreW" create-semaphore kernel32) handle
   (semaphore-attributes (:pointer security-attributes))
@@ -3515,6 +3723,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wparam wparam)
   (lparam lparam))
 
+(defwin32fun ("DeleteMenu" delete-menu user32) bool
+  (hmenu hmenu)
+  (position uint)
+  (flags uint))
+
 (defwin32fun ("DeleteObject" delete-object gdi32) bool
   (object hgdiobj))
 
@@ -3526,6 +3739,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("DestroyCursor" destroy-cursor user32) bool
   (cursor hcursor))
+
+(defwin32fun ("DestroyMenu" destroy-menu user32) bool
+  (menu hmenu))
 
 (defwin32fun ("DestroyWindow" destroy-window user32) bool
   (hwnd hwnd))
@@ -3543,6 +3759,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (fat-date word)
   (fat-time word)
   (file-time (:pointer filetime)))
+
+(defwin32fun ("EnableMenuItem" enable-menu-item user32) bool
+  (hmenu hmenu)
+  (id-enable-item uint)
+  (enable uint))
 
 (defwin32fun ("EnableWindow" enable-window user32) bool
   (hwnd hwnd)
@@ -3644,6 +3865,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetCurrentThreadId" get-current-thread-id kernel32) dword)
 
+(defwin32fun ("GetCursorPos" get-cursor-pos user32) bool
+  (point (:pointer point)))
+
 (defwin32fun ("GetDC" get-dc user32) hdc
   (hwnd hwnd))
 
@@ -3691,6 +3915,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetLocalTime" get-local-time kernel32) :void
   (system-time (:pointer systemtime)))
+
+(defwin32fun ("GetMenuItemCount" get-menu-item-count user32) :int
+  (hmenu hmenu))
+
+(defwin32fun ("GetMenuItemID" get-menu-item-id user32) uint
+  (hmenu hmenu)
+  (pos :int))
 
 (defwin32fun ("GetMessageW" get-message user32) bool
   (msg (:pointer msg))
@@ -3766,6 +3997,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetParent" get-parent user32) hwnd
   (hwnd :pointer))
 
+(defwin32fun ("GetPhysicalCursorPos" get-physical-cursor-pos user32) bool
+  (point (:pointer point)))
+
 (defwin32fun ("GetPixelFormat" get-pixel-format gdi32) :int
   (dc hdc))
 
@@ -3781,6 +4015,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetStockObject" get-stock-object gdi32) hgdiobj
   (object :int))
+
+(defwin32fun ("GetSubMenu" get-sub-menu user32) hmenu
+  (hmenu hmenu)
+  (pos :int))
 
 (defwin32fun ("GetQueueStatus" get-queue-status user32) dword
   (flags uint))
@@ -3859,6 +4097,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("InSendMessageEx" in-send-message-ex user32) dword
   (reserved :pointer))
+
+(defwin32fun ("InsertMenuW" insert-menu user32) bool
+  (hmenu hmenu)
+  (position uint)
+  (flags uint)
+  (id-new-item uint-ptr)
+  (new-item lpcwstr))
 
 (defwin32fun ("InvalidateRect" invalidate-rect user32) bool
   (hwnd hwnd)
@@ -3991,6 +4236,19 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32-lispfun make-lang-id (p s)
   (declare (type (unsigned-byte 16) p s))
   (logior (ash s 10) p))
+
+(defwin32fun ("MessageBoxW" message-box user32) :int
+  (hwnd hwnd)
+  (text lpcwstr)
+  (caption lpcwstr)
+  (type uint))
+
+(defwin32fun ("ModifyMenuW" modify-menu user32) bool
+  (hmenu hmenu)
+  (position uint)
+  (flags uint)
+  (id-new-item uint-ptr)
+  (new-item lpcwstr))
 
 (defwin32fun ("MoveFileW" move-file kernel32) bool
   (existing-file-name lpctstr)
@@ -4186,6 +4444,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("RemoveDllDirectory" remove-dll-directory kernel32) bool
   (cookie dll-directory-cookie))
 
+(defwin32fun ("RemoveMenu" remove-menu user32) bool
+  (hmenu hmenu)
+  (position uint)
+  (flags uint))
+
 (defwin32fun ("ReplyMessage" reply-message user32) bool
   (result lresult))
 
@@ -4292,6 +4555,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (mode (:pointer dword))
   (max-collection-count (:pointer dword))
   (collected-data-timeout (:pointer dword)))
+
+(defwin32fun ("SetPhysicalCursorPos" set-physical-cursor-pos user32) bool
+  (x :int)
+  (y :int))
 
 (defwin32fun ("SetSystemTime" set-system-time kernel32) bool
   (system-time (:pointer systemtime)))
@@ -4405,6 +4672,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (required-size (:pointer dword))
   (device-info-data (:pointer sp-devinfo-data)))
 
+(defwin32fun ("Shell_NotifyIconW" shell-notify-icon shell32) bool
+  (message dword)
+  (data (:pointer notify-icon-data)))
+
 (defwin32fun ("ShowCursor" show-cursor user32) :int
   (show bool))
 
@@ -4440,6 +4711,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("TrackMouseEvent" track-mouse-event user32) bool
   (event-track (:pointer trackmouseevent)))
+
+(defwin32fun ("TrackPopupMenu" track-popup-menu user32) bool
+  (hmenu hmenu)
+  (flags uint)
+  (x :int)
+  (y :int)
+  (reserved :int)
+  (hwnd hwnd)
+  (rect (:pointer rect)))
 
 (defwin32fun ("TransactNamedPipe" transact-named-pipe kernel32) bool
   (named-pipe handle)
