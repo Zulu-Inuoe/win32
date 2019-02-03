@@ -4128,6 +4128,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (rect (:pointer rect))
   (erase bool))
 
+(defwin32-lispfun is-intresource (r)
+  (zerop (ash r -16)))
+
 (defwin32fun ("IsGUIThread" is-gui-thread user32) bool
   (convert bool))
 
@@ -4243,6 +4246,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hmem hlocal)
   (bytes size-t)
   (flags uint))
+
+(defwin32-lispfun makeintresource (i)
+  (cffi:make-pointer (ldb (cl:byte 16 0) i)))
 
 (defwin32-lispfun make-lang-id (p s)
   (declare (type (unsigned-byte 16) p s))
