@@ -9,4 +9,13 @@
    #:char
    #:float)
   (:export
-   #:+win32-string-encoding+))
+   #:+win32-string-encoding+
+   #:version
+   #:kernel32
+   #:user32
+   #:shell32
+   #:gdi32
+   #:opengl32
+   #:advapi32
+   #:setupapi))
+
