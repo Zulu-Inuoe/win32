@@ -10,11 +10,8 @@
 
 (in-package #:win32)
 
-(define-foreign-library api-ms-win-core-version-l1-1-0
-  (:win32 "Api-ms-win-core-version-l1-1-0.dll"))
-
-(define-foreign-library api-ms-win-core-localization-l1-2-1
-  (:win32 "Api-ms-win-core-localization-l1-2-1.dll"))
+(define-foreign-library version
+  (:win32 "version.dll"))
 
 (define-foreign-library kernel32
   (:win32 "Kernel32.dll"))
@@ -37,8 +34,7 @@
 (define-foreign-library setupapi
   (:win32 "setupapi.dll"))
 
-(use-foreign-library api-ms-win-core-version-l1-1-0)
-(use-foreign-library api-ms-win-core-localization-l1-2-1)
+(use-foreign-library version)
 (use-foreign-library kernel32)
 (use-foreign-library user32)
 (use-foreign-library shell32)
@@ -3892,24 +3888,24 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (last-access-time (:pointer filetime))
   (last-write-time (:pointer filetime)))
 
-(defwin32fun ("GetFileVersionInfoW" get-file-version-info api-ms-win-core-version-l1-1-0) bool
+(defwin32fun ("GetFileVersionInfoW" get-file-version-info version) bool
   (str-file-name lpctstr)
   (handle dword)
   (len dword)
   (data :pointer))
 
-(defwin32fun ("GetFileVersionInfoExW" get-file-version-info-ex api-ms-win-core-version-l1-1-0) bool
+(defwin32fun ("GetFileVersionInfoExW" get-file-version-info-ex version) bool
   (flags dword)
   (str-file-name lpctstr)
   (handle dword)
   (len dword)
   (data :pointer))
 
-(defwin32fun ("GetFileVersionInfoSizeW" get-file-version-info-size pi-ms-win-core-version-l1-1-0) dword
+(defwin32fun ("GetFileVersionInfoSizeW" get-file-version-info-size version) dword
   (str-file-name lpctstr)
   (handle (:pointer dword)))
 
-(defwin32fun ("GetFileVersionInfoSizeExW" get-file-version-info-size-ex api-ms-win-core-version-l1-1-0) dword
+(defwin32fun ("GetFileVersionInfoSizeExW" get-file-version-info-size-ex version) dword
   (flags dword)
   (str-file-name lpctstr)
   (handle (:pointer dword)))
@@ -4759,7 +4755,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (rect (:pointer rect)))
 
-(defwin32fun ("VerFindFileW" ver-find-file api-ms-win-core-version-l1-1-0) dword
+(defwin32fun ("VerFindFileW" ver-find-file version) dword
   (flags dword)
   (file-name lpctstr)
   (win-dir lpctstr)
@@ -4769,7 +4765,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (dst-dir lptstr)
   (dest-dir-len (:pointer uint)))
 
-(defwin32fun ("VerInstallFileW" ver-install-file api-ms-win-core-version-l1-1-0) dword
+(defwin32fun ("VerInstallFileW" ver-install-file version) dword
   (flags dword)
   (src-file-name lpctstr)
   (dst-file-name lpctstr)
@@ -4779,12 +4775,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (tmp-file lptstr)
   (tmp-file-len (:pointer uint)))
 
-(defwin32fun ("VerLanguageNameW" ver-language-name api-ms-win-core-localization-l1-2-1) dword
+(defwin32fun ("VerLanguageNameW" ver-language-name version) dword
   (wlang dword)
   (szlang lptstr)
   (cchlang dword))
 
-(defwin32fun ("VerQueryValueW" ver-query-value api-ms-win-core-version-l1-1-0) bool
+(defwin32fun ("VerQueryValueW" ver-query-value version) bool
   (block :pointer)
   (sub-block lpctstr)
   (buffer :pointer)
