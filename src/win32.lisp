@@ -54,6 +54,11 @@
 
 (defconstant +pointer-bit-size+ (* (cffi:foreign-type-size :pointer) 8))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ecase +pointer-bit-size+
+    (32 (pushnew :32-bit *features*))
+    (64 (pushnew :64-bit *features*))))
+
 (defmacro defwin32constant (name value &optional doc)
   "Wrapper around `defconstant' which exports the constant."
   `(progn
@@ -154,14 +159,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type wchar :int16)
 
 (defwin32type int :int)
-(defwin32type int-ptr #+x86 :int32 #+x86-64 :int64)
+(defwin32type int-ptr #+32-bit :int32 #+64-bit :int64)
 (defwin32type int8 :int8)
 (defwin32type int16 :int16)
 (defwin32type int32 :int32)
 (defwin32type int64 :int64)
 
 (defwin32type uint :uint32)
-(defwin32type uint-ptr #+x86 :uint32 #+x86-64 :uint64)
+(defwin32type uint-ptr #+32-bit :uint32 #+64-bit :uint64)
 (defwin32type uint8 :uint8)
 (defwin32type uint16 :uint16)
 (defwin32type uint32 :uint32)
@@ -169,13 +174,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32type long :long)
 (defwin32type longlong :int64)
-(defwin32type long-ptr #+x86 :int32 #+x86-64 :int64)
+(defwin32type long-ptr #+32-bit :int32 #+64-bit :int64)
 (defwin32type long32 :int32)
 (defwin32type long64 :int64)
 
 (defwin32type ulong :uint32)
 (defwin32type ulonglong :uint64)
-(defwin32type ulong-ptr #+x86 :uint32 #+x86-64 :uint64)
+(defwin32type ulong-ptr #+32-bit :uint32 #+64-bit :uint64)
 (defwin32type ulong32 :uint32)
 (defwin32type ulong64 :uint64)
 
@@ -199,8 +204,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32type float :float)
 
-(defwin32type size-t #+x86 :uint32 #+x86-64 :uint64)
-(defwin32type ssize-t #+x86 :int32 #+x86-64 :int64)
+(defwin32type size-t #+32-bit :uint32 #+64-bit :uint64)
+(defwin32type ssize-t #+32-bit :int32 #+64-bit :int64)
 
 (defwin32type lpcstr (:string :encoding :ascii))
 (defwin32type lpcwstr (:string :encoding #.+win32-string-encoding+))
@@ -214,8 +219,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type handle :pointer)
 
 (defwin32type atom :uint16)
-(defwin32type half-ptr #+x86 :int #+x86-64 :short)
-(defwin32type uhalf-ptr #+x86 :uint #+x86-64 :ushort)
+(defwin32type half-ptr #+32-bit :int #+64-bit :short)
+(defwin32type uhalf-ptr #+32-bit :uint #+64-bit :ushort)
 (defwin32type colorref :uint32)
 (defwin32type haccel handle)
 (defwin32type hbitmap handle)
@@ -788,7 +793,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (defwin32constant +hwnd-notopmost+ #xFFFFFFFE)
   (defwin32constant +hwnd-topmost+   #xFFFFFFFF))
 
-#+:x86-64
+#+:64-bit
 (progn
   (defwin32constant +hwnd-message+   #xFFFFFFFFFFFFFFFD)
   (defwin32constant +hwnd-notopmost+ #xFFFFFFFFFFFFFFFE)
@@ -3837,12 +3842,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (index :int))
 
-#+x86
+#+32-bit
 (defwin32fun ("GetClassLongW" get-class-long-ptr user32) ulong-ptr
   (hwnd hwnd)
   (index :int))
 
-#+x86-64
+#+64-bit
 (defwin32fun ("GetClassLongPtrW" get-class-long-ptr user32) ulong-ptr
   (hwnd hwnd)
   (index :int))
@@ -4508,13 +4513,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (index :int)
   (new-long long))
 
-#+x86
+#+32-bit
 (defwin32fun ("SetClassLongW" set-class-long-ptr user32) ulong-ptr
   (hwnd hwnd)
   (index :int)
   (new-long long-ptr))
 
-#+x86-64
+#+64-bit
 (defwin32fun ("SetClassLongPtrW" set-class-long-ptr user32) ulong-ptr
   (hwnd hwnd)
   (index :int)
@@ -4617,13 +4622,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (index :int)
   (new-long long))
 
-#+x86
+#+32-bit
 (defwin32fun ("SetWindowLongW" set-window-long-ptr user32) long-ptr
   (hwnd hwnd)
   (index :int)
   (new-long long-ptr))
 
-#+x86-64
+#+64-bit
 (defwin32fun ("SetWindowLongPtrW" set-window-long-ptr user32) long-ptr
   (hwnd hwnd)
   (index :int)
