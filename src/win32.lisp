@@ -3100,6 +3100,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +tpm-workarea+        #x10000)
 
+(defwin32constant +get-module-handle-ex-flag-pin+                 #x00000001)
+(defwin32constant +get-module-handle-ex-flag-unchanged-refcount+  #x00000002)
+(defwin32constant +get-module-handle-ex-flag-from-address+        #x00000004)
+
 (defwin32struct os-version-info-ex
   (os-version-info-size dword)
   (major-version dword)
