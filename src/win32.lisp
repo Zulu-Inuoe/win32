@@ -4723,7 +4723,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("TrackMouseEvent" track-mouse-event user32) bool
   (event-track (:pointer trackmouseevent)))
 
-(defwin32fun ("TrackPopupMenu" track-popup-menu user32) bool
+(defwin32fun ("TrackPopupMenu" track-popup-menu user32) :int
   (hmenu hmenu)
   (flags uint)
   (x :int)
@@ -4731,6 +4731,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (reserved :int)
   (hwnd hwnd)
   (rect (:pointer rect)))
+
+(defwin32-lispfun track-popup-menu* (hmenu flags x y reserved hwnd rect)
+  (not (zerop (track-popup-menu hmenu flags x y reserved hwnd rect))))
 
 (defwin32fun ("TransactNamedPipe" transact-named-pipe kernel32) bool
   (named-pipe handle)
