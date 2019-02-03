@@ -4119,16 +4119,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
             minor-version minor
             service-pack-major service-pack))
 
-    (if (zerop
-         (verify-version-info osvi
-                              (logior +ver-majorversion+ +ver-minorversion+ +ver-servicepackmajor+)
-                              (ver-set-condition-mask
-                               (ver-set-condition-mask
-                                (ver-set-condition-mask 0 +ver-majorversion+ +ver-greater-equal+)
-                                +ver-minorversion+ +ver-greater-equal+)
-                               +ver-servicepackmajor+ +ver-greater-equal+)))
-        0
-        1)))
+    (verify-version-info osvi
+                         (logior +ver-majorversion+ +ver-minorversion+ +ver-servicepackmajor+)
+                         (ver-set-condition-mask
+                          (ver-set-condition-mask
+                           (ver-set-condition-mask 0 +ver-majorversion+ +ver-greater-equal+)
+                           +ver-minorversion+ +ver-greater-equal+)
+                          +ver-servicepackmajor+ +ver-greater-equal+))))
 
 (defwin32-lispfun is-windows-xp-or-greater ()
   (is-windows-version-or-greater
@@ -4182,13 +4179,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
                               os-version-info-ex)
       (setf os-version-info-size (cffi:foreign-type-size 'os-version-info-ex)
             product-type +ver-nt-workstation+))
-
-    (if (zerop
-         (verify-version-info osvi
-                              +ver-product-type+
-                              +ver-equal+))
-        0
-        1)))
+    (verify-version-info osvi
+                         +ver-product-type+
+                         +ver-equal+)))
 
 (defwin32fun ("IsWow64Process" is-wow-64-process kernel32) bool
   (process handle)
