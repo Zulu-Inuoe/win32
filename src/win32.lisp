@@ -182,8 +182,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type dword64 :uint64)
 (defwin32type qword :uint64)
 
-(defwin32type bool :int)
-(defwin32type boolean byte)
+(defwin32type bool (:boolean :int))
+(defwin32type boolean (:boolean byte))
 
 (defwin32type tbyte wchar)
 (defwin32type tchar wchar)
