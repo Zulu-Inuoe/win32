@@ -705,7 +705,34 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +cs-hredraw+ #x0002)
 (defwin32constant +cs-owndc+   #x0020)
 
-(defwin32constant +sw-show+ 5)
+(defwin32constant +sw-hide+             0)
+(defwin32constant +sw-shownormal+       1)
+(defwin32constant +sw-normal+           1)
+(defwin32constant +sw-showminimized+    2)
+(defwin32constant +sw-showmaximized+    3)
+(defwin32constant +sw-maximize+         3)
+(defwin32constant +sw-shownoactivate+   4)
+(defwin32constant +sw-show+             5)
+(defwin32constant +sw-minimize+         6)
+(defwin32constant +sw-showminnoactive+  7)
+(defwin32constant +sw-showna+           8)
+(defwin32constant +sw-restore+          9)
+(defwin32constant +sw-showdefault+      10)
+(defwin32constant +sw-forceminimize+    11)
+(defwin32constant +sw-max+              11)
+
+;; Old ShowWindow() Commands
+(defwin32constant +hide-window+         0)
+(defwin32constant +show-openwindow+     1)
+(defwin32constant +show-iconwindow+     2)
+(defwin32constant +show-fullscreen+     3)
+(defwin32constant +show-opennoactivate+ 4)
+
+;; Identifiers for the WM_SHOWWINDOW message
+(defwin32constant +sw-parentclosing+    1)
+(defwin32constant +sw-otherzoom+        2)
+(defwin32constant +sw-parentopening+    3)
+(defwin32constant +sw-otherunzoom+      4)
 
 (defwin32constant +idi-application+     (make-pointer 32512))
 (defwin32constant +idi-hand+            (make-pointer 32513))
