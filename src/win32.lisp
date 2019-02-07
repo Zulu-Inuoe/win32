@@ -34,8 +34,8 @@
 (use-foreign-library setupapi)
 
 (defconstant +win32-string-encoding+
-  #+little-endian :utf-16le
-  #+big-endian :utf-16be
+  #+little-endian :ucs-2le
+  #+big-endian :ucs-2be
   "Not a win32 'constant' per-se, but useful to expose for usage with FOREIGN-STRING-TO-LISP and friends.")
 
 (defconstant +pointer-bit-size+ (* (cffi:foreign-type-size :pointer) 8))
