@@ -3104,6 +3104,26 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +get-module-handle-ex-flag-unchanged-refcount+  #x00000002)
 (defwin32constant +get-module-handle-ex-flag-from-address+        #x00000004)
 
+(defwin32constant      +ga-parent+       1)
+(defwin32constant      +ga-root+         2)
+(defwin32constant      +ga-rootowner+    3)
+
+(defwin32constant +gw-hwndfirst+        0)
+(defwin32constant +gw-hwndlast+         1)
+(defwin32constant +gw-hwndnext+         2)
+(defwin32constant +gw-hwndprev+         3)
+(defwin32constant +gw-owner+            4)
+(defwin32constant +gw-child+            5)
+(defwin32constant +gw-enabledpopup+     6)
+(defwin32constant +gw-max+              6)
+
+(defwin32constant +kl-namelength+ 9)
+
+(defwin32constant  +mapvk-vk-to-vsc+     0)
+(defwin32constant  +mapvk-vsc-to-vk+     1)
+(defwin32constant  +mapvk-vk-to-char+    2)
+(defwin32constant  +mapvk-vsc-to-vk-ex+  3)
+
 (defwin32struct os-version-info-ex
   (os-version-info-size dword)
   (major-version dword)
@@ -3443,6 +3463,28 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +vif-tempfile+          #x00000001)
 (defwin32constant +vif-writeprot+         #x00000040)
 
+(defwin32constant  +hkl-prev+            0)
+(defwin32constant  +hkl-next+            1)
+
+(defwin32constant  +klf-activate+        #x00000001)
+(defwin32constant  +klf-substitute-ok+   #x00000002)
+(defwin32constant  +klf-reorder+         #x00000008)
+(defwin32constant  +klf-replacelang+     #x00000010)
+(defwin32constant  +klf-notellshell+     #x00000080)
+(defwin32constant  +klf-setforprocess+   #x00000100)
+(defwin32constant  +klf-shiftlock+       #x00010000)
+(defwin32constant  +klf-reset+           #x40000000)
+
+(defwin32constant  +mod-alt+                         #x0001)
+(defwin32constant  +mod-control+                     #x0002)
+(defwin32constant  +mod-shift+                       #x0004)
+
+(defwin32constant  +mod-left+                        #x8000)
+(defwin32constant  +mod-right+                       #x4000)
+
+(defwin32constant  +mod-on-keyup+                    #x0800)
+(defwin32constant  +mod-ignore-all-modifier+         #x0400)
+
 (defwin32struct devmode
   (device-name wchar :count #.+cchdevicename+)
   (spec-version word)
@@ -3506,6 +3548,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (type dword)
   (input input_input-union))
 
+(defwin32struct last-input-info
+  (size uint)
+  (time dword))
+
+(defwin32struct mouse-move-point
+  (x :int)
+  (y :int)
+  (time dword)
+  (extra-info ulong-ptr))
+
 (defwin32struct filetime
   (low-date-time dword)
   (high-date-time dword))
@@ -3540,6 +3592,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (daylight-date systemtime)
   (daylight-bias long))
 
+(defwin32fun ("ActivateKeyboardLayout" activate-keyboard-layout user32) hkl
+  (hkl hkl)
+  (flags uint))
+
 (defwin32fun ("AddDllDirectory" add-dll-directory kernel32) dll-directory-cookie
   (new-directory pcwstr))
 
@@ -3556,6 +3612,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("BeginPaint" begin-paint user32) hdc
   (hwnd hwnd)
   (paint (:pointer paintstruct)))
+
+(defwin32fun ("BlockInput" block-input user32) bool
+  (block-it bool))
 
 (defwin32fun ("BroadcastSystemMessageW" broadcast-system-message user32) :long
   (flags dword)
@@ -3795,6 +3854,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (paint (:pointer paintstruct)))
 
+(defwin32fun ("EnumChildWindows" enum-child-windows user32) bool
+  (parent hwnd)
+  (enum-func :pointer)
+  (lparam lparam))
+
 (defwin32fun ("EnumDynamicTimeZoneInformation" enum-dynamic-time-zone-information kernel32) dword
   (index dword)
   (time-zone-information (:pointer dynamic-time-zone-information)))
@@ -3855,6 +3919,17 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetACP" get-acp kernel32) uint)
 
+(defwin32fun ("GetActiveWindow" get-active-window user32) hwnd)
+
+(defwin32fun ("GetAncesor" get-ancestor user32) hwnd
+  (hwnd hwnd)
+  (ga-flags uint))
+
+(defwin32fun ("GetAsyncKeyState" get-async-key-state user32) short
+  (virt-key :int))
+
+(defwin32fun ("GetCapture" get-capture user32) hwnd)
+
 (defwin32fun ("GetClassLongW" get-class-long user32) dword
   (hwnd hwnd)
   (index :int))
@@ -3895,6 +3970,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetDesktopWindow" get-desktop-window user32) hwnd)
 
+(defwin32fun ("GetDoubleClickTime" get-double-click-time user32) uint)
+
 (defwin32fun ("GetDynamicTimeZoneInformation" get-dynamic-time-zone-information kernel32) dword
   (time-zone-information (:pointer dynamic-time-zone-information)))
 
@@ -3931,9 +4008,36 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (str-file-name lpctstr)
   (handle (:pointer dword)))
 
+(defwin32fun ("GetFocus" get-focus user32) hwnd)
+
 (defwin32fun ("GetInputState" get-input-state user32) bool)
 
+(defwin32fun ("GetKBCodePage" get-kb-code-page user32) uint)
+
+(defwin32fun ("GetKeyboardLayoutNameW" get-keyboard-layout-name user32) bool
+  (buffer lpwstr))
+
+(defwin32fun ("GetKeyboardState" get-keyboard-state user32) bool
+  (key-state (:pointer byte)))
+
+(defwin32fun ("GetKeyboardType" get-keyboard-type user32) :int
+  (type-flag :int))
+
+(defwin32fun ("GetKeyNameTextW" get-key-name-text user32) :int
+  (lparam long)
+  (buffer lpwstr)
+  (buffer-size :int))
+
+(defwin32fun ("GetKeyState" get-key-state user32) short
+  (virt-key :int))
+
+(defwin32fun ("GetLastActivePopup" get-last-active-popup user32) hwnd
+  (hwnd hwnd))
+
 (defwin32fun ("GetLastError" get-last-error user32) dword)
+
+(defwin32fun ("GetLastInputInfo" get-last-input-info user32) bool
+  (last-input (:pointer last-input-info)))
 
 (defwin32fun ("GetLocalTime" get-local-time kernel32) :void
   (system-time (:pointer systemtime)))
@@ -3969,6 +4073,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (flags dword)
   (module-name lpctstr)
   (module (:pointer hmodule)))
+
+(defwin32fun ("GetMouseMovePointsEx" get-mouse-move-points-ex user32) :int
+  (size uint)
+  (ppt (:pointer mouse-move-point))
+  (buffer (:pointer mouse-move-point))
+  (buf-points :int)
+  (resolution dword))
 
 (defwin32fun ("GetNamedPipeClientComputerNameW" get-named-pipe-client-computer-name kernel32) bool
   (pipe handle)
@@ -4095,6 +4206,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetTopWindow" get-top-window user32) hwnd
   (hwnd hwnd))
 
+(defwin32fun ("GetWindow" get-window user32) hwnd
+  (hwnd hwnd)
+  (cmd uint))
+
 (defwin32fun ("GetWindowLongW" get-window-long user32) long
   (hwnd hwnd)
   (index :int))
@@ -4139,6 +4254,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (convert bool))
 
 (defwin32fun ("IsWindow" is-window user32) bool
+  (hwnd hwnd))
+
+(defwin32fun ("IsWindowEnabled" is-window-enabled user32) bool
   (hwnd hwnd))
 
 (defwin32-lispfun is-windows-version-or-greater (major minor service-pack)
@@ -4232,6 +4350,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (instance hinstance)
   (name lpctstr))
 
+(defwin32fun ("LoadKeyboardLayoutW" load-keyboard-layout user32) hkl
+  (id lpcstr)
+  (flags uint))
+
 (defwin32fun ("LocalAlloc" local-alloc kernel32) hlocal
   (flags uint)
   (bytes size-t))
@@ -4257,6 +4379,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32-lispfun make-lang-id (p s)
   (declare (type (unsigned-byte 16) p s))
   (logior (ash s 10) p))
+
+(defwin32fun ("MapVirtualKeyW" map-virtual-key user32) uint
+  (code uint)
+  (map-type uint))
+
+(defwin32fun ("MapVirtualKeyExW" map-virtual-key-ex user32) uint
+  (code uint)
+  (map-type uint)
+  (layout hkl))
 
 (defwin32fun ("MessageBoxW" message-box user32) :int
   (hwnd hwnd)
@@ -4455,8 +4586,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("RegisterClassExW" register-class-ex user32) atom
   (wndclassex (:pointer wndclassex)))
 
+(defwin32fun ("RegisterHotKey" register-hot-key user32) bool
+  (hwnd hwnd)
+  (id :int)
+  (modifiers uint)
+  (vk uint))
+
 (defwin32fun ("RegisterWindowMessageW" register-window-message user32) uint
   (string lpctstr))
+
+(defwin32fun ("ReleaseCapture" release-capture user32) bool)
 
 (defwin32fun ("ReleaseDC" release-dc user32) :int
   (hwnd hwnd)
@@ -4524,6 +4663,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wparam wparam)
   (lparam lparam))
 
+(defwin32fun ("SetActiveWindow" set-active-window user32) hwnd
+  (hwnd hwnd))
+
+(defwin32fun ("SetCapture" set-capture user32) hwnd
+  (hwnd hwnd))
+
 (defwin32fun ("SetClassLongW" set-class-long user32) dword
   (hwnd hwnd)
   (index :int)
@@ -4556,6 +4701,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SetDefaultDllDirectories" set-default-dll-directories kernel32) bool
   (directory-flags dword))
 
+(defwin32fun ("SetDoubleClickTime" set-double-click-time user32) bool
+  (arg uint))
+
 (defwin32fun ("SetDynamicTimeZoneInformation" set-dynamic-time-zone-information kernel32) bool
   (time-zone-information (:pointer dynamic-time-zone-information)))
 
@@ -4567,6 +4715,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (creation-time (:pointer filetime))
   (last-access-time (:pointer filetime))
   (last-write-time (:pointer filetime)))
+
+(defwin32fun ("SetFocus" set-focus user32) hwnd
+  (hwnd hwnd))
 
 (defwin32fun ("SetLocalTime" set-local-time kernel32) bool
   (system-time (:pointer systemtime)))
@@ -4593,6 +4744,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("SetForegroundWindow" set-foreground-window user32) bool
   (hwnd hwnd))
+
+(defwin32fun ("SetKeyboardState" set-keyboard-state user32) bool
+  (key-state (:pointer byte)))
 
 (defwin32fun ("SetLastError" set-last-error kernel32) :void
   (err-code dword))
@@ -4707,6 +4861,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SwapBuffers" swap-buffers gdi32) bool
   (dc hdc))
 
+(defwin32fun ("SwapMouseButton" swap-mouse-button user32) bool
+  (sweap bool))
+
 (defwin32fun ("SwitchDesktop" switch-desktop user32) bool
   (desktop hdesk))
 
@@ -4729,6 +4886,38 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (time-zone-information (:pointer dynamic-time-zone-information))
   (universal-time (:pointer systemtime))
   (local-time (:pointer systemtime)))
+
+(defwin32fun ("ToAscii" to-ascii user32) :int
+  (virt-key uint)
+  (scan-code uint)
+  (key-state (:pointer byte))
+  (char (:pointer word))
+  (flags uint))
+
+(defwin32fun ("ToAsciiEx" to-ascii-ex user32) :int
+  (virt-key uint)
+  (scan-code uint)
+  (key-state (:pointer byte))
+  (char (:pointer word))
+  (flags uint)
+  (hkl hkl))
+
+(defwin32fun ("ToUnicode" to-unicode user32) :int
+  (virt-key uint)
+  (scan-code uint)
+  (key-state (:pointer byte))
+  (buf lpwstr)
+  (buf-size :int)
+  (flags uint))
+
+(defwin32fun ("ToUnicodeEx" to-unicode-ex user32) :int
+  (virt-key uint)
+  (scan-code uint)
+  (key-state (:pointer byte))
+  (buf lpwstr)
+  (buf-size :int)
+  (flags uint)
+  (hkl hkl))
 
 (defwin32fun ("TrackMouseEvent" track-mouse-event user32) bool
   (event-track (:pointer trackmouseevent)))
@@ -4766,6 +4955,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (time-zone-information (:pointer dynamic-time-zone-information))
   (local-time (:pointer systemtime))
   (universal-time (:pointer systemtime)))
+
+(defwin32fun ("UnloadKeyboardLayout" unload-keyboard-layout user32) bool
+  (hkl hkl))
 
 (defwin32fun ("UnregisterClassW" unregister-class user32) bool
   (wndclass-name lpctstr)
@@ -4821,6 +5013,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (version-information (:pointer os-version-info-ex))
   (type-mask dword)
   (condition-mask dwordlong))
+
+(defwin32fun ("VkKeyScanW" vk-key-scan user32) short
+  (ch wchar))
+
+(defwin32fun ("VkKeyScanExW" vk-key-scan-ex user32) short
+  (ch wchar)
+  (hkl hkl))
 
 (defwin32fun ("WaitForSingleObject" wait-for-single-object kernel32) dword
   (handle handle)
