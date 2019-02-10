@@ -9,5 +9,4 @@
    (:file "win32"))
   :depends-on
   (#:cffi
-   #:defpackage-plus
    #:trivial-features))

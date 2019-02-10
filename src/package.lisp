@@ -1,7 +1,7 @@
-(in-package #:defpackage+-user-1)
-
-(defpackage+ #:win32
-  (:use #:cffi #:cl)
+(defpackage #:win32
+  (:use
+   #:cffi
+   #:cl)
   (:shadow
    #:atom
    #:boolean
@@ -18,4 +18,3 @@
    #:opengl32
    #:advapi32
    #:setupapi))
-
