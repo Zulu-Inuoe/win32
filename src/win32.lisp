@@ -3564,8 +3564,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wparam wparam)
   (lparam lparam))
 
-(defwin32fun ("CallNamedPipeA" call-named-pipe kernel32) bool
-  (named-pipe-name lpcstr)
+(defwin32fun ("CallNamedPipeW" call-named-pipe kernel32) bool
+  (named-pipe-name lpcwstr)
   (in-buffer (:pointer :void))
   (in-buffer-size dword)
   (out-buffer (:pointer :void))
@@ -3701,8 +3701,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (revert bool))
 
-(defwin32fun ("CreateNamedPipeA" create-named-pipe kernel32) handle
-  (name lpcstr)
+(defwin32fun ("CreateNamedPipeW" create-named-pipe kernel32) handle
+  (name lpcwstr)
   (open-mode dword)
   (pipe-mode dword)
   (max-instances dword)
@@ -3970,9 +3970,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (module-name lpctstr)
   (module (:pointer hmodule)))
 
-(defwin32fun ("GetNamedPipeClientComputerNameA" get-named-pipe-client-computer-name kernel32) bool
+(defwin32fun ("GetNamedPipeClientComputerNameW" get-named-pipe-client-computer-name kernel32) bool
   (pipe handle)
-  (client-computer-name lpstr)
+  (client-computer-name lpwstr)
   (client-computer-name-length ulong))
 
 (defwin32fun ("GetNamedPipeClientProcessId" get-named-pipe-client-process-id kernel32) bool
@@ -3983,13 +3983,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (pipe handle)
   (client-session-id (:pointer ulong)))
 
-(defwin32fun ("GetNamedPipeHandleStateA" get-named-pipe-handle-state kernel32) bool
+(defwin32fun ("GetNamedPipeHandleStateW" get-named-pipe-handle-state kernel32) bool
   (named-pipe handle)
   (state (:pointer dword))
   (cur-instances (:pointer dword))
   (max-collection-count (:pointer dword))
   (collect-data-timeout (:pointer dword))
-  (user-name lpstr)
+  (user-name lpwstr)
   (max-user-name-size dword))
 
 (defwin32fun ("GetNamedPipeInfo" get-named-pipe-info kernel32) bool
@@ -4832,8 +4832,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wait-all bool)
   (milliseconds dword))
 
-(defwin32fun ("WaitNamedPipeA" wait-named-pipe kernel32) bool
-  (named-pipe-name lpcstr)
+(defwin32fun ("WaitNamedPipeW" wait-named-pipe kernel32) bool
+  (named-pipe-name lpcwstr)
   (timeout dword))
 
 (defwin32fun ("wglCreateContext" wgl-create-context opengl32) hglrc
