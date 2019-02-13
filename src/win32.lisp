@@ -270,6 +270,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type dll-directory-cookie :pointer)
 (defwin32type far-proc :pointer)
 
+(defwin32type large-integer :int64)
+
+(defwin32type sid :void)
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
     "Makes it easier to declare certain high values which in C are int32, in hex.
@@ -3485,6 +3489,132 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant  +mod-on-keyup+                    #x0800)
 (defwin32constant  +mod-ignore-all-modifier+         #x0400)
 
+(defwin32constant +startf-useshowwindow+       #x00000001)
+(defwin32constant +startf-usesize+             #x00000002)
+(defwin32constant +startf-useposition+         #x00000004)
+(defwin32constant +startf-usecountchars+       #x00000008)
+(defwin32constant +startf-usefillattribute+    #x00000010)
+(defwin32constant +startf-runfullscreen+       #x00000020)  ;; ignored for non-x86 platforms
+(defwin32constant +startf-forceonfeedback+     #x00000040)
+(defwin32constant +startf-forceofffeedback+    #x00000080)
+(defwin32constant +startf-usestdhandles+       #x00000100)
+
+(defwin32constant +startf-usehotkey+           #x00000200)
+(defwin32constant +startf-titleislinkname+     #x00000800)
+(defwin32constant +startf-titleisappid+        #x00001000)
+(defwin32constant +startf-preventpinning+      #x00002000)
+
+(defwin32constant +logon32-logon-interactive+       2)
+(defwin32constant +logon32-logon-network+           3)
+(defwin32constant +logon32-logon-batch+             4)
+(defwin32constant +logon32-logon-service+           5)
+(defwin32constant +logon32-logon-unlock+            7)
+;; #if(_WIN32_WINNT >= 0x0500)
+(defwin32constant +logon32-logon-network-cleartext+ 8)
+(defwin32constant +logon32-logon-new-credentials+   9)
+;; #endif // (_WIN32_WINNT >= 0x0500)
+
+(defwin32constant +logon32-provider-default+    0)
+(defwin32constant +logon32-provider-winnt35+    1)
+;; #if(_WIN32_WINNT >= 0x0400)
+(defwin32constant +logon32-provider-winnt40+    2)
+;; #endif /* _WIN32_WINNT >= 0x0400 */
+;; #if(_WIN32_WINNT >= 0x0500)
+(defwin32constant +logon32-provider-winnt50+    3)
+;; #endif // (_WIN32_WINNT >= 0x0500)
+;; #if(_WIN32_WINNT >= 0x0600)
+(defwin32constant +logon32-provider-virtual+    4)
+;; #endif // (_WIN32_WINNT >= 0x0600)
+
+;;
+;; Process dwCreationFlag values
+;;
+
+(defwin32constant +debug-process+                     #x00000001)
+(defwin32constant +debug-only-this-process+           #x00000002)
+(defwin32constant +create-suspended+                  #x00000004)
+(defwin32constant +detached-process+                  #x00000008)
+
+(defwin32constant +create-new-console+                #x00000010)
+(defwin32constant +normal-priority-class+             #x00000020)
+(defwin32constant +idle-priority-class+               #x00000040)
+(defwin32constant +high-priority-class+               #x00000080)
+
+(defwin32constant +realtime-priority-class+           #x00000100)
+(defwin32constant +create-new-process-group+          #x00000200)
+(defwin32constant +create-unicode-environment+        #x00000400)
+(defwin32constant +create-separate-wow-vdm+           #x00000800)
+
+(defwin32constant +create-shared-wow-vdm+             #x00001000)
+(defwin32constant +create-forcedos+                   #x00002000)
+(defwin32constant +below-normal-priority-class+       #x00004000)
+(defwin32constant +above-normal-priority-class+       #x00008000)
+
+(defwin32constant +inherit-parent-affinity+           #x00010000)
+(defwin32constant +inherit-caller-priority+           #x00020000)    ;; Deprecated
+(defwin32constant +create-protected-process+          #x00040000)
+(defwin32constant +extended-startupinfo-present+      #x00080000)
+
+(defwin32constant +process-mode-background-begin+     #x00100000)
+(defwin32constant +process-mode-background-end+       #x00200000)
+
+(defwin32constant +create-breakaway-from-job+         #x01000000)
+(defwin32constant +create-preserve-code-authz-level+  #x02000000)
+(defwin32constant +create-default-error-mode+         #x04000000)
+(defwin32constant +create-no-window+                  #x08000000)
+
+(defwin32constant +profile-user+                      #x10000000)
+(defwin32constant +profile-kernel+                    #x20000000)
+(defwin32constant +profile-server+                    #x40000000)
+(defwin32constant +create-ignore-system-default+      #x80000000)
+
+;;
+;; Thread dwCreationFlag values
+;;
+
+;;#define CREATE_SUSPENDED                  #x00000004
+
+(defwin32constant +stack-size-param-is-a-reservation+   #x00010000)    ;; Threads only
+
+(defwin32struct startupinfo
+  (size dword)
+  (reserved lpwstr)
+  (desktop lpwstr)
+  (title lpwstr)
+  (x dword)
+  (y dword)
+  (width dword)
+  (height dword)
+  (char-width dword)
+  (char-height dword)
+  (fill-attributes dword)
+  (flags dword)
+  (show-window word)
+  (reserved-2-size word)
+  (reserved-2-buf (:pointer byte))
+  (std-input handle)
+  (std-output handle)
+  (std-error handle))
+
+(defwin32struct process-information
+  (process handle)
+  (thread handle)
+  (process-id dword)
+  (thread-id dword))
+
+(defwin32struct quota-limits
+  (paged-pool-limit size-t)
+  (non-paged-pool-limit size-t)
+  (minimum-working-set-size size-t)
+  (maximum-working-set-size size-t)
+  (page-file-limit size-t)
+  (time-limit large-integer))
+
+(defwin32struct processor-number
+  (group word)
+  (number byte)
+  (reserved byte))
+
 (defwin32struct devmode
   (device-name wchar :count #.+cchdevicename+)
   (spec-version word)
@@ -3775,6 +3905,64 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("CreatePopupMenu" create-popup-menu user32) hmenu)
 
+(defwin32fun ("CreateProcessW" create-process kernel32) bool
+  (application-name lpcwstr)
+  (command-line lpwstr)
+  (process-attributes (:pointer security-attributes))
+  (thread-attributes (:pointer security-attributes))
+  (inherit-handles bool)
+  (creation-flags dword)
+  (environment (:pointer :void))
+  (current-directory lpcwstr)
+  (startupinfo (:pointer startupinfo))
+  (process-information (:pointer process-information)))
+
+(defwin32fun ("CreateProcessAsUserW" create-process-as-user advapi32) bool
+  (token handle)
+  (application-name lpcwstr)
+  (command-line lpwstr)
+  (process-attributes (:pointer security-attributes))
+  (thread-attributes (:pointer security-attributes))
+  (inherit-handles bool)
+  (creation-flags dword)
+  (environment (:pointer :void))
+  (current-directory lpcwstr)
+  (startupinfo (:pointer startupinfo))
+  (process-information (:pointer process-information)))
+
+(defwin32fun ("CreateProcessWithLogonW" create-process-with-logon advapi32) bool
+  (user-name lpcwstr)
+  (domain lpcwstr)
+  (password lpcwstr)
+  (logon-flags dword)
+  (application-name lpcwstr)
+  (command-line lpwstr)
+  (creation-flags dword)
+  (environment (:pointer :void))
+  (current-directory lpcwstr)
+  (startupinfo (:pointer startupinfo))
+  (process-information (:pointer process-information)))
+
+(defwin32fun ("CreateProcessWithTokenW" create-process-with-token advapi32) bool
+  (token handle)
+  (logon-flags dword)
+  (application-name lpcwstr)
+  (command-line lpwstr)
+  (creation-flags dword)
+  (environment (:pointer :void))
+  (current-directory lpcwstr)
+  (startupinfo (:pointer startupinfo))
+  (process-information (:pointer process-information)))
+
+(defwin32fun ("CreateRemoteThread" create-remote-thread kernel32) handle
+  (process handle)
+  (thread-attributes (:pointer security-attributes))
+  (stack-size size-t)
+  (start-address :pointer)
+  (parameter (:pointer :void))
+  (creation-flags dword)
+  (thread-id (:pointer dword)))
+
 (defwin32fun ("CreateSemaphoreW" create-semaphore kernel32) handle
   (semaphore-attributes (:pointer security-attributes))
   (initial-count long)
@@ -3901,6 +4089,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("FlushFileBuffers" flush-file-buffers kernel32) bool
   (hfile handle))
 
+(defwin32fun ("FlushInstructionCache" flush-instruction-cache kernel32) bool
+  (process handle)
+  (base-address (:pointer :void))
+  (size size-t))
+
 (defwin32fun ("FormatMessageW" format-message kernel32) dword
   (flags dword)
   (source (:pointer :void))
@@ -3959,6 +4152,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetCurrentProcessId" get-current-process-id kernel32) dword)
 
 (defwin32fun ("GetCurrentProcessorNumber" get-current-processor-number kernel32) dword)
+
+(defwin32fun ("GetCurrentProcessorNumberEx" get-current-processor-number-ex kernel32) :void
+  (processor-number (:pointer processor-number)))
 
 (defwin32fun ("GetCurrentThreadId" get-current-thread-id kernel32) dword)
 
@@ -4145,6 +4341,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (get-proc-address module (cffi:make-pointer ordinal)))
 
 (defwin32fun ("GetShellWindow" get-shell-window user32) hwnd)
+
+(defwin32fun ("GetStartupInfoW" get-startup-info kernel32) :void
+  (startupinfo (:pointer startupinfo)))
 
 (defwin32fun ("GetStockObject" get-stock-object gdi32) hgdiobj
   (object :int))
@@ -4373,6 +4572,26 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (bytes size-t)
   (flags uint))
 
+(defwin32fun ("LogonUserW" logon-user advapi32) bool
+  (user-name lpcwstr)
+  (domain lpcwstr)
+  (password lpcwstr)
+  (logon-type dword)
+  (logon-provider dword)
+  (token (:pointer handle)))
+
+(defwin32fun ("LogonUserExW" logon-user-ex advapi32) bool
+  (user-name lpcwstr)
+  (domain lpcwstr)
+  (password lpcwstr)
+  (logon-type dword)
+  (logon-provider dword)
+  (token (:pointer handle))
+  (sid (:pointer sid))
+  (profile-buffer (:pointer :void))
+  (profile-length (:pointer dword))
+  (quota-limits (:pointer quota-limits)))
+
 (defwin32-lispfun makeintresource (i)
   (cffi:make-pointer (ldb (cl:byte 16 0) i)))
 
@@ -4428,6 +4647,27 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (flags dword)
   (inherit bool)
   (desired-access access-mask))
+
+(defwin32fun ("OpenProcess" open-process kernel32) handle
+  (desired-access dword)
+  (inherit-handle bool)
+  (process-id dword))
+
+(defwin32fun ("OpenProcessToken" open-process-token advapi32) bool
+  (process-handle handle)
+  (desired-access dword)
+  (handle (:pointer handle)))
+
+(defwin32fun ("OpenThread" open-thread kernel32) handle
+  (desired-access dword)
+  (inherit-handle bool)
+  (thread-id dword))
+
+(defwin32fun ("OpenThreadToken" open-thread-token advapi32) bool
+  (thread-handle handle)
+  (desired-access dword)
+  (open-as-self bool)
+  (token-handle (:pointer handle)))
 
 (defwin32fun ("PeekMessageW" peek-message user32) bool
   (msg (:pointer msg))
