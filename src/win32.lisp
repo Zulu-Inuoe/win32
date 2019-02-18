@@ -24,6 +24,9 @@
 (define-foreign-library setupapi
   (:win32 "setupapi.dll"))
 
+(define-foreign-library psapi
+  (:win32 "psapi.dll"))
+
 (use-foreign-library version)
 (use-foreign-library kernel32)
 (use-foreign-library user32)
@@ -32,6 +35,7 @@
 (use-foreign-library opengl32)
 (use-foreign-library advapi32)
 (use-foreign-library setupapi)
+(use-foreign-library psapi)
 
 (defconstant +win32-string-encoding+
   #+little-endian :ucs-2le
@@ -3576,6 +3580,72 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +stack-size-param-is-a-reservation+   #x00010000)    ;; Threads only
 
+(defwin32constant  +section-query+                #x0001)
+(defwin32constant  +section-map-write+            #x0002)
+(defwin32constant  +section-map-read+             #x0004)
+(defwin32constant  +section-map-execute+          #x0008)
+(defwin32constant  +section-extend-size+          #x0010)
+(defwin32constant  +section-map-execute-explicit+ #x0020) ;; not included in SECTION_ALL_ACCESS
+
+(defwin32constant  +section-all-access+ (logior +standard-rights-required+
+                                                +section-query+
+                                                +section-map-write+
+                                                +section-map-read+
+                                                +section-map-execute+
+                                                +section-extend-size+))
+
+(defwin32constant  +session-query-access+  #x0001)
+(defwin32constant  +session-modify-access+ #x0002)
+
+(defwin32constant  +session-all-access+ (logior +standard-rights-required+
+                                                +session-query-access+
+                                                +session-modify-access+))
+
+(defwin32constant  +page-noaccess+          #x01)
+(defwin32constant  +page-readonly+          #x02)
+(defwin32constant  +page-readwrite+         #x04)
+(defwin32constant  +page-writecopy+         #x08)
+;; #if WINAPI-FAMILY-PARTITION(WINAPI-PARTITION-DESKTOP)
+(defwin32constant  +page-execute+           #x10)
+(defwin32constant  +page-execute-read+      #x20)
+(defwin32constant  +page-execute-readwrite+ #x40)
+(defwin32constant  +page-execute-writecopy+ #x80)
+;; #endif  WINAPI-FAMILY-PARTITION(WINAPI-PARTITION-DESKTOP)
+(defwin32constant  +page-guard+            #x100)
+(defwin32constant  +page-nocache+          #x200)
+(defwin32constant  +page-writecombine+     #x400)
+(defwin32constant  +page-revert-to-file-map+     #x80000000)
+(defwin32constant  +mem-commit+                  #x1000)
+(defwin32constant  +mem-reserve+                 #x2000)
+(defwin32constant  +mem-decommit+                #x4000)
+(defwin32constant  +mem-release+                 #x8000)
+(defwin32constant  +mem-free+                    #x10000)
+(defwin32constant  +mem-private+                 #x20000)
+(defwin32constant  +mem-mapped+                  #x40000)
+(defwin32constant  +mem-reset+                   #x80000)
+(defwin32constant  +mem-top-down+                #x100000)
+(defwin32constant  +mem-write-watch+             #x200000)
+(defwin32constant  +mem-physical+                #x400000)
+(defwin32constant  +mem-rotate+                  #x800000)
+(defwin32constant  +mem-different-image-base-ok+ #x800000)
+(defwin32constant  +mem-reset-undo+              #x1000000)
+(defwin32constant  +mem-large-pages+             #x20000000)
+(defwin32constant  +mem-4mb-pages+               #x80000000)
+(defwin32constant  +sec-file+           #x800000)
+(defwin32constant  +sec-image+         #x1000000)
+(defwin32constant  +sec-protected-image+  #x2000000)
+(defwin32constant  +sec-reserve+       #x4000000)
+(defwin32constant  +sec-commit+        #x8000000)
+(defwin32constant  +sec-nocache+      #x10000000)
+(defwin32constant  +sec-writecombine+ #x40000000)
+(defwin32constant  +sec-large-pages+  #x80000000)
+(defwin32constant  +sec-image-no-execute+ (logior +sec-image+ +sec-nocache+))
+(defwin32constant  +mem-image+         +sec-image+)
+(defwin32constant  +write-watch-flag-reset+  #x01)
+(defwin32constant  +mem-unmap-with-transient-boost+  #x01)
+
+(defwin32constant +numa-no-preferred-node+ #xffffffff)
+
 (defwin32struct startupinfo
   (size dword)
   (reserved lpwstr)
@@ -3879,6 +3949,23 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (creation-disposition dword)
   (create-ex-params (:pointer createfile2-extended-parameters)))
 
+(defwin32fun ("CreateFileMappingW" create-file-mapping kernel32) handle
+  (file handle)
+  (security-attributes (:pointer security-attributes))
+  (protect dword)
+  (max-size-high dword)
+  (max-size-low dword)
+  (name lpcwstr))
+
+(defwin32fun ("CreateFileMappingNumaW" create-file-mapping-numa kernel32) handle
+  (file handle)
+  (security-attributes (:pointer security-attributes))
+  (protect dword)
+  (max-size-high dword)
+  (max-size-low dword)
+  (name lpcwstr)
+  (nd-preferred dword))
+
 (defwin32fun ("CreateMenu" create-menu user32) hmenu)
 
 (defwin32fun ("CreateMutexW" create-mutex kernel32) handle
@@ -4094,6 +4181,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (base-address (:pointer :void))
   (size size-t))
 
+(defwin32fun ("FlushViewOfFile" flush-view-of-file kernel32) bool
+  (base-address (:pointer :void))
+  (number-of-bytes-to-flush size-t))
+
 (defwin32fun ("FormatMessageW" format-message kernel32) dword
   (flags dword)
   (source (:pointer :void))
@@ -4237,6 +4328,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetLocalTime" get-local-time kernel32) :void
   (system-time (:pointer systemtime)))
+
+(defwin32fun ("GetMappedFiledNameW" get-mapped-file-name psapi) dword
+  (process handle)
+  (lpv (:pointer :void))
+  (file-name lpwstr)
+  (size dword))
 
 (defwin32fun ("GetMenuItemCount" get-menu-item-count user32) :int
   (hmenu hmenu))
@@ -4599,6 +4696,58 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (declare (type (unsigned-byte 16) p s))
   (logior (ash s 10) p))
 
+(defwin32fun ("MapViewOfFile" map-view-of-file kernel32) (:pointer :void)
+  (file-mapping-object handle)
+  (desired-access dword)
+  (file-offset-high dword)
+  (file-offset-low dword)
+  (number-of-bytes-to-map size-t))
+
+(defwin32fun ("MapViewOfFile2" map-view-of-file-2 kernel32) (:pointer :void)
+  (file-mapping-object handle)
+  (process-handle handle)
+  (offset ulong64)
+  (base-address (:pointer :void))
+  (view-size size-t)
+  (allocation-type ulong)
+  (page-protection ulong))
+
+(defwin32fun ("MapViewOfFile3" map-view-of-file-3 kernel32) (:pointer :void)
+  (file-mapping-object handle)
+  (process-handle handle)
+  (offset ulong64)
+  (base-address (:pointer :void))
+  (view-size size-t)
+  (allocation-type ulong)
+  (page-protection ulong))
+
+(defwin32fun ("MapViewOfFileEx" map-view-of-file-ex kernel32) (:pointer :void)
+  (file-mapping-object handle)
+  (desired-access dword)
+  (file-offset-high dword)
+  (file-offset-low dword)
+  (number-of-bytes-to-map size-t)
+  (base-address (:pointer :void)))
+
+(defwin32fun ("MapViewOfFileExNuma" map-view-of-file-ex-numa kernel32) (:pointer :void)
+  (file-mapping-object handle)
+  (desired-access dword)
+  (file-offset-high dword)
+  (file-offset-low dword)
+  (number-of-bytes-to-map size-t)
+  (base-address (:pointer :void))
+  (nd-preferred dword))
+
+(defwin32fun ("MapViewOfFileNuma2" map-view-of-file-numa-2 kernel32) (:pointer :void)
+  (file-mapping-object handle)
+  (process-handle handle)
+  (offset ulong64)
+  (base-address (:pointer :void))
+  (view-size size-t)
+  (allocation-type ulong)
+  (page-protection ulong)
+  (preferred-node ulong))
+
 (defwin32fun ("MapVirtualKeyW" map-virtual-key user32) uint
   (code uint)
   (map-type uint))
@@ -4642,6 +4791,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (desired-access dword)
   (inherit-handle bool)
   (name lpctstr))
+
+(defwin32fun ("OpenFileMappingW" open-file-mapping kernel32) handle
+  (desired-access dword)
+  (inherit-handle bool)
+  (name lpcwstr))
 
 (defwin32fun ("OpenInputDesktop" open-input-desktop user32) hdesk
   (flags dword)
@@ -5198,6 +5352,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("UnloadKeyboardLayout" unload-keyboard-layout user32) bool
   (hkl hkl))
+
+(defwin32fun ("UnmapViewOfFile" unmap-view-of-file kernel32) bool
+  (base-address (:pointer :void)))
+
+(defwin32fun ("UnmapViewOfFile2" unmap-view-of-file-2 kernel32) bool
+  (process-handle handle)
+  (base-address (:pointer :void))
+  (unmap-flags ulong))
+
+(defwin32fun ("UnmapViewOfFileEx" unmap-view-of-file-ex kernel32) bool
+  (base-address (:pointer :void))
+  (unmap-flags ulong))
 
 (defwin32fun ("UnregisterClassW" unregister-class user32) bool
   (wndclass-name lpctstr)
