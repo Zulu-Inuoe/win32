@@ -4238,6 +4238,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetCommandLineW" get-command-line kernel32) lptstr)
 
+(defwin32fun ("GetCompressedFileSizeW" get-compressed-file-size kernel32) dword
+  (file-name lpcwstr)
+  (file-size-high (:pointer dword)))
+
 (defwin32fun ("GetCurrentProcess" get-current-process kernel32) handle)
 
 (defwin32fun ("GetCurrentProcessId" get-current-process-id kernel32) dword)
@@ -4272,6 +4276,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (creation-time (:pointer filetime))
   (last-access-time (:pointer filetime))
   (last-write-time (:pointer filetime)))
+
+(defwin32fun ("GetFileSize" get-file-size kernel32) dword
+  (file handle)
+  (file-size-high (:pointer dword)))
+
+(defwin32fun ("GetFileSizeEx" get-file-size-ex kernel32) bool
+  (file handle)
+  (file-size-high (:pointer large-integer)))
 
 (defwin32fun ("GetFileVersionInfoW" get-file-version-info version) bool
   (str-file-name lpctstr)
