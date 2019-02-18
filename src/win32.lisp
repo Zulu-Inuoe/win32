@@ -3483,6 +3483,51 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant  +klf-shiftlock+       #x00010000)
 (defwin32constant  +klf-reset+           #x40000000)
 
+;;; Predefined Clipboard Formats
+(defwin32constant  +cf-text+             1)
+(defwin32constant  +cf-bitmap+           2)
+(defwin32constant  +cf-metafilepict+     3)
+(defwin32constant  +cf-sylk+             4)
+(defwin32constant  +cf-dif+              5)
+(defwin32constant  +cf-tiff+             6)
+(defwin32constant  +cf-oemtext+          7)
+(defwin32constant  +cf-dib+              8)
+(defwin32constant  +cf-palette+          9)
+(defwin32constant  +cf-pendata+          10)
+(defwin32constant  +cf-riff+             11)
+(defwin32constant  +cf-wave+             12)
+(defwin32constant  +cf-unicodetext+      13)
+(defwin32constant  +cf-enhmetafile+      14)
+;; #if(WINVER >= #x0400)
+(defwin32constant  +cf-hdrop+            15)
+(defwin32constant  +cf-locale+           16)
+;; #endif /* WINVER >= #x0400 */
+;; #if(WINVER >= #x0500)
+(defwin32constant  +cf-dibv5+            17)
+;; #endif /* WINVER >= #x0500 */
+
+;; #if(WINVER >= #x0500)
+(defwin32constant  +cf-max+              18)
+;; #elif(WINVER >= #x0400)
+;; CF_MAX              17
+;; #else
+;; CF_MAX              15
+;; #endif
+
+(defwin32constant  +cf-ownerdisplay+     #x0080)
+(defwin32constant  +cf-dsptext+          #x0081)
+(defwin32constant  +cf-dspbitmap+        #x0082)
+(defwin32constant  +cf-dspmetafilepict+  #x0083)
+(defwin32constant  +cf-dspenhmetafile+   #x008E)
+
+;;; "Private" formats don't get GlobalFree()'d
+(defwin32constant  +cf-privatefirst+     #x0200)
+(defwin32constant  +cf-privatelast+      #x02FF)
+
+;;; "GDIOBJ" formats do get DeleteObject()'d
+(defwin32constant  +cf-gdiobjfirst+      #x0300)
+(defwin32constant  +cf-gdiobjlast+       #x03FF)
+
 (defwin32constant  +mod-alt+                         #x0001)
 (defwin32constant  +mod-control+                     #x0002)
 (defwin32constant  +mod-shift+                       #x0004)
@@ -3646,6 +3691,28 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +numa-no-preferred-node+ #xffffffff)
 
+(defwin32constant +gmem-fixed+          #x0000)
+(defwin32constant +gmem-moveable+       #x0002)
+(defwin32constant +gmem-nocompact+      #x0010)
+(defwin32constant +gmem-nodiscard+      #x0020)
+(defwin32constant +gmem-zeroinit+       #x0040)
+(defwin32constant +gmem-modify+         #x0080)
+(defwin32constant +gmem-discardable+    #x0100)
+(defwin32constant +gmem-not-banked+     #x1000)
+(defwin32constant +gmem-share+          #x2000)
+(defwin32constant +gmem-ddeshare+       #x2000)
+(defwin32constant +gmem-notify+         #x4000)
+(defwin32constant +gmem-lower+          +gmem-not-banked+)
+(defwin32constant +gmem-valid-flags+    #x7F72)
+(defwin32constant +gmem-invalid-handle+ #x8000)
+
+(defwin32constant +ghnd+                (logior +gmem-moveable+ +gmem-zeroinit+))
+(defwin32constant +gptr+                (logior +gmem-fixed+  +gmem-zeroinit+))
+
+;/* Flags returned by GlobalFlags (in addition to GMEM_DISCARDABLE) */
+(defwin32constant  +gmem-discarded+      #x4000)
+(defwin32constant  +gmem-lockcount+      #x00FF)
+
 (defwin32struct startupinfo
   (size dword)
   (reserved lpwstr)
@@ -3792,9 +3859,17 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (daylight-date systemtime)
   (daylight-bias long))
 
+(defwin32struct copydatastruct
+  (dw-data ulong-ptr)
+  (cb-data dword)
+  (lp-data (:pointer :void)))
+
 (defwin32fun ("ActivateKeyboardLayout" activate-keyboard-layout user32) hkl
   (hkl hkl)
   (flags uint))
+
+(defwin32fun ("AddClipboardFormatListener" add-clipboard-format-listener user32) bool
+  (hwnd hwnd))
 
 (defwin32fun ("AddDllDirectory" add-dll-directory kernel32) dll-directory-cookie
   (new-directory pcwstr))
@@ -3848,6 +3923,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CancelIo" cancel-io kernel32) bool
   (handle handle))
 
+(defwin32fun ("ChangeClipboardChain" change-clipboard-chain user32) bool
+  (hwnd-remove hwnd)
+  (hwnd-new-next hwnd))
+
 (defwin32fun ("CheckMenuItem" check-menu-item user32) dword
   (hmenu hmenu)
   (id-check-item uint)
@@ -3863,6 +3942,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("ClipCursor" clip-cursor user32) bool
   (rect (:pointer rect)))
+
+(defwin32fun ("CloseClipboard" close-clipboard user32) bool)
 
 (defwin32fun ("CloseHandle" close-handle kernel32) bool
   (handle handle))
@@ -3918,6 +3999,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (cancel (:pointer bool))
   (copy-flags dword)
   (transaction handle))
+
+(defwin32fun ("CountClipboardFormats" count-clipboard-formats user32) :int)
 
 (defwin32fun ("CreateDesktopW" create-desktop user32) hdesk
   (desktop lpcwstr)
@@ -4116,6 +4199,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (fat-time word)
   (file-time (:pointer filetime)))
 
+(defwin32fun ("EmptyClipboard" empty-clipboard user32) bool)
+
 (defwin32fun ("EnableMenuItem" enable-menu-item user32) bool
   (hmenu hmenu)
   (id-enable-item uint)
@@ -4133,6 +4218,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (parent hwnd)
   (enum-func :pointer)
   (lparam lparam))
+
+(defwin32fun ("EnumClipboardFormats" enum-clipboard-formats user32) uint
+  (format uint))
 
 (defwin32fun ("EnumDynamicTimeZoneInformation" enum-dynamic-time-zone-information kernel32) dword
   (index dword)
@@ -4235,6 +4323,20 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetClientRect" get-client-rect user32) bool
   (hwnd hwnd)
   (rect (:pointer rect)))
+
+(defwin32fun ("GetClipboardData" get-clipboard-data user32) handle
+  (format uint))
+
+(defwin32fun ("GetClipboardFormatNameW" get-clipboard-format-name user32) :int
+  (format uint)
+  (format-name lpwstr)
+  (ch-max-count :int))
+
+(defwin32fun ("GetClipboardOwner" get-clipboard-owner user32) hwnd)
+
+(defwin32fun ("GetClipboardSequenceNumber" get-clipboard-sequence-number user32) dword)
+
+(defwin32fun ("GetClipboardViewer" get-clipboard-viewer user32) hwnd)
 
 (defwin32fun ("GetCommandLineW" get-command-line kernel32) lptstr)
 
@@ -4426,6 +4528,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetNativeSystemInfo" get-native-system-info kernel32) :void
   (system-info (:pointer system-info)))
 
+(defwin32fun ("GetOpenClipboardWindow" get-open-clipboard-window user32) hwnd)
+
 (defwin32fun ("GetOverlappedResult" get-overlapped-result kernel32) bool
   (file handle)
   (overlapped (:pointer overlapped))
@@ -4440,6 +4544,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetPixelFormat" get-pixel-format gdi32) :int
   (dc hdc))
+
+(defwin32fun ("GetPriorityClipboardFormat" get-priority-clipboard-format user32) :int
+  (format-priority-list (:pointer uint))
+  (formats :int))
 
 (defwin32fun ("GetProcAddress" get-proc-address kernel32) far-proc
   (module hmodule)
@@ -4514,6 +4622,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetTopWindow" get-top-window user32) hwnd
   (hwnd hwnd))
 
+(defwin32fun ("GetUpdatedClipboardFormats" get-updated-clipboard-formats user32) bool
+  (formats (:pointer uint))
+  (count-formats uint)
+  (count-formats-out (:pointer uint)))
+
 (defwin32fun ("GetWindow" get-window user32) hwnd
   (hwnd hwnd)
   (cmd uint))
@@ -4557,6 +4670,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (rect (:pointer rect))
   (erase bool))
+
+(defwin32fun ("IsClipboardFormatAvailable" is-clipboard-format-available user32) bool
+  (format uint))
 
 (defwin32-lispfun is-intresource (r)
   (zerop (ash r -16)))
@@ -4802,6 +4918,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (flags dword)
   (transaction handle))
 
+(defwin32fun ("OpenClipboard" open-clipboard user32) bool
+  (new-owner hwnd))
+
 (defwin32fun ("OpenEventW" open-event kernel32) handle
   (desired-access dword)
   (inherit-handle bool)
@@ -4995,6 +5114,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("RegisterClassExW" register-class-ex user32) atom
   (wndclassex (:pointer wndclassex)))
 
+(defwin32fun ("RegisterClipboardFormatW" register-clipboard-format user32) uint
+  (format lpcwstr))
+
 (defwin32fun ("RegisterHotKey" register-hot-key user32) bool
   (hwnd hwnd)
   (id :int)
@@ -5009,6 +5131,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("ReleaseDC" release-dc user32) :int
   (hwnd hwnd)
   (dc hdc))
+
+(defwin32fun ("RemoveClipboardFormatListener" remove-clipboard-format-listener user32) bool
+  (hwnd hwnd))
 
 (defwin32fun ("RemoveDllDirectory" remove-dll-directory kernel32) bool
   (cookie dll-directory-cookie))
@@ -5099,6 +5224,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (index :int)
   (new-word word))
+
+(defwin32fun ("SetClipboardData" set-clipboard-data user32) handle
+  (format uint)
+  (hmem handle))
+
+(defwin32fun ("SetClipboardViewer" set-clipboard-viewer user32) hwnd
+  (new-viewer hwnd))
 
 (defwin32fun ("SetCursor" set-cursor user32) hcursor
   (cursor hcursor))
