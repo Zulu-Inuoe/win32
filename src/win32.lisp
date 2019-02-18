@@ -4519,6 +4519,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (string lptstr)
   (max-count :int))
 
+(defwin32fun ("GetWindowTextLengthW" get-window-text-length user32) :int
+  (hwnd hwnd))
+
 (defwin32fun ("GetWindowThreadProcessId" get-window-thread-process-id user32) dword
   (hwnd hwnd)
   (process-id (:pointer dword)))
