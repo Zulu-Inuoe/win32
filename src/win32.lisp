@@ -4651,6 +4651,36 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (process-id (:pointer dword)))
 
+(defwin32fun ("GlobalAlloc" global-alloc kernel32) hglobal
+  (flags uint)
+  (size size-t))
+
+(defwin32-lispfun global-discard (h)
+  (global-re-alloc h 0 +gmem-moveable+))
+
+(defwin32fun ("GlobalFlags" global-flags kernel32) uint
+  (mem hglobal))
+
+(defwin32fun ("GlobalFree" global-free kernel32) hglobal
+  (mem hglobal))
+
+(defwin32fun ("GlobalHandle" global-handle kernel32) hglobal
+  (mem (:pointer :void)))
+
+(defwin32fun ("GlobalLock" global-lock kernel32) (:pointer :void)
+  (mem hglobal))
+
+(defwin32fun ("GlobalReAlloc" global-re-alloc kernel32) hglobal
+  (mem hglobal)
+  (size size-t)
+  (flags uint))
+
+(defwin32fun ("GlobalSize" global-size kernel32) size-t
+  (mem hglobal))
+
+(defwin32fun ("GlobalUnlock" global-unlock kernel32) bool
+  (mem hglobal))
+
 (defwin32fun ("ImpersonateNamedPipeClient" impersonate-named-pipe-client advapi32) bool
   (named-pipe handle))
 
@@ -4792,13 +4822,28 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (local-file-time (:pointer filetime))
   (file-time (:pointer filetime)))
 
+(defwin32fun ("LocalFlags" local-flags kernel32) uint
+  (mem hlocal))
+
 (defwin32fun ("LocalFree" local-free kernel32) hlocal
   (hmem hlocal))
+
+(defwin32fun ("LocalHandle" local-handle kernel32) hlocal
+  (mem (:pointer :void)))
+
+(defwin32fun ("LocalLock" local-lock kernel32) (:pointer :void)
+  (mem hlocal))
 
 (defwin32fun ("LocalReAlloc" local-re-alloc kernel32) hlocal
   (hmem hlocal)
   (bytes size-t)
   (flags uint))
+
+(defwin32fun ("LocalSize" local-size kernel32) size-t
+  (mem hlocal))
+
+(defwin32fun ("LocalUnlock" local-unlock kernel32) bool
+  (mem hlocal))
 
 (defwin32fun ("LogonUserW" logon-user advapi32) bool
   (user-name lpcwstr)
