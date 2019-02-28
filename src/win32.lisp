@@ -806,19 +806,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +wait-timeout+   #x00000102)
 (defwin32constant +wait-failed+    #xFFFFFFFF)
 
-(defwin32constant +hwnd-top+       #x00000000)
-(defwin32constant +hwnd-bottom+    #x00000001)
-#+:x86
-(progn
-  (defwin32constant +hwnd-message+   #xFFFFFFFD)
-  (defwin32constant +hwnd-notopmost+ #xFFFFFFFE)
-  (defwin32constant +hwnd-topmost+   #xFFFFFFFF))
+(defwin32constant +hwnd-top+        (%as-ptr 0))
+(defwin32constant +hwnd-bottom+     (%as-ptr 1))
+(defwin32constant +hwnd-topmost+    (%as-ptr -1))
+(defwin32constant +hwnd-notopmost+  (%as-ptr -2))
 
-#+:64-bit
-(progn
-  (defwin32constant +hwnd-message+   #xFFFFFFFFFFFFFFFD)
-  (defwin32constant +hwnd-notopmost+ #xFFFFFFFFFFFFFFFE)
-  (defwin32constant +hwnd-topmost+   #xFFFFFFFFFFFFFFFF))
+(defwin32constant +hwnd-broadcast+  (%as-ptr #xffff))
+(defwin32constant +hwnd-message+     (%as-ptr -3))
 
 (defwin32constant +winevent-outofcontext+    #x0000)
 (defwin32constant +winevent-skipownthread+   #x0001)
