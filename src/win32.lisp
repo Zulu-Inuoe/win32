@@ -3707,6 +3707,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant  +gmem-discarded+      #x4000)
 (defwin32constant  +gmem-lockcount+      #x00FF)
 
+(defwin32constant +fr-private+     #x10)
+(defwin32constant +fr-not-enum+    #x20)
+
 (defwin32struct startupinfo
   (size dword)
   (reserved lpwstr)
@@ -3867,6 +3870,20 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("AddDllDirectory" add-dll-directory kernel32) dll-directory-cookie
   (new-directory pcwstr))
+
+(defwin32fun ("AddFontMemResourceEx" add-font-mem-resource-ex gdi32) handle
+  (file-view (:pointer :void))
+  (size dword)
+  (reserved (:pointer :void))
+  (num-fonts (:pointer dword)))
+
+(defwin32fun ("AddFontResourceW" add-font-resource gdi32) :int
+  (resource-name lpwstr))
+
+(defwin32fun ("AddFontResourceExW" add-font-resource-ex gdi32) :int
+  (resource-name lpwstr)
+  (fl dword)
+  (res (:pointer :void)))
 
 (defwin32fun ("AppendMenuW" append-menu user32) bool
   (hmenu hmenu)
@@ -5176,6 +5193,17 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("RemoveDllDirectory" remove-dll-directory kernel32) bool
   (cookie dll-directory-cookie))
+
+(defwin32fun ("RemoveFontMemResourceW" remove-font-mem-resource gdi32) bool
+  (h handle))
+
+(defwin32fun ("RemoveFontResourceW" remove-font-resource gdi32) bool
+  (file-name lpwstr))
+
+(defwin32fun ("RemoveFontResourceExW" remove-font-resource-ex gdi32) bool
+  (name lpwstr)
+  (fl dword)
+  (pdv (:pointer :void)))
 
 (defwin32fun ("RemoveMenu" remove-menu user32) bool
   (hmenu hmenu)
