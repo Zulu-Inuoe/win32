@@ -45,9 +45,11 @@
 (defconstant +pointer-bit-size+ (* (cffi:foreign-type-size :pointer) 8))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (ecase +pointer-bit-size+
-    (32 (pushnew :32-bit *features*))
-    (64 (pushnew :64-bit *features*))))
+  (pushnew
+   #.(ecase +pointer-bit-size+
+       (32 :32-bit)
+       (64 :64-bit))
+   *features*))
 
 (defmacro defwin32constant (name value &optional doc)
   "Wrapper around `defconstant' which exports the constant."
