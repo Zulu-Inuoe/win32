@@ -280,6 +280,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32type sid :void)
 
+(defwin32type fxpt16dot16 :long)
+(defwin32type fxpt2dot30 :long)
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
     "Makes it easier to declare certain high values which in C are int32, in hex.
@@ -773,9 +776,445 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +idc-appstarting+     (make-pointer 32650)) ; /*not in win3.1 */
 (defwin32constant +idc-help+            (make-pointer 32651))
 
-(defwin32constant +white-brush+ 0)
-(defwin32constant +black-brush+ 4)
-(defwin32constant +dc-brush+ 18)
+;;; Binary raster ops
+(defwin32constant +r2-black+            1)   ;  0
+(defwin32constant +r2-notmergepen+      2)   ; DPon
+(defwin32constant +r2-masknotpen+       3)   ; DPna
+(defwin32constant +r2-notcopypen+       4)   ; PN
+(defwin32constant +r2-maskpennot+       5)   ; PDna
+(defwin32constant +r2-not+              6)   ; Dn
+(defwin32constant +r2-xorpen+           7)   ; DPx
+(defwin32constant +r2-notmaskpen+       8)   ; DPan
+(defwin32constant +r2-maskpen+          9)   ; DPa
+(defwin32constant +r2-notxorpen+        10)  ; DPxn
+(defwin32constant +r2-nop+              11)  ; D
+(defwin32constant +r2-mergenotpen+      12)  ; DPno
+(defwin32constant +r2-copypen+          13)  ; P
+(defwin32constant +r2-mergepennot+      14)  ; PDno
+(defwin32constant +r2-mergepen+         15)  ; DPo
+(defwin32constant +r2-white+            16)  ;  1
+(defwin32constant +r2-last+             16)
+
+;;; Ternary raster operations
+(defwin32constant +srccopy+             #x00CC0020) ; dest = source
+(defwin32constant +srcpaint+            #x00EE0086) ; dest = source OR dest
+(defwin32constant +srcand+              #x008800C6) ; dest = source AND dest
+(defwin32constant +srcinvert+           #x00660046) ; dest = source XOR dest
+(defwin32constant +srcerase+            #x00440328) ; dest = source AND (NOT dest )
+(defwin32constant +notsrccopy+          #x00330008) ; dest = (NOT source)
+(defwin32constant +notsrcerase+         #x001100A6) ; dest = (NOT src) AND (NOT dest)
+(defwin32constant +mergecopy+           #x00C000CA) ; dest = (source AND pattern)
+(defwin32constant +mergepaint+          #x00BB0226) ; dest = (NOT source) OR dest
+(defwin32constant +patcopy+             #x00F00021) ; dest = pattern
+(defwin32constant +patpaint+            #x00FB0A09) ; dest = DPSnoo
+(defwin32constant +patinvert+           #x005A0049) ; dest = pattern XOR dest
+(defwin32constant +dstinvert+           #x00550009) ; dest = (NOT dest)
+(defwin32constant +blackness+           #x00000042) ; dest = BLACK
+(defwin32constant +whiteness+           #x00FF0062) ; dest = WHITE
+
+(defwin32constant +nomirrorbitmap+               #x80000000) ; Do not Mirror the bitmap in this call
+(defwin32constant +captureblt+                   #x40000000) ; Include layered windows
+
+(defwin32constant +gdi-error+ #xFFFFFFFF)
+
+(defwin32constant +hgdi-error+ (cffi:make-pointer #xFFFFFFFF))
+
+;;; Region Flags
+(defwin32constant +error+               0)
+(defwin32constant +nullregion+          1)
+(defwin32constant +simpleregion+        2)
+(defwin32constant +complexregion+       3)
+(defwin32constant +rgn-error+ +error+)
+
+;;; CombineRgn() Styles
+(defwin32constant +rgn-and+             1)
+(defwin32constant +rgn-or+              2)
+(defwin32constant +rgn-xor+             3)
+(defwin32constant +rgn-diff+            4)
+(defwin32constant +rgn-copy+            5)
+(defwin32constant +rgn-min+             +rgn-and+)
+(defwin32constant +rgn-max+             +rgn-copy+)
+
+;;; StretchBlt() Modes
+(defwin32constant +blackonwhite+                 1)
+(defwin32constant +whiteonblack+                 2)
+(defwin32constant +coloroncolor+                 3)
+(defwin32constant +halftone+                     4)
+(defwin32constant +maxstretchbltmode+            4)
+
+;;; New StretchBlt() Modes
+(defwin32constant +stretch-andscans+    +blackonwhite+)
+(defwin32constant +stretch-orscans+     +whiteonblack+)
+(defwin32constant +stretch-deletescans+ +coloroncolor+)
+(defwin32constant +stretch-halftone+    +halftone+)
+
+;;; PolyFill() Modes
+(defwin32constant +alternate+                    1)
+(defwin32constant +winding+                      2)
+(defwin32constant +polyfill-last+                2)
+
+;;; Layout Orientation Options
+(defwin32constant +layout-rtl+                         #x00000001) ;; Right to left
+(defwin32constant +layout-btt+                         #x00000002) ;; Bottom to top
+(defwin32constant +layout-vbh+                         #x00000004) ;; Vertical before horizontal
+(defwin32constant +layout-orientationmask+             (logior +layout-rtl+ +layout-btt+ +layout-vbh+))
+(defwin32constant +layout-bitmaporientationpreserved+  #x00000008)
+
+;;; Text Alignment Options
+(defwin32constant +ta-noupdatecp+                0)
+(defwin32constant +ta-updatecp+                  1)
+
+(defwin32constant +ta-left+                      0)
+(defwin32constant +ta-right+                     2)
+(defwin32constant +ta-center+                    6)
+
+(defwin32constant +ta-top+                       0)
+(defwin32constant +ta-bottom+                    8)
+(defwin32constant +ta-baseline+                  24)
+
+(defwin32constant +ta-rtlreading+                256)
+(defwin32constant +ta-mask+       (+ +ta-baseline+ +ta-center+ +ta-updatecp+ +ta-rtlreading+))
+
+(defwin32constant +vta-baseline+ +ta-baseline+)
+(defwin32constant +vta-left+     +ta-bottom+)
+(defwin32constant +vta-right+    +ta-top+)
+(defwin32constant +vta-center+   +ta-center+)
+(defwin32constant +vta-bottom+   +ta-right+)
+(defwin32constant +vta-top+      +ta-left+)
+
+(defwin32constant +eto-opaque+                   #x0002)
+(defwin32constant +eto-clipped+                  #x0004)
+
+(defwin32constant +eto-glyph-index+              #x0010)
+(defwin32constant +eto-rtlreading+               #x0080)
+(defwin32constant +eto-numericslocal+            #x0400)
+(defwin32constant +eto-numericslatin+            #x0800)
+(defwin32constant +eto-ignorelanguage+           #x1000)
+
+(defwin32constant +eto-pdy+                      #x2000)
+
+(defwin32constant +eto-reverse-index-map+        #x10000)
+
+(defwin32constant +aspect-filtering+             #x0001)
+
+;;; EnumFonts Masks
+(defwin32constant +raster-fonttype+     #x0001)
+(defwin32constant +device-fonttype+     #x0002)
+(defwin32constant +truetype-fonttype+   #x0004)
+
+;;; palette entry flags
+
+(defwin32constant +pc-reserved+     #x01)    ; palette index used for animation
+(defwin32constant +pc-explicit+     #x02)    ; palette index is explicit to device
+(defwin32constant +pc-nocollapse+   #x04)    ; do not match color to system palette
+
+
+;;; Background Modes
+(defwin32constant +transparent+         1)
+(defwin32constant +opaque+              2)
+(defwin32constant +bkmode-last+         2)
+
+;;; Graphics Modes
+
+(defwin32constant +gm-compatible+       1)
+(defwin32constant +gm-advanced+         2)
+(defwin32constant +gm-last+             2)
+
+;;; PolyDraw and GetPath point types
+(defwin32constant +pt-closefigure+      #x01)
+(defwin32constant +pt-lineto+           #x02)
+(defwin32constant +pt-bezierto+         #x04)
+(defwin32constant +pt-moveto+           #x06)
+
+;;; Mapping Modes
+(defwin32constant +mm-text+             1)
+(defwin32constant +mm-lometric+         2)
+(defwin32constant +mm-himetric+         3)
+(defwin32constant +mm-loenglish+        4)
+(defwin32constant +mm-hienglish+        5)
+(defwin32constant +mm-twips+            6)
+(defwin32constant +mm-isotropic+        7)
+(defwin32constant +mm-anisotropic+      8)
+
+;;; Min and Max Mapping Mode values
+(defwin32constant +mm-min+              +mm-text+)
+(defwin32constant +mm-max+              +mm-anisotropic+)
+(defwin32constant +mm-max-fixedscale+   +mm-twips+)
+
+;;; Coordinate Modes
+(defwin32constant +absolute+            1)
+(defwin32constant +relative+            2)
+
+;;; Stock Logical Objects
+(defwin32constant +white-brush+         0)
+(defwin32constant +ltgray-brush+        1)
+(defwin32constant +gray-brush+          2)
+(defwin32constant +dkgray-brush+        3)
+(defwin32constant +black-brush+         4)
+(defwin32constant +null-brush+          5)
+(defwin32constant +hollow-brush+        +null-brush+)
+(defwin32constant +white-pen+           6)
+(defwin32constant +black-pen+           7)
+(defwin32constant +null-pen+            8)
+(defwin32constant +oem-fixed-font+      10)
+(defwin32constant +ansi-fixed-font+     11)
+(defwin32constant +ansi-var-font+       12)
+(defwin32constant +system-font+         13)
+(defwin32constant +device-default-font+ 14)
+(defwin32constant +default-palette+     15)
+(defwin32constant +system-fixed-font+   16)
+
+(defwin32constant +default-gui-font+    17)
+
+(defwin32constant +dc-brush+            18)
+(defwin32constant +dc-pen+              19)
+
+(defwin32constant +stock-last+          19)
+
+(defwin32constant +clr-invalid+     #xFFFFFFFF)
+
+;;; Brush Styles
+(defwin32constant +bs-solid+            0)
+(defwin32constant +bs-null+             1)
+(defwin32constant +bs-hollow+           +bs-null+)
+(defwin32constant +bs-hatched+          2)
+(defwin32constant +bs-pattern+          3)
+(defwin32constant +bs-indexed+          4)
+(defwin32constant +bs-dibpattern+       5)
+(defwin32constant +bs-dibpatternpt+     6)
+(defwin32constant +bs-pattern8x8+       7)
+(defwin32constant +bs-dibpattern8x8+    8)
+(defwin32constant +bs-monopattern+      9)
+
+;;; Hatch Styles
+(defwin32constant +hs-horizontal+       0)       ; -----
+(defwin32constant +hs-vertical+         1)       ; |||||
+(defwin32constant +hs-fdiagonal+        2)       ; \\\\\
+(defwin32constant +hs-bdiagonal+        3)       ; /////
+(defwin32constant +hs-cross+            4)       ; +++++
+(defwin32constant +hs-diagcross+        5)       ; xxxxx
+(defwin32constant +hs-api-max+          12)
+
+;;; Pen Styles
+(defwin32constant +ps-solid+            0)
+(defwin32constant +ps-dash+             1)       ; -------
+(defwin32constant +ps-dot+              2)       ; .......
+(defwin32constant +ps-dashdot+          3)       ; _._._._
+(defwin32constant +ps-dashdotdot+       4)       ; _.._.._
+(defwin32constant +ps-null+             5)
+(defwin32constant +ps-insideframe+      6)
+(defwin32constant +ps-userstyle+        7)
+(defwin32constant +ps-alternate+        8)
+(defwin32constant +ps-style-mask+       #x0000000F)
+
+(defwin32constant +ps-endcap-round+     #x00000000)
+(defwin32constant +ps-endcap-square+    #x00000100)
+(defwin32constant +ps-endcap-flat+      #x00000200)
+(defwin32constant +ps-endcap-mask+      #x00000F00)
+
+(defwin32constant +ps-join-round+       #x00000000)
+(defwin32constant +ps-join-bevel+       #x00001000)
+(defwin32constant +ps-join-miter+       #x00002000)
+(defwin32constant +ps-join-mask+        #x0000F000)
+
+(defwin32constant +ps-cosmetic+         #x00000000)
+(defwin32constant +ps-geometric+        #x00010000)
+(defwin32constant +ps-type-mask+        #x000F0000)
+
+(defwin32constant +ad-counterclockwise+ 1)
+(defwin32constant +ad-clockwise+        2)
+
+;;; Device Parameters for GetDeviceCaps()
+(defwin32constant +driverversion+ 0)     ; Device driver version
+(defwin32constant +technology+    2)     ; Device classification
+(defwin32constant +horzsize+      4)     ; Horizontal size in millimeters
+(defwin32constant +vertsize+      6)     ; Vertical size in millimeters
+(defwin32constant +horzres+       8)     ; Horizontal width in pixels
+(defwin32constant +vertres+       10)    ; Vertical height in pixels
+(defwin32constant +bitspixel+     12)    ; Number of bits per pixel
+(defwin32constant +planes+        14)    ; Number of planes
+(defwin32constant +numbrushes+    16)    ; Number of brushes the device has
+(defwin32constant +numpens+       18)    ; Number of pens the device has
+(defwin32constant +nummarkers+    20)    ; Number of markers the device has
+(defwin32constant +numfonts+      22)    ; Number of fonts the device has
+(defwin32constant +numcolors+     24)    ; Number of colors the device supports
+(defwin32constant +pdevicesize+   26)    ; Size required for device descriptor
+(defwin32constant +curvecaps+     28)    ; Curve capabilities
+(defwin32constant +linecaps+      30)    ; Line capabilities
+(defwin32constant +polygonalcaps+ 32)    ; Polygonal capabilities
+(defwin32constant +textcaps+      34)    ; Text capabilities
+(defwin32constant +clipcaps+      36)    ; Clipping capabilities
+(defwin32constant +rastercaps+    38)    ; Bitblt capabilities
+(defwin32constant +aspectx+       40)    ; Length of the X leg
+(defwin32constant +aspecty+       42)    ; Length of the Y leg
+(defwin32constant +aspectxy+      44)    ; Length of the hypotenuse
+
+(defwin32constant +logpixelsx+    88)    ; Logical pixels/inch in X
+(defwin32constant +logpixelsy+    90)    ; Logical pixels/inch in Y
+
+(defwin32constant +sizepalette+  104)    ; Number of entries in physical palette
+(defwin32constant +numreserved+  106)    ; Number of reserved entries in palette
+(defwin32constant +colorres+     108)    ; Actual color resolution
+
+;; Printing related DeviceCaps. These replace the appropriate Escapes
+
+(defwin32constant +physicalwidth+   110) ; Physical Width in device units
+(defwin32constant +physicalheight+  111) ; Physical Height in device units
+(defwin32constant +physicaloffsetx+ 112) ; Physical Printable Area x margin
+(defwin32constant +physicaloffsety+ 113) ; Physical Printable Area y margin
+(defwin32constant +scalingfactorx+  114) ; Scaling factor x
+(defwin32constant +scalingfactory+  115) ; Scaling factor y
+
+;; Display driver specific
+
+(defwin32constant +vrefresh+        116)  ; Current vertical refresh rate of the
+                                          ; display device (for displays only) in Hz
+(defwin32constant +desktopvertres+  117)  ; Horizontal width of entire desktop in
+                                          ; pixels
+(defwin32constant +desktophorzres+  118)  ; Vertical height of entire desktop in
+                                          ; pixels
+(defwin32constant +bltalignment+    119)  ; Preferred blt alignment
+
+(defwin32constant +shadeblendcaps+  120)  ; Shading and blending caps
+(defwin32constant +colormgmtcaps+   121)  ; Color Management caps
+
+;;; Device Capability Masks:
+
+;;; Device Technologies
+(defwin32constant +dt-plotter+          0)   ; Vector plotter
+(defwin32constant +dt-rasdisplay+       1)   ; Raster display
+(defwin32constant +dt-rasprinter+       2)   ; Raster printer
+(defwin32constant +dt-rascamera+        3)   ; Raster camera
+(defwin32constant +dt-charstream+       4)   ; Character-stream, PLP
+(defwin32constant +dt-metafile+         5)   ; Metafile, VDM
+(defwin32constant +dt-dispfile+         6)   ; Display-file
+
+;;; Curve Capabilities
+(defwin32constant +cc-none+             0)   ; Curves not supported
+(defwin32constant +cc-circles+          1)   ; Can do circles
+(defwin32constant +cc-pie+              2)   ; Can do pie wedges
+(defwin32constant +cc-chord+            4)   ; Can do chord arcs
+(defwin32constant +cc-ellipses+         8)   ; Can do ellipese
+(defwin32constant +cc-wide+             16)  ; Can do wide lines
+(defwin32constant +cc-styled+           32)  ; Can do styled lines
+(defwin32constant +cc-widestyled+       64)  ; Can do wide styled lines
+(defwin32constant +cc-interiors+        128) ; Can do interiors
+(defwin32constant +cc-roundrect+        256) ;
+
+;;; Line Capabilities
+(defwin32constant +lc-none+             0)   ; Lines not supported
+(defwin32constant +lc-polyline+         2)   ; Can do polylines
+(defwin32constant +lc-marker+           4)   ; Can do markers
+(defwin32constant +lc-polymarker+       8)   ; Can do polymarkers
+(defwin32constant +lc-wide+             16)  ; Can do wide lines
+(defwin32constant +lc-styled+           32)  ; Can do styled lines
+(defwin32constant +lc-widestyled+       64)  ; Can do wide styled lines
+(defwin32constant +lc-interiors+        128) ; Can do interiors
+
+;;; Polygonal Capabilities
+(defwin32constant +pc-none+             0)   ; Polygonals not supported
+(defwin32constant +pc-polygon+          1)   ; Can do polygons
+(defwin32constant +pc-rectangle+        2)   ; Can do rectangles
+(defwin32constant +pc-windpolygon+      4)   ; Can do winding polygons
+(defwin32constant +pc-trapezoid+        4)   ; Can do trapezoids
+(defwin32constant +pc-scanline+         8)   ; Can do scanlines
+(defwin32constant +pc-wide+             16)  ; Can do wide borders
+(defwin32constant +pc-styled+           32)  ; Can do styled borders
+(defwin32constant +pc-widestyled+       64)  ; Can do wide styled borders
+(defwin32constant +pc-interiors+        128) ; Can do interiors
+(defwin32constant +pc-polypolygon+      256) ; Can do polypolygons
+(defwin32constant +pc-paths+            512) ; Can do paths
+
+;;; Clipping Capabilities
+(defwin32constant +cp-none+             0)   ; No clipping of output
+(defwin32constant +cp-rectangle+        1)   ; Output clipped to rects
+(defwin32constant +cp-region+           2)   ; obsolete
+
+;;; Text Capabilities
+(defwin32constant +tc-op-character+     #x00000001)  ; Can do OutputPrecision   CHARACTER
+(defwin32constant +tc-op-stroke+        #x00000002)  ; Can do OutputPrecision   STROKE
+(defwin32constant +tc-cp-stroke+        #x00000004)  ; Can do ClipPrecision     STROKE
+(defwin32constant +tc-cr-90+            #x00000008)  ; Can do CharRotAbility    90
+(defwin32constant +tc-cr-any+           #x00000010)  ; Can do CharRotAbility    ANY
+(defwin32constant +tc-sf-x-yindep+      #x00000020)  ; Can do ScaleFreedom      X_YINDEPENDENT
+(defwin32constant +tc-sa-double+        #x00000040)  ; Can do ScaleAbility      DOUBLE
+(defwin32constant +tc-sa-integer+       #x00000080)  ; Can do ScaleAbility      INTEGER
+(defwin32constant +tc-sa-contin+        #x00000100)  ; Can do ScaleAbility      CONTINUOUS
+(defwin32constant +tc-ea-double+        #x00000200)  ; Can do EmboldenAbility   DOUBLE
+(defwin32constant +tc-ia-able+          #x00000400)  ; Can do ItalisizeAbility  ABLE
+(defwin32constant +tc-ua-able+          #x00000800)  ; Can do UnderlineAbility  ABLE
+(defwin32constant +tc-so-able+          #x00001000)  ; Can do StrikeOutAbility  ABLE
+(defwin32constant +tc-ra-able+          #x00002000)  ; Can do RasterFontAble    ABLE
+(defwin32constant +tc-va-able+          #x00004000)  ; Can do VectorFontAble    ABLE
+(defwin32constant +tc-reserved+         #x00008000)
+(defwin32constant +tc-scrollblt+        #x00010000)  ; Don't do text scroll with blt
+
+;;; Raster Capabilities
+(defwin32constant +rc-none+             0)
+(defwin32constant +rc-bitblt+           1)       ; Can do standard BLT.
+(defwin32constant +rc-banding+          2)       ; Device requires banding support
+(defwin32constant +rc-scaling+          4)       ; Device requires scaling support
+(defwin32constant +rc-bitmap64+         8)       ; Device can support >64K bitmap
+(defwin32constant +rc-gdi20-output+     #x0010)      ; has 2.0 output calls
+(defwin32constant +rc-gdi20-state+      #x0020)
+(defwin32constant +rc-savebitmap+       #x0040)
+(defwin32constant +rc-di-bitmap+        #x0080)      ; supports DIB to memory
+(defwin32constant +rc-palette+          #x0100)      ; supports a palette
+(defwin32constant +rc-dibtodev+         #x0200)      ; supports DIBitsToDevice
+(defwin32constant +rc-bigfont+          #x0400)      ; supports >64K fonts
+(defwin32constant +rc-stretchblt+       #x0800)      ; supports StretchBlt
+(defwin32constant +rc-floodfill+        #x1000)      ; supports FloodFill
+(defwin32constant +rc-stretchdib+       #x2000)      ; supports StretchDIBits
+(defwin32constant +rc-op-dx-output+     #x4000)
+(defwin32constant +rc-devbits+          #x8000)
+
+;;; Shading and blending caps
+(defwin32constant +sb-none+             #x00000000)
+(defwin32constant +sb-const-alpha+      #x00000001)
+(defwin32constant +sb-pixel-alpha+      #x00000002)
+(defwin32constant +sb-premult-alpha+    #x00000004)
+
+(defwin32constant +sb-grad-rect+        #x00000010)
+(defwin32constant +sb-grad-tri+         #x00000020)
+
+;;; Color Management caps
+(defwin32constant +cm-none+             #x00000000)
+(defwin32constant +cm-device-icm+       #x00000001)
+(defwin32constant +cm-gamma-ramp+       #x00000002)
+(defwin32constant +cm-cmyk-color+       #x00000004)
+
+;;; DIB color table identifiers
+
+(defwin32constant +dib-rgb-colors+      0) ; color table in RGBs
+(defwin32constant +dib-pal-colors+      1) ; color table in palette indices
+
+;;; constants for Get/SetSystemPaletteUse()
+
+(defwin32constant +syspal-error+    0)
+(defwin32constant +syspal-static+   1)
+(defwin32constant +syspal-nostatic+ 2)
+(defwin32constant +syspal-nostatic256+ 3)
+
+;;; constants for CreateDIBitmap
+(defwin32constant +cbm-init+        #x04)   ; initialize bitmap
+
+
+;;; ExtFloodFill style flags
+(defwin32constant +floodfillborder+   0)
+(defwin32constant +floodfillsurface+  1)
+
+;;; size of a device name string
+(defwin32constant +cchdevicename+ 32)
+
+;;; size of a form name string
+(defwin32constant +cchformname+ 32)
+
+(defwin32constant +bi-rgb+        0)
+(defwin32constant +bi-rle8+       1)
+(defwin32constant +bi-rle4+       2)
+(defwin32constant +bi-bitfields+  3)
+(defwin32constant +bi-jpeg+       4)
+(defwin32constant +bi-png+        5)
 
 (defwin32constant +gcl-hbrbackground+ -10)
 (defwin32constant +gcl-wndproc+ -24)
@@ -3327,6 +3766,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (vertgap :int)
   (arrange :int))
 
+(defwin32struct xform
+  (em11 float)
+  (em12 float)
+  (em21 float)
+  (em22 float)
+  (edx float)
+  (edy float))
+
 (defwin32struct logfont
   (height long)
   (width long)
@@ -3342,6 +3789,125 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (quality byte)
   (pitchandfamily byte)
   (facename tchar :count #.+lf-facesize+))
+
+(defwin32struct logbrush
+  (style uint)
+  (color colorref)
+  (hatch ulong-ptr))
+
+(defwin32struct logbrush32
+  (style uint)
+  (color colorref)
+  (hatch ulong))
+
+(defwin32struct logpen
+  (style uint)
+  (width point)
+  (color colorref))
+
+(defwin32struct polytext
+  (x :int)
+  (y :int)
+  (n uint)
+  (text lpcwstr)
+  (flags uint)
+  (rect rect)
+  (pdx (:pointer :int)))
+
+(defwin32struct bitmap
+  (type long)
+  (width long)
+  (height long)
+  (width-bytes long)
+  (planes word)
+  (bits-pixel word)
+  (bits (:pointer :void)))
+
+(defwin32struct rgbtriple
+  (blue byte)
+  (green byte)
+  (red byte))
+
+(defwin32struct rgbquad
+  (blue byte)
+  (green byte)
+  (red byte)
+  (reserved byte))
+
+(defwin32struct bitmapinfoheader
+  (size dword)
+  (width long)
+  (height long)
+  (planes word)
+  (bit-count word)
+  (compression dword)
+  (size-image dword)
+  (x-pels-per-meter long)
+  (y-pels-per-meter long)
+  (clr-used dword)
+  (clr-important dword))
+
+(defwin32struct ciexyz
+  (x fxpt2dot30)
+  (y fxpt2dot30)
+  (z fxpt2dot30))
+
+(defwin32struct ciexyztriple
+  (red ciexyz)
+  (green ciexyz)
+  (blue ciexyz))
+
+(defwin32struct bitmapinfoheaderv4
+  (size dword)
+  (width long)
+  (height long)
+  (planes word)
+  (bit-count word)
+  (compression dword)
+  (size-image dword)
+  (x-pels-per-meter long)
+  (y-pels-per-meter long)
+  (clr-used dword)
+  (clr-important dword)
+  (red-mask dword)
+  (green-mask dword)
+  (blue-mask dword)
+  (alpha-mask dword)
+  (cs-type dword)
+  (end-points ciexyztriple)
+  (gamma-red dword)
+  (gamma-green dword)
+  (gamma-blue dword))
+
+(defwin32struct bitmapinfoheaderv5
+  (size dword)
+  (width long)
+  (height long)
+  (planes word)
+  (bit-count word)
+  (compression dword)
+  (size-image dword)
+  (x-pels-per-meter long)
+  (y-pels-per-meter long)
+  (clr-used dword)
+  (clr-important dword)
+  (red-mask dword)
+  (green-mask dword)
+  (blue-mask dword)
+  (alpha-mask dword)
+  (cs-type dword)
+  (end-points ciexyztriple)
+  (gamma-red dword)
+  (gamma-green dword)
+  (gamma-blue dword)
+  (intent dword)
+  (profile-data dword)
+  (profile-size dword)
+  (reserved dword))
+
+(defwin32struct bitmapinfo
+  (header bitmapinfoheader)
+  (colors rgbquad :count 1))
 
 (defwin32struct nonclientmetrics
   (size uint)
@@ -3431,9 +3997,6 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (id uint)
   (guid-item guid))
-
-(defwin32constant +cchdevicename+ 32)
-(defwin32constant +cchformname+ 32)
 
 (defwin32constant +file-ver-get-localised+ #x01)
 (defwin32constant +file-ver-get-neutral+ #x02)
@@ -3863,6 +4426,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (cb-data dword)
   (lp-data (:pointer :void)))
 
+(defwin32fun ("AbortPath" abort-path gdi32) bool
+  (hdc hdc))
+
 (defwin32fun ("ActivateKeyboardLayout" activate-keyboard-layout user32) hkl
   (hkl hkl)
   (flags uint))
@@ -3893,6 +4459,28 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (id-new-item uint-ptr)
   (new-item lpcwstr))
 
+(defwin32fun ("Arc" arc gdi32) bool
+  (hdc hdc)
+  (x1 :int)
+  (y1 :int)
+  (x2 :int)
+  (y2 :int)
+  (x3 :int)
+  (y3 :int)
+  (x4 :int)
+  (y4 :int))
+
+(defwin32fun ("ArcTo" arc-to gdi32) bool
+  (hdc hdc)
+  (left :int)
+  (top :int)
+  (right :int)
+  (bottom :int)
+  (xr1 :int)
+  (yr1 :int)
+  (xr2 :int)
+  (yr2 :int))
+
 (defwin32fun ("Beep" beep kernel32) bool
   (freq dword)
   (duration dword))
@@ -3900,6 +4488,20 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("BeginPaint" begin-paint user32) hdc
   (hwnd hwnd)
   (paint (:pointer paintstruct)))
+
+(defwin32fun ("BeginPath" begin-path gdi32) bool
+  (hdc hdc))
+
+(defwin32fun ("BitBlt" bit-blt gdi32) bool
+  (hdc hdc)
+  (x :int)
+  (y :int)
+  (cx :int)
+  (cy :int)
+  (hdc-src hdc)
+  (x1 :int)
+  (y1 :int)
+  (rop dword))
 
 (defwin32fun ("BlockInput" block-input user32) bool
   (block-it bool))
@@ -3933,6 +4535,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wparam wparam)
   (lparam lparam))
 
+(defwin32fun ("CancelDC" cancel-dc gdi32) bool
+  (hdc hdc))
+
 (defwin32fun ("CancelIo" cancel-io kernel32) bool
   (handle handle))
 
@@ -3949,6 +4554,17 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (dc hdc)
   (pixel-format (:pointer pixelformatdescriptor)))
 
+(defwin32fun ("Chord" chord gdi32) bool
+  (hdc hdc)
+  (x1 :int)
+  (y1 :int)
+  (x2 :int)
+  (y2 :int)
+  (x3 :int)
+  (y3 :int)
+  (x4 :int)
+  (y4 :int))
+
 (defwin32fun ("ClientToScreen" client-to-screen user32) bool
   (hwnd hwnd)
   (point (:pointer point)))
@@ -3958,8 +4574,28 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("CloseClipboard" close-clipboard user32) bool)
 
+(defwin32fun ("CloseEnhMetaFile" close-enh-meta-file gdi32) henhmetafile
+  (hdc hdc))
+
+(defwin32fun ("CloseFigure" close-figure gdi32) bool
+  (hdc hdc))
+
 (defwin32fun ("CloseHandle" close-handle kernel32) bool
   (handle handle))
+
+(defwin32fun ("CloseMetaFile" close-meta-file gdi32) hmetafile
+  (hdc hdc))
+
+(defwin32fun ("CombineRgn" combine-rgn gdi32) :int
+  (dst hrgn)
+  (src1 hrgn)
+  (src2 hrgn)
+  (mode :int))
+
+(defwin32fun ("CombineTransform" combine-transform gdi32) bool
+  (xf-out (:pointer xform))
+  (xf1 (:pointer xform))
+  (xf2 (:pointer xform)))
 
 (defwin32fun ("CloseWindow" close-window user32) bool
   (hwnd hwnd))
@@ -3985,6 +4621,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (performance-counter-value ulonglong)
   (auxiliary-counter-value (:pointer ulonglong))
   (conversion-error (:pointer ulonglong)))
+
+(defwin32fun ("CopyEnhMetaFileW" copy-enh-meta-file gdi32) henhmetafile
+  (henh henhmetafile)
+  (file-name lpcwstr))
 
 (defwin32fun ("CopyFileW" copy-file kernel32) bool
   (existing-name lpcwstr)
@@ -4013,7 +4653,38 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (copy-flags dword)
   (transaction handle))
 
+(defwin32fun ("CopyMetaFileW" copy-meta-file gdi32) hmetafile
+  (hmeta hmetafile)
+  (file-name lpcwstr))
+
 (defwin32fun ("CountClipboardFormats" count-clipboard-formats user32) :int)
+
+(defwin32fun ("CreateBitmap" create-bitmap gdi32) hbitmap
+  (width :int)
+  (height :int)
+  (planes uint)
+  (bit-count uint)
+  (bits (:pointer :void)))
+
+(defwin32fun ("CreateBitmapIndirect" create-bitmap-indirect gdi32) hbitmap
+  (pbm (:pointer bitmap)))
+
+(defwin32fun ("CreateBrushIndirect" create-brush-indirect gdi32) hbrush
+  (logbrush (:pointer logbrush)))
+
+(defwin32fun ("CreateCompatibleBitmap" create-compatible-bitmap gdi32) hbitmap
+  (hdc hdc)
+  (cx :int)
+  (cy :int))
+
+(defwin32fun ("CreateCompatibleDC" create-compatible-dc gdi32) hdc
+  (hdc hdc))
+
+(defwin32fun ("CreateDCW" create-dc gdi32) hdc
+  (driver lpcwstr)
+  (device lpcwstr)
+  (port lpcwstr)
+  (pdm (:pointer devmode)))
 
 (defwin32fun ("CreateDesktopW" create-desktop user32) hdesk
   (desktop lpcwstr)
@@ -4022,6 +4693,35 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (flags dword)
   (desired-access access-mask)
   (security-attributes (:pointer security-attributes)))
+
+(defwin32fun ("CreateDIBitmap" create-di-bitmap gdi32) hbitmap
+  (hdc hdc)
+  (header (:pointer bitmapinfoheader))
+  (fl-init dword)
+  (pj-bits (:pointer :void))
+  (pbmi (:pointer bitmapinfo))
+  (usage uint))
+
+(defwin32fun ("CreateDIBPatternBrush" create-dib-pattern-brush gdi32) hbrush
+  (h hglobal)
+  (usage uint))
+
+(defwin32fun ("CreateDIBPatternBrushPt" create-dib-pattern-brush-pt gdi32) hbrush
+  (packed-dib (:pointer :void))
+  (usage uint))
+
+(defwin32fun ("CreateDIBSection" create-dib-section gdi32) hbitmap
+  (hdc hdc)
+  (pbmi (:pointer bitmapinfo))
+  (usage uint)
+  (bits (:pointer (:pointer :void)))
+  (section handle)
+  (offset dword))
+
+(defwin32fun ("CreateDiscardableBitmap" create-discardable-bitmap gdi32) hbitmap
+  (hdc hdc)
+  (cx :int)
+  (cy :int))
 
 (defwin32fun ("CreateEventW" create-event kernel32) handle
   (security-attributes (:pointer security-attributes))
@@ -4062,6 +4762,35 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (name lpcwstr)
   (nd-preferred dword))
 
+(defwin32fun ("CreateFontW" create-font gdi32) hfont
+  (height :int)
+  (width :int)
+  (escapement :int)
+  (orientation :int)
+  (weight :int)
+  (italic dword)
+  (underline dword)
+  (strike-out dword)
+  (charset dword)
+  (out-precision dword)
+  (clip-precision dword)
+  (quality dword)
+  (pitch-and-family dword)
+  (face-name lpcwstr))
+
+(defwin32fun ("CreateFontIndirectW" create-font-indirect gdi32) hfont
+  (plf (:pointer logfont)))
+
+(defwin32fun ("CreateFontIndirectExW" create-font-indirect-ex gdi32) hfont
+  (plf (:pointer logfont)))
+
+(defwin32fun ("CreateHalftonePalette" create-halftone-palette gdi32) hpalette
+  (hdc hdc))
+
+(defwin32fun ("CreateHatchBrush" create-hatch-brush gdi32) hbrush
+  (hatch :int)
+  (color colorref))
+
 (defwin32fun ("CreateMenu" create-menu user32) hmenu)
 
 (defwin32fun ("CreateMutexW" create-mutex kernel32) handle
@@ -4085,6 +4814,17 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("CreatePalette" create-palette gdi32) hpalette
   (log-palette (:pointer logpalette)))
+
+(defwin32fun ("CreatePatternBrush" create-pattern-brush gdi32) hbrush
+  (hbm hbitmap))
+
+(defwin32fun ("CreatePen" create-pen gdi32) hpen
+  (style :int)
+  (width :int)
+  (color colorref))
+
+(defwin32fun ("CreatePenIndirect" create-pen-indirect gdi32) hpen
+  (pen (:pointer logpen)))
 
 (defwin32fun ("CreatePopupMenu" create-popup-menu user32) hmenu)
 
@@ -4152,6 +4892,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (maximum-count long)
   (name lpcwstr))
 
+(defwin32fun ("CreateScalableFontResourceW" create-scalable-font-resource gdi32) bool
+  (hidden dword)
+  (font lpcwstr)
+  (file lpcwstr)
+  (path lpcwstr))
+
+(defwin32fun ("CreateSolidBrush" create-solid-brush gdi32) hbrush
+  (color colorref))
+
 (defwin32-lispfun create-window (class-name window-name style x y width height parent menu instance param)
   (create-window-ex 0 class-name window-name style x y width height parent menu instance param))
 
@@ -4174,6 +4923,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (msg uint)
   (wparam wparam)
   (lparam lparam))
+
+(defwin32fun ("DeleteDC" delete-dc gdi32) bool
+  (hdc hdc))
 
 (defwin32fun ("DeleteMenu" delete-menu user32) bool
   (hmenu hmenu)
@@ -4212,6 +4964,19 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (fat-time word)
   (file-time (:pointer filetime)))
 
+(defwin32fun ("DrawEscape" draw-escape gdi32) :int
+  (hdc hdc)
+  (escape :int)
+  (cjin :int)
+  (lpin lpcstr))
+
+(defwin32fun ("Ellipse" ellipse gdi32) bool
+  (hdc hdc)
+  (left :int)
+  (top :int)
+  (right :int)
+  (bottom :int))
+
 (defwin32fun ("EmptyClipboard" empty-clipboard user32) bool)
 
 (defwin32fun ("EnableMenuItem" enable-menu-item user32) bool
@@ -4227,6 +4992,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (paint (:pointer paintstruct)))
 
+(defwin32fun ("EndPath" end-path gdi32) bool
+  (hdc hdc))
+
 (defwin32fun ("EnumChildWindows" enum-child-windows user32) bool
   (parent hwnd)
   (enum-func :pointer)
@@ -4239,9 +5007,40 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (index dword)
   (time-zone-information (:pointer dynamic-time-zone-information)))
 
+(defwin32fun ("EnumEnhMetaFile" enum-enh-meta-file gdi32) bool
+  (hdc hdc)
+  (hmf henhmetafile)
+  (proc :pointer)
+  (param (:pointer :void))
+  (rect (:pointer rect)))
+
+(defwin32fun ("EnumFontFamiliesW" enum-font-families gdi32) :int
+  (hdc hdc)
+  (logfont (:pointer logfont))
+  (proc :pointer)
+  (lparam lparam))
+
+(defwin32fun ("EnumFontFamiliesExW" enum-font-families-ex gdi32) :int
+  (hdc hdc)
+  (logfont (:pointer logfont))
+  (proc :pointer)
+  (lparam lparam)
+  (flags dword))
+
+(defwin32fun ("EnumFontsW" enum-fonts gdi32) :int
+  (hdc hdc)
+  (face-name lpwstr)
+  (proc :pointer)
+  (lparam lparam))
+
 (defwin32fun ("EnumWindows" enum-windows user32) bool
   (callback :pointer)
   (lparam lparam))
+
+(defwin32fun ("ExtCreatePen" ext-create-pen gdi32) hpen
+  (pen-style dword)
+  (width dword)
+  (brush (:pointer logbrush)))
 
 (defwin32fun ("FileTimeToDosDateTime" file-time-to-dos-date-time kernel32) bool
   (file-time (:pointer filetime))
@@ -4313,6 +5112,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetAsyncKeyState" get-async-key-state user32) short
   (virt-key :int))
 
+(defwin32fun ("GetBkColor" get-bk-color gdi32) colorref
+  (hdc hdc))
+
+(defwin32fun ("GetBkMode" get-bk-mode gdi32) :int
+  (hdc hdc))
+
 (defwin32fun ("GetCapture" get-capture user32) hwnd)
 
 (defwin32fun ("GetClassLongW" get-class-long user32) dword
@@ -4374,7 +5179,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetDC" get-dc user32) hdc
   (hwnd hwnd))
 
+(defwin32fun ("GetDCEx" get-dc-ex user32) hdc
+  (hwnd hwnd)
+  (clip hrgn)
+  (flags dword))
+
 (defwin32fun ("GetDesktopWindow" get-desktop-window user32) hwnd)
+
+(defwin32fun ("GetDeviceCaps" get-device-caps gdi32) :int
+  (hdc hdc)
+  (index :int))
 
 (defwin32fun ("GetDoubleClickTime" get-double-click-time user32) uint)
 
@@ -4570,6 +5384,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (declare (type (unsigned-byte 16) ordinal))
   (get-proc-address module (cffi:make-pointer ordinal)))
 
+(defwin32-lispfun get-b-value (rgb)
+  (ldb (cl:byte 8 16) rgb))
+
+(defwin32-lispfun get-g-value (rgb)
+  (ldb (cl:byte 8 8) rgb))
+
+(defwin32-lispfun get-r-value (rgb)
+  (ldb (cl:byte 8 0) rgb))
+
 (defwin32fun ("GetShellWindow" get-shell-window user32) hwnd)
 
 (defwin32fun ("GetStartupInfoW" get-startup-info kernel32) :void
@@ -4643,6 +5466,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetWindow" get-window user32) hwnd
   (hwnd hwnd)
   (cmd uint))
+
+(defwin32fun ("GetWindowDC" get-window-dc user32) hdc
+  (hwnd hwnd))
 
 (defwin32fun ("GetWindowLongW" get-window-long user32) long
   (hwnd hwnd)
@@ -4809,6 +5635,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (process handle)
   (wow-64-process (:pointer bool)))
 
+(defwin32fun ("LineTo" line-to gdi32) bool
+  (hdc hdc)
+  (x :int)
+  (y :int))
+
 (defwin32fun ("LoadCursorW" load-cursor user32) hcursor
   (instance hinstance)
   (name lpctstr))
@@ -4885,6 +5716,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (declare (type (unsigned-byte 16) p s))
   (logior (ash s 10) p))
 
+(defwin32-lispfun makerop4 (fore back)
+  (logior (logand (ash back 8) #xFF000000) fore))
+
 (defwin32fun ("MapViewOfFile" map-view-of-file kernel32) (:pointer :void)
   (file-mapping-object handle)
   (desired-access dword)
@@ -4946,6 +5780,20 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (map-type uint)
   (layout hkl))
 
+(defwin32fun ("MaskBlt" mask-blt gdi32) bool
+  (hdc-dest hdc)
+  (x-dest :int)
+  (y-dest :int)
+  (width :int)
+  (height :int)
+  (hdc-src hdc)
+  (x-src :int)
+  (y-src :int)
+  (mask hbitmap)
+  (x-mask :int)
+  (y-mask :int)
+  (rop dword))
+
 (defwin32fun ("MessageBoxW" message-box user32) :int
   (hwnd hwnd)
   (text lpcwstr)
@@ -4975,6 +5823,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (data :pointer)
   (flags dword)
   (transaction handle))
+
+(defwin32fun ("MoveToEx" move-to-ex gdi32) bool
+  (hdc hdc)
+  (x :int)
+  (y :int)
+  (prev-point (:pointer point)))
 
 (defwin32fun ("OpenClipboard" open-clipboard user32) bool
   (new-owner hwnd))
@@ -5015,6 +5869,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (open-as-self bool)
   (token-handle (:pointer handle)))
 
+(defwin32-lispfun palettergb (r g b)
+  (logior #x02000000 (rgb r g b)))
+
+(defwin32-lispfun paletteindex (i)
+  (logior #x01000000 (ldb (cl:byte 16 0) i)))
+
 (defwin32fun ("PeekMessageW" peek-message user32) bool
   (msg (:pointer msg))
   (hwnd hwnd)
@@ -5029,6 +5889,43 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (bytes-read (:pointer dword))
   (total-bytes-avail (:pointer dword))
   (bytes-left-this-message (:pointer dword)))
+
+(defwin32fun ("PolyBezier" poly-bezier gdi32) bool
+  (hdc hdc)
+  (apt (:pointer point))
+  (cpt dword))
+
+(defwin32fun ("PolyBezierTo" poly-bezier-to gdi32) bool
+  (hdc hdc)
+  (apt (:pointer point))
+  (cpt dword))
+
+(defwin32fun ("Polygon" polygon gdi32) bool
+  (hdc hdc)
+  (apt (:pointer point))
+  (cpt :int))
+
+(defwin32fun ("Polyline" polyline gdi32) bool
+  (hdc hdc)
+  (apt (:pointer point))
+  (cpt :int))
+
+(defwin32fun ("PolylineTo" polyline-to gdi32) bool
+  (hdc hdc)
+  (apt (:pointer point))
+  (cpt dword))
+
+(defwin32fun ("PolyPolygon" poly-polygon gdi32) bool
+  (hdc hdc)
+  (apt (:pointer point))
+  (asz (:pointer int))
+  (csz :int))
+
+(defwin32fun ("PolyPolyline" poly-polyline gdi32) bool
+  (hdc hdc)
+  (apt (:pointer point))
+  (asz (:pointer dword))
+  (csz dword))
 
 (defwin32fun ("PostMessageW" post-message user32) bool
   (hwnd hwnd)
@@ -5082,6 +5979,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("RealizePalette" realize-palette gdi32) uint
   (dc hdc))
+
+(defwin32fun ("Rectangle" rectangle gdi32) bool
+  (hdc hdc)
+  (left :int)
+  (top :int)
+  (right :int)
+  (bottom :int))
 
 (defwin32fun ("RegCloseKey" reg-close-key advapi32) long
   (hkey hkey))
@@ -5228,6 +6132,19 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
    (ash (logand g #xFF) 8)
    (ash (logand r #xFF) 0)))
 
+(defwin32fun ("RoundRect" round-rect gdi32) bool
+  (hdc hdc)
+  (left :int)
+  (top :int)
+  (right :int)
+  (bottom :int)
+  (width :int)
+  (height :int))
+
+(defwin32fun ("SelectObject" select-object gdi32) hgdiobj
+  (hdc hdc)
+  (obj hgdiobj))
+
 (defwin32fun ("SelectPalette" select-palette gdi32) hpalette
   (dc hdc)
   (palette hpalette)
@@ -5268,6 +6185,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("SetActiveWindow" set-active-window user32) hwnd
   (hwnd hwnd))
+
+(defwin32fun ("SetBkColor" set-bk-color gdi32) colorref
+  (hdc hdc)
+  (color colorref))
+
+(defwin32fun ("SetBkMode" set-bk-mode gdi32) :int
+  (hdc hdc)
+  (mode :int))
 
 (defwin32fun ("SetCapture" set-capture user32) hwnd
   (hwnd hwnd))
@@ -5378,6 +6303,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (new-parent hwnd))
 
+(defwin32fun ("SetPixel" set-pixel gdi32) colorref
+  (hdc hdc)
+  (x :int)
+  (y :int)
+  (color colorref))
+
+(defwin32fun ("SetPixelV" set-pixel-v gdi32) bool
+  (hdc hdc)
+  (x :int)
+  (y :int)
+  (color colorref))
+
 (defwin32fun ("SetPixelFormat" set-pixel-format user32) bool
   (dc hdc)
   (pixel-format :int)
@@ -5468,6 +6405,19 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (cmd :int))
 
+(defwin32fun ("StretchBlt" stretch-blt gdi32) bool
+  (hdc-dest hdc)
+  (x-dest :int)
+  (y-dest :int)
+  (w-dest :int)
+  (h-dest :int)
+  (hdc-src hdc)
+  (x-src :int)
+  (y-src :int)
+  (w-src :int)
+  (h-src :int)
+  (rop dword))
+
 (defwin32fun ("SwapBuffers" swap-buffers gdi32) bool
   (dc hdc))
 
@@ -5496,6 +6446,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (time-zone-information (:pointer dynamic-time-zone-information))
   (universal-time (:pointer systemtime))
   (local-time (:pointer systemtime)))
+
+(defwin32fun ("TextOutW" text-out gdi32) bool
+  (hdc hdc)
+  (x :int)
+  (y :int)
+  (string lpcwstr)
+  (c :int))
 
 (defwin32fun ("ToAscii" to-ascii user32) :int
   (virt-key uint)
