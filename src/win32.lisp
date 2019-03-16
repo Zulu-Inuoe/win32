@@ -3672,7 +3672,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (y long))
 
 (defwin32struct trackmouseevent
-  (cbsize dword)
+  (size dword)
   (flags dword)
   (hwnd hwnd)
   (hover-time dword))
