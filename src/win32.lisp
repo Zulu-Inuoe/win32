@@ -27,6 +27,12 @@
 (define-foreign-library psapi
   (:win32 "psapi.dll"))
 
+(define-foreign-library ole32
+  (:win32 "ole32.dll"))
+
+(define-foreign-library oleaut32
+  (:win32 "oleaut32.dll"))
+
 (use-foreign-library version)
 (use-foreign-library kernel32)
 (use-foreign-library user32)
@@ -36,6 +42,8 @@
 (use-foreign-library advapi32)
 (use-foreign-library setupapi)
 (use-foreign-library psapi)
+(use-foreign-library ole32)
+(use-foreign-library oleaut32)
 
 (defconstant +win32-string-encoding+
   #+little-endian :ucs-2le
@@ -282,6 +290,21 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32type fxpt16dot16 :long)
 (defwin32type fxpt2dot30 :long)
+
+(defwin32type olechar wchar)
+(defwin32type bstr (:pointer olechar))
+(defwin32type lpbstr (:pointer bstr))
+(defwin32type dispid long)
+(defwin32type memberid dispid)
+(defwin32type hreftype dword)
+(defwin32type lpolestr lpstr)
+(defwin32type lpcolestr lpolestr)
+(defwin32type lpolestrptr (:pointer lpstr))
+(defwin32type interface :void)
+(defwin32type iunknown interface)
+(defwin32type lpunknown (:pointer iunknown))
+(defwin32type itypelib interface)
+(defwin32type vartype :ushort)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
@@ -3569,6 +3592,55 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant  +mapvk-vk-to-char+    2)
 (defwin32constant  +mapvk-vsc-to-vk-ex+  3)
 
+(defwin32constant +coinitbase-multithreaded+       #x0)      ; OLE calls objects on any thread.
+
+(defwin32constant +coinit-apartmentthreaded+   #x2)      ; Apartment model
+(defwin32constant +coinit-multithreaded+       +coinitbase-multithreaded+)
+(defwin32constant +coinit-disable-ole1dde+     #x4)      ; Don't use DDE for Ole1 support.
+(defwin32constant +coinit-speed-over-memory+   #x8)      ; Trade memory for speed.
+
+(defwin32constant +rotregflags-allowanyclient+ #x1)
+(defwin32constant +appidregflags-activate-iuserver-indesktop+ #x1)
+(defwin32constant +appidregflags-secure-server-process-sd-and-bind+ #x2)
+(defwin32constant +appidregflags-issue-activation-rpc-at-identify+ #x4)
+(defwin32constant +appidregflags-iuserver-unmodified-logon-token+ #x8)
+(defwin32constant +appidregflags-iuserver-self-sid-in-launch-permission+ #x10)
+(defwin32constant +appidregflags-iuserver-activate-in-client-session-only+ #x20)
+(defwin32constant +appidregflags-reserved1+ #x40)
+(defwin32constant +appidregflags-reserved2+ #x80)
+
+(defwin32constant +dcomscm-activation-use-all-authnservices+ #x1)
+(defwin32constant +dcomscm-activation-disallow-unsecure-call+ #x2)
+(defwin32constant +dcomscm-resolve-use-all-authnservices+ #x4)
+(defwin32constant +dcomscm-resolve-disallow-unsecure-call+ #x8)
+(defwin32constant +dcomscm-ping-use-mid-authnservice+ #x10)
+(defwin32constant +dcomscm-ping-disallow-unsecure-call+ #x20)
+
+(defwin32constant +clsctx-inproc-server+	 #x1)
+(defwin32constant +clsctx-inproc-handler+	 #x2)
+(defwin32constant +clsctx-local-server+	 #x4)
+(defwin32constant +clsctx-inproc-server16+	 #x8)
+(defwin32constant +clsctx-remote-server+	 #x10)
+(defwin32constant +clsctx-inproc-handler16+	 #x20)
+(defwin32constant +clsctx-reserved1+	 #x40)
+(defwin32constant +clsctx-reserved2+	 #x80)
+(defwin32constant +clsctx-reserved3+	 #x100)
+(defwin32constant +clsctx-reserved4+	 #x200)
+(defwin32constant +clsctx-no-code-download+	 #x400)
+(defwin32constant +clsctx-reserved5+	 #x800)
+(defwin32constant +clsctx-no-custom-marshal+	 #x1000)
+(defwin32constant +clsctx-enable-code-download+	 #x2000)
+(defwin32constant +clsctx-no-failure-log+	 #x4000)
+(defwin32constant +clsctx-disable-aaa+	 #x8000)
+(defwin32constant +clsctx-enable-aaa+	 #x10000)
+(defwin32constant +clsctx-from-default-context+	 #x20000)
+(defwin32constant +clsctx-activate-32-bit-server+	 #x40000)
+(defwin32constant +clsctx-activate-64-bit-server+	 #x80000)
+(defwin32constant +clsctx-enable-cloaking+	 #x100000)
+(defwin32constant +clsctx-appcontainer+	 #x400000)
+(defwin32constant +clsctx-activate-aaa-as-iu+	 #x800000)
+(defwin32constant +clsctx-ps-dll+	 #x80000000)
+
 (defwin32struct os-version-info-ex
   (os-version-info-size dword)
   (major-version dword)
@@ -3938,6 +4010,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (data3 word)
   (data4 byte :count 8))
 
+(defwin32type refguid (:pointer guid))
+(defwin32type clsid guid)
+(defwin32type iid guid)
+(defwin32type refclsid (:pointer clsid))
+(defwin32type refiid (:pointer iid))
+
 (defwin32struct sp-devinfo-data
   (size dword)
   (class-guid guid)
@@ -4277,6 +4355,120 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +fr-private+     #x10)
 (defwin32constant +fr-not-enum+    #x20)
 
+(defwin32constant +activeobject-strong+ #x0)
+(defwin32constant +activeobject-weak+ #x1)
+
+ ;;/*
+ ;; * VARENUM usage key,
+ ;; *
+ ;; * * [V] - may appear in a VARIANT
+ ;; * * [T] - may appear in a TYPEDESC
+ ;; * * [P] - may appear in an OLE property set
+ ;; * * [S] - may appear in a Safe Array
+ ;; *
+ ;; *
+ ;; *  VT_EMPTY            [V]   [P]     nothing
+ ;; *  VT_NULL             [V]   [P]     SQL style Null
+ ;; *  VT_I2               [V][T][P][S]  2 byte signed int
+ ;; *  VT_I4               [V][T][P][S]  4 byte signed int
+ ;; *  VT_R4               [V][T][P][S]  4 byte real
+ ;; *  VT_R8               [V][T][P][S]  8 byte real
+ ;; *  VT_CY               [V][T][P][S]  currency
+ ;; *  VT_DATE             [V][T][P][S]  date
+ ;; *  VT_BSTR             [V][T][P][S]  OLE Automation string
+ ;; *  VT_DISPATCH         [V][T]   [S]  IDispatch *
+ ;; *  VT_ERROR            [V][T][P][S]  SCODE
+ ;; *  VT_BOOL             [V][T][P][S]  True=-1, False=0
+ ;; *  VT_VARIANT          [V][T][P][S]  VARIANT *
+ ;; *  VT_UNKNOWN          [V][T]   [S]  IUnknown *
+ ;; *  VT_DECIMAL          [V][T]   [S]  16 byte fixed point
+ ;; *  VT_RECORD           [V]   [P][S]  user defined type
+ ;; *  VT_I1               [V][T][P][s]  signed char
+ ;; *  VT_UI1              [V][T][P][S]  unsigned char
+ ;; *  VT_UI2              [V][T][P][S]  unsigned short
+ ;; *  VT_UI4              [V][T][P][S]  ULONG
+ ;; *  VT_I8                  [T][P]     signed 64-bit int
+ ;; *  VT_UI8                 [T][P]     unsigned 64-bit int
+ ;; *  VT_INT              [V][T][P][S]  signed machine int
+ ;; *  VT_UINT             [V][T]   [S]  unsigned machine int
+ ;; *  VT_INT_PTR             [T]        signed machine register size width
+ ;; *  VT_UINT_PTR            [T]        unsigned machine register size width
+ ;; *  VT_VOID                [T]        C style void
+ ;; *  VT_HRESULT             [T]        Standard return type
+ ;; *  VT_PTR                 [T]        pointer type
+ ;; *  VT_SAFEARRAY           [T]        (use VT_ARRAY in VARIANT)
+ ;; *  VT_CARRAY              [T]        C style array
+ ;; *  VT_USERDEFINED         [T]        user defined type
+ ;; *  VT_LPSTR               [T][P]     null terminated string
+ ;; *  VT_LPWSTR              [T][P]     wide null terminated string
+ ;; *  VT_FILETIME               [P]     FILETIME
+ ;; *  VT_BLOB                   [P]     Length prefixed bytes
+ ;; *  VT_STREAM                 [P]     Name of the stream follows
+ ;; *  VT_STORAGE                [P]     Name of the storage follows
+ ;; *  VT_STREAMED_OBJECT        [P]     Stream contains an object
+ ;; *  VT_STORED_OBJECT          [P]     Storage contains an object
+ ;; *  VT_VERSIONED_STREAM       [P]     Stream with a GUID version
+ ;; *  VT_BLOB_OBJECT            [P]     Blob contains an object 
+ ;; *  VT_CF                     [P]     Clipboard format
+ ;; *  VT_CLSID                  [P]     A Class ID
+ ;; *  VT_VECTOR                 [P]     simple counted array
+ ;; *  VT_ARRAY            [V]           SAFEARRAY*
+ ;; *  VT_BYREF            [V]           void* for local use
+ ;; *  VT_BSTR_BLOB                      Reserved for system use
+ ;; */
+(defwin32constant        +vt-empty+	 0)
+(defwin32constant        +vt-null+	 1)
+(defwin32constant        +vt-i2+	 2)
+(defwin32constant        +vt-i4+	 3)
+(defwin32constant        +vt-r4+	 4)
+(defwin32constant        +vt-r8+	 5)
+(defwin32constant        +vt-cy+	 6)
+(defwin32constant        +vt-date+	 7)
+(defwin32constant        +vt-bstr+	 8)
+(defwin32constant        +vt-dispatch+	 9)
+(defwin32constant        +vt-error+	 10)
+(defwin32constant        +vt-bool+	 11)
+(defwin32constant        +vt-variant+	 12)
+(defwin32constant        +vt-unknown+	 13)
+(defwin32constant        +vt-decimal+	 14)
+(defwin32constant        +vt-i1+	 16)
+(defwin32constant        +vt-ui1+	 17)
+(defwin32constant        +vt-ui2+	 18)
+(defwin32constant        +vt-ui4+	 19)
+(defwin32constant        +vt-i8+	 20)
+(defwin32constant        +vt-ui8+	 21)
+(defwin32constant        +vt-int+	 22)
+(defwin32constant        +vt-uint+	 23)
+(defwin32constant        +vt-void+	 24)
+(defwin32constant        +vt-hresult+	 25)
+(defwin32constant        +vt-ptr+	 26)
+(defwin32constant        +vt-safearray+	 27)
+(defwin32constant        +vt-carray+	 28)
+(defwin32constant        +vt-userdefined+	 29)
+(defwin32constant        +vt-lpstr+	 30)
+(defwin32constant        +vt-lpwstr+	 31)
+(defwin32constant        +vt-record+	 36)
+(defwin32constant        +vt-int-ptr+	 37)
+(defwin32constant        +vt-uint-ptr+	 38)
+(defwin32constant        +vt-filetime+	 64)
+(defwin32constant        +vt-blob+	 65)
+(defwin32constant        +vt-stream+	 66)
+(defwin32constant        +vt-storage+	 67)
+(defwin32constant        +vt-streamed-object+	 68)
+(defwin32constant        +vt-stored-object+	 69)
+(defwin32constant        +vt-blob-object+	 70)
+(defwin32constant        +vt-cf+	 71)
+(defwin32constant        +vt-clsid+	 72)
+(defwin32constant        +vt-versioned-stream+	 73)
+(defwin32constant        +vt-bstr-blob+	 #xfff)
+(defwin32constant        +vt-vector+	 #x1000)
+(defwin32constant        +vt-array+	 #x2000)
+(defwin32constant        +vt-byref+	 #x4000)
+(defwin32constant        +vt-reserved+	 #x8000)
+(defwin32constant        +vt-illegal+	 #xffff)
+(defwin32constant        +vt-illegalmasked+	 #xfff)
+(defwin32constant        +vt-typemask+	 #xfff)
+
 (defwin32struct startupinfo
   (size dword)
   (reserved lpwstr)
@@ -4567,6 +4759,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (x4 :int)
   (y4 :int))
 
+(defwin32fun ("CLSIDFromProgID" clsid-from-prog-id ole32) hresult
+  (prog-id lpcolestr)
+  (clsid (:pointer clsid)))
+
+(defwin32fun ("CLSIDFromProgIDEx" clsid-from-prog-id-ex ole32) hresult
+  (prog-id lpcolestr)
+  (clsid (:pointer clsid)))
+
+(defwin32fun ("CLSIDFromString" cls-id-from-string ole32) hresult
+  (lpsz lpcolestr)
+  (clsid (:pointer clsid)))
+
 (defwin32fun ("ClientToScreen" client-to-screen user32) bool
   (hwnd hwnd)
   (point (:pointer point)))
@@ -4587,6 +4791,82 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("CloseMetaFile" close-meta-file gdi32) hmetafile
   (hdc hdc))
+
+(defwin32fun ("CoAddRefServerProcess" co-add-ref-server-process ole32) ulong)
+
+(defwin32fun ("CoCreateGuid" co-create-guid ole32) hresult
+  (pguid (:pointer guid)))
+
+(defwin32fun ("CoCreateInstance" co-create-instance ole32) hresult
+  (clsid refclsid)
+  (unk-outer lpunknown)
+  (cls-context dword)
+  (riid refiid)
+  (ppv (:pointer :void)))
+
+(defwin32fun ("CoEnableCallCancellation" co-enable-call-cancellation ole32) hresult
+  (reserved (:pointer :void)))
+
+(defwin32fun ("CoFileTimeNow" co-file-time-now ole32) hresult
+  (lp-file-time (:pointer filetime)))
+
+(defwin32fun ("CoFreeUnusedLibraries" co-free-unused-libraries ole32) :void)
+
+(defwin32fun ("CoFreeUnusedLibrariesEx" co-free-unused-libraries-ex ole32) :void
+  (unload-delay dword)
+  (reserved dword))
+
+(defwin32fun ("CoGetCallContext" co-get-call-context ole32) hresult
+  (riid refiid)
+  (pp-interface (:pointer (:pointer :void))))
+
+(defwin32fun ("CoGetCallerTID" co-get-caller-tid ole32) hresult
+  (lptid (:pointer dword)))
+
+(defwin32fun ("CoGetClassObject" co-get-class-object ole32) hresult
+  (clsid refclsid)
+  (context dword)
+  (reserved (:pointer :void))
+  (riid refiid)
+  (ppv (:pointer :void)))
+
+(defwin32fun ("CoGetContextToken" co-get-context-token ole32) hresult
+  (token (:pointer ulong-ptr)))
+
+(defwin32fun ("CoGetCurrentLogicalThreadId" co-get-current-logical-thread-id ole32) hresult
+  (pguid (:pointer guid)))
+
+(defwin32fun ("CoGetCurrentProcess" co-get-current-process ole32) dword)
+
+(defwin32fun ("CoInitialize" co-initialize ole32) hresult
+  (reserved (:pointer :void)))
+
+(defwin32fun ("CoInitializeEx" co-initialize-ex ole32) hresult
+  (reserved (:pointer :void))
+  (co-init dword))
+
+(defwin32fun ("CoSetCancelObject" co-set-cancel-object ole32) hresult
+  (punk (:pointer iunknown)))
+
+(defwin32fun ("CoSuspendClassObjects" co-suspend-class-objects ole32) hresult)
+
+(defwin32fun ("CoSwitchCallContext" co-switch-call-context ole32) hresult
+  (new-object (:pointer iunknown))
+  (old-object (:pointer (:pointer iunknown))))
+
+(defwin32fun ("CoTaskMemAlloc" co-task-mem-alloc ole32) (:pointer :void)
+  (cb size-t))
+
+(defwin32fun ("CoTaskMemFree" co-task-mem-free ole32) :void
+  (pv (:pointer :void)))
+
+(defwin32fun ("CoTaskMemRealloc" co-task-mem-realloc ole32) (:pointer :void)
+  (pv (:pointer :void))
+  (cb size-t))
+
+(defwin32fun ("CoTestCancel" co-test-cancel ole32) hresult)
+
+(defwin32fun ("CoUninitialize" co-uninitialize ole32) :void)
 
 (defwin32fun ("CombineRgn" combine-rgn gdi32) :int
   (dst hrgn)
@@ -5522,6 +5802,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GlobalUnlock" global-unlock kernel32) bool
   (mem hglobal))
 
+(defwin32fun ("IIDFromString" iid-from-string ole32) hresult
+  (lpsz lpcolestr)
+  (lpiid (:pointer iid)))
+
 (defwin32fun ("ImpersonateNamedPipeClient" impersonate-named-pipe-client advapi32) bool
   (named-pipe handle))
 
@@ -5544,6 +5828,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("IsClipboardFormatAvailable" is-clipboard-format-available user32) bool
   (format uint))
+
+(defwin32fun ("IsEqualGUID" is-equal-guid ole32) bool
+  (rguid1 refguid)
+  (rguid2 refguid))
+
+(defwin32-lispfun is-equal-clsid (rclsid1 rclsid2)
+  (is-equal-guid rclsid1 rclsid2))
+
+(defwin32-lispfun is-equal-iid (riid1 riid2)
+  (is-equal-guid riid1 riid2))
 
 (defwin32-lispfun is-intresource (r)
   (zerop (ash r -16)))
@@ -5656,6 +5950,17 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("LoadKeyboardLayoutW" load-keyboard-layout user32) hkl
   (id lpcstr)
   (flags uint))
+
+(defwin32fun ("LoadRegTypeLib" load-reg-type-lib oleaut32) hresult
+  (guid refguid)
+  (ver-major word)
+  (ver-minor word)
+  (lcid lcid)
+  (lib (:pointer (:pointer itypelib))))
+
+(defwin32fun ("LoadTypeLib" load-type-lib oleaut32) hresult
+  (file lpcolestr)
+  (lib (:pointer (:pointer itypelib))))
 
 (defwin32fun ("LocalAlloc" local-alloc kernel32) hlocal
   (flags uint)
@@ -5832,6 +6137,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (y :int)
   (prev-point (:pointer point)))
 
+(defwin32fun ("OaBuildVersion" oa-build-version oleaut32) hresult)
+
+(defwin32fun ("OaEnablePerUserTLibRegistration" oa-enable-per-user-tlib-registration oleaut32) :void)
+
 (defwin32fun ("OpenClipboard" open-clipboard user32) bool
   (new-owner hwnd))
 
@@ -5947,6 +6256,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32-lispfun primary-lang-id (lgid)
   (ldb (cl:byte 10 0) lgid))
 
+(defwin32fun ("ProgIDFromCLSID" prog-id-from-clsid ole32) hresult
+  (clsid refclsid)
+  (lplpsz-prog-id (:pointer lpolestr)))
+
 (defwin32-lispfun sub-lang-id (lgid)
   (ldb (cl:byte 6 10) lgid))
 
@@ -5958,6 +6271,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("QueryInterruptTimePrecise" query-interrupt-time-precise kernel32) :void
   (interrupt-time-precise (:pointer ulonglong)))
+
+(defwin32fun ("QueryPathOfRegTypeLib" query-path-of-reg-type-lib oleaut32) hresult
+  (guid refguid)
+  (ver-major ushort)
+  (ver-minor ushort)
+  (lcid lcid)
+  (path-name lpbstr))
 
 (defwin32fun ("QueryUnbiasedInterruptTime" query-unbiased-interrupt-time kernel32) bool
   (unbiased-interrupt-time (:pointer ulonglong)))
@@ -6072,6 +6392,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (data (:pointer byte))
   (data-size dword))
 
+(defwin32fun ("RegisterActiveObject" register-active-object oleaut32) hresult
+  (punk (:pointer iunknown))
+  (clsid refclsid)
+  (flags dword)
+  (register (:pointer dword)))
+
 (defwin32fun ("RegisterClassW" register-class user32) atom
   (wndclass (:pointer wndclass)))
 
@@ -6086,6 +6412,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (id :int)
   (modifiers uint)
   (vk uint))
+
+(defwin32fun ("RegisterTypeLib" register-type-lib oleaut32) hresult
+  (lib (:pointer itypelib))
+  (full-path lpcolestr)
+  (help-dir lpcolestr))
+
+(defwin32fun ("RegisterTypeLibForUser" register-type-lib-for-user oleaut32) hresult
+  (lib (:pointer itypelib))
+  (full-path lpcolestr)
+  (help-dir lpcolestr))
 
 (defwin32fun ("RegisterWindowMessageW" register-window-message user32) uint
   (string lpctstr))
@@ -6127,6 +6463,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("ResizePalette" resize-palette gdi32) bool
   (palette hpalette)
   (entries uint))
+
+(defwin32fun ("RevokeActiveObject" revoke-active-object oleaut32) hresult
+  (register dword)
+  (reserved (:pointer :void)))
 
 (defwin32-lispfun rgb (r g b)
   (logior
@@ -6420,6 +6760,19 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (h-src :int)
   (rop dword))
 
+(defwin32fun ("StringFromCLSID" string-from-clsid ole32) hresult
+  (rclsid refclsid)
+  (lplpsz (:pointer lpolestr)))
+
+(defwin32fun ("StringFromGUID2" string-from-guid-2 ole32) :int
+  (rguid refguid)
+  (lpsz lpolestr)
+  (chh-max :int))
+
+(defwin32fun ("StringFromIID" string-from-iid ole32) hresult
+  (rclsid refiid)
+  (lplpsz (:pointer lpolestr)))
+
 (defwin32fun ("SwapBuffers" swap-buffers gdi32) bool
   (dc hdc))
 
@@ -6428,6 +6781,41 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("SwitchDesktop" switch-desktop user32) bool
   (desktop hdesk))
+
+(defwin32fun ("SysAddRefString" sys-add-ref-string oleaut32) hresult
+  (bstr bstr))
+
+(defwin32fun ("SysAllocString" sys-alloc-string oleaut32) bstr
+  (psz (:pointer olechar)))
+
+(defwin32fun ("SysAllocStringByteLen" sys-alloc-string-byte-len oleaut32) hresult
+  (psz lpcstr)
+  (len uint))
+
+(defwin32fun ("SysAllocStringLen" sys-alloc-string-len oleaut32) bstr
+  (str (:pointer olechar))
+  (char-len uint))
+
+(defwin32fun ("SysFreeString" sys-free-string oleaut32) :void
+  (bstr bstr))
+
+(defwin32fun ("SysReAllocString" sys-re-alloc-string oleaut32) int
+  (bstr (:pointer bstr))
+  (psz (:pointer olechar)))
+
+(defwin32fun ("SysReAllocStringLen" sys-re-alloc-string-len oleaut32) int
+  (bstr (:pointer bstr))
+  (psz (:pointer olechar))
+  (len :uint))
+
+(defwin32fun ("SysReleaseString" sys-release-string oleaut32) :void
+  (bstr bstr))
+
+(defwin32fun ("SysStringByteLen" sys-string-byte-len oleaut32) uint
+  (bstr bstr))
+
+(defwin32fun ("SysStringLen" sys-string-len oleaut32) uint
+  (bstr bstr))
 
 (defwin32fun ("SystemParametersInfoW" system-parameters-info user32) bool
   (action uint)
