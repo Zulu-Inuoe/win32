@@ -154,6 +154,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
      ;;Return the name
      ',name))
 
+(defwin32type pvoid (:pointer :void))
+
 (defwin32type char :int8)
 (defwin32type uchar :uchar)
 (defwin32type wchar :int16)
@@ -177,7 +179,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type long-ptr #+32-bit :int32 #+64-bit :int64)
 (defwin32type long32 :int32)
 (defwin32type long64 :int64)
-
+(defwin32type double :double)
 (defwin32type ulong :uint32)
 (defwin32type ulonglong :uint64)
 (defwin32type ulong-ptr #+32-bit :uint32 #+64-bit :uint64)
@@ -189,6 +191,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32type byte :uint8)
 (defwin32type word :uint16)
+(defwin32type float :float)
 (defwin32type dword :uint32)
 (defwin32type dwordlong :uint64)
 (defwin32type dword-ptr ulong-ptr)
@@ -291,20 +294,48 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type fxpt16dot16 :long)
 (defwin32type fxpt2dot30 :long)
 
+(defwin32struct flagged-word-blob
+  (f-flags ulong)
+  (cl-size ulong)
+  (as-data :ushort :count 1))
+
+(defwin32struct byte-sizedarr
+  (cl-size ulong)
+  (p-data (:pointer byte)))
+
+(defwin32struct word-sizedarr
+  (cl-size ulong)
+  (p-data (:pointer :ushort)))
+
+(defwin32struct dword-sizedarr
+  (cl-size ulong)
+  (p-data (:pointer ulong)))
+
+(defwin32type hyper :int64)
+
+(defwin32struct hyper-sizedarr
+  (cl-size ulong)
+  (p-data (:pointer hyper)))
+
 (defwin32type olechar wchar)
+(defwin32type wire-bstr (:pointer flagged-word-blob))
 (defwin32type bstr (:pointer olechar))
 (defwin32type lpbstr (:pointer bstr))
+(defwin32type variant-bool :short)
+(defwin32type -variant-bool variant-bool)
 (defwin32type dispid long)
 (defwin32type memberid dispid)
 (defwin32type hreftype dword)
 (defwin32type lpolestr lpstr)
-(defwin32type lpcolestr lpolestr)
+(defwin32type lpcolestr (:string :encoding #.+win32-string-encoding+))
 (defwin32type lpolestrptr (:pointer lpstr))
 (defwin32type interface :void)
 (defwin32type iunknown interface)
 (defwin32type lpunknown (:pointer iunknown))
 (defwin32type itypelib interface)
 (defwin32type vartype :ushort)
+(defwin32type scode long)
+(defwin32type pscode (:pointer scode))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun %to-int32 (value)
@@ -3641,6 +3672,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +clsctx-activate-aaa-as-iu+	 #x800000)
 (defwin32constant +clsctx-ps-dll+	 #x80000000)
 
+(defwin32type date :double)
+(defwin32union cy
+  (int64 longlong))
+
+(defwin32struct decimal
+  (w-reserved ushort)
+  (scale byte)
+  (sign byte)
+  (hi-32 ulong)
+  (lo-32 ulong)
+  (mid-32 ulong))
+
 (defwin32struct os-version-info-ex
   (os-version-info-size dword)
   (major-version dword)
@@ -4767,7 +4810,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (prog-id lpcolestr)
   (clsid (:pointer clsid)))
 
-(defwin32fun ("CLSIDFromString" cls-id-from-string ole32) hresult
+(defwin32fun ("CLSIDFromString" clsid-from-string ole32) hresult
   (lpsz lpcolestr)
   (clsid (:pointer clsid)))
 
@@ -5960,6 +6003,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("LoadTypeLib" load-type-lib oleaut32) hresult
   (file lpcolestr)
+  (lib (:pointer (:pointer itypelib))))
+
+(defwin32fun ("LoadTypeLibEx" load-type-lib-ex oleaut32) hresult
+  (file lpcolestr)
+  (regkind :int)
   (lib (:pointer (:pointer itypelib))))
 
 (defwin32fun ("LocalAlloc" local-alloc kernel32) hlocal
