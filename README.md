@@ -2,10 +2,18 @@
 
 ## Overview
 
-win32 is a library containing a set of CFFI bindings and constant definitions for interacting with the Win32 API.
+`win32` is a library containing a set of CFFI bindings and constant definitions for interacting with the Win32 API.
 This means it's a practically non-existant layer on top of the API, and has little to no utility other than exposing the raw interface.
 
-New functions and libraries will be added as needed, usually a whole set at a time.
+Since relatively often type names might be changed around, and because it 
+includes just a random assortment of things as one giant file, I don't 
+recommend using it as a library dependency.
+
+I primarily use this to experiment with some API before using it. That said, 
+hopefully this can be cleaned up to be properly reusable.
+
+Check out [winutil](https://github.com/Zulu-Inuoe/winutil) to see about calling 
+into `win32`.
 
 ## Notes:
 
@@ -38,5 +46,7 @@ Most of WinAPI is defined in terms of Windows' own types, with well-defined size
 Occasionally, a type will be a bare C type instead. In this case, the corresponding CFFI type will be used, such as `:int` or `:char`
 
 ## Probable Goals:
-Separate into multiple source files and possibly separate packages to
-have a 1:1 with the library DLLS (aka win32.user32, win32.gdi32 etc.).
+1. Separate into multiple source files and separate packages/systems to have a 
+1:1 with the library DLLS (user32, gdi32 etc.).
+2. Normalize and stabilize type names to avoid breakage if people use `win32` 
+directly.
