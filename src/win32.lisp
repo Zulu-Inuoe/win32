@@ -6836,7 +6836,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SysAllocString" sys-alloc-string oleaut32) bstr
   (psz (:pointer olechar)))
 
-(defwin32fun ("SysAllocStringByteLen" sys-alloc-string-byte-len oleaut32) hresult
+(defwin32fun ("SysAllocStringByteLen" sys-alloc-string-byte-len oleaut32) bstr
   (psz lpcstr)
   (len uint))
 
