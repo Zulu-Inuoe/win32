@@ -6730,13 +6730,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (new-long long))
 
 #+32-bit
-(defwin32fun ("SetWindowLongW" set-window-long-ptr user32) long-ptr
+(defwin32fun ("SetWindowLongPtrW" set-window-long-ptr user32) long-ptr
   (hwnd hwnd)
   (index :int)
   (new-long long-ptr))
 
 #+64-bit
-(defwin32fun ("SetWindowLongPtrW" set-window-long-ptr user32) long-ptr
+(defwin32fun ("SetWindowLongW" set-window-long-ptr user32) long-ptr
   (hwnd hwnd)
   (index :int)
   (new-long long-ptr))
