@@ -5799,6 +5799,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (index :int))
 
+#+32-bit
+(defwin32fun ("GetWindowLongPtrW" get-window-long-ptr user32) long-ptr
+  (hwnd hwnd)
+  (index :int))
+
+#+64-bit
+(defwin32fun ("GetWindowLongW" get-window-long-ptr user32) long-ptr
+  (hwnd hwnd)
+  (index :int))
+
 (defwin32fun ("GetWindowRect" get-window-rect user32) bool
   (hwnd hwnd)
   (rect (:pointer rect)))
