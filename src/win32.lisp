@@ -5445,6 +5445,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetCapture" get-capture user32) hwnd)
 
+(defwin32fun ("GetCaretBlinkTime" get-caret-blink-time user32) uint)
+
+(defwin32fun ("GetCaretPos" get-caret-pos user32) bool
+  (point (:pointer point)))
+
 (defwin32fun ("GetClassLongW" get-class-long user32) dword
   (hwnd hwnd)
   (index :int))
@@ -6596,6 +6601,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("SetCapture" set-capture user32) hwnd
   (hwnd hwnd))
+
+(defwin32fun ("SetCaretBlinkTime" set-caret-blink-time user32) bool
+  (umseconds uint))
+
+(defwin32fun ("SetCaretPos" set-caret-pos user32) bool
+  (x :int)
+  (y :int))
 
 (defwin32fun ("SetClassLongW" set-class-long user32) dword
   (hwnd hwnd)
