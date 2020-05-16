@@ -5613,7 +5613,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hmenu hmenu)
   (pos :int))
 
-(defwin32fun ("GetMessageW" get-message user32) bool
+(defwin32fun ("GetMessageW" get-message user32) :int
   (msg (:pointer msg))
   (hwnd hwnd)
   (msg-filter-min uint)
