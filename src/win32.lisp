@@ -5773,6 +5773,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (buffer lpwstr)
   (size uint))
 
+(defwin32fun ("GetThreadId" get-thread-id kernel32) dword
+  (thread handle))
+
 (defwin32fun ("GetTickCount" get-tick-count kernel32) dword)
 
 (defwin32fun ("GetTickCount64" get-tick-count-64 kernel32) ulonglong)
