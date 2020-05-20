@@ -5863,6 +5863,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GlobalUnlock" global-unlock kernel32) bool
   (mem hglobal))
 
+(defwin32-lispfun hiword (dword)
+  (ldb (cl:byte 16 16) dword))
+
 (defwin32fun ("IIDFromString" iid-from-string ole32) hresult
   (lpsz lpcolestr)
   (lpiid (:pointer iid)))
@@ -5889,6 +5892,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("IsClipboardFormatAvailable" is-clipboard-format-available user32) bool
   (format uint))
+
+(defwin32fun ("IsDialogMessageW" is-dialog-message user32) bool
+  (hdlg hwnd)
+  (lpmsg (:pointer msg)))
 
 (defwin32fun ("IsEqualGUID" is-equal-guid ole32) bool
   (rguid1 refguid)
@@ -6081,6 +6088,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (profile-buffer (:pointer :void))
   (profile-length (:pointer dword))
   (quota-limits (:pointer quota-limits)))
+
+(defwin32-lispfun loword (dword)
+  (ldb (cl:byte 16 0) dword))
 
 (defwin32-lispfun makeintresource (i)
   (cffi:make-pointer (ldb (cl:byte 16 0) i)))
