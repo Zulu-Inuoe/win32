@@ -5520,6 +5520,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hdc hdc)
   (index :int))
 
+(defwin32fun ("GetDIBits" get-di-bits gdi32) :int
+  (hdc hdc)
+  (hbm hbitmap)
+  (start uint)
+  (clines uint)
+  (lpv-bits (:pointer :void))
+  (lpbmi (:pointer bitmapinfo))
+  (usage uint))
+
 (defwin32fun ("GetDoubleClickTime" get-double-click-time user32) uint)
 
 (defwin32fun ("GetDynamicTimeZoneInformation" get-dynamic-time-zone-information kernel32) dword
@@ -5684,6 +5693,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetNativeSystemInfo" get-native-system-info kernel32) :void
   (system-info (:pointer system-info)))
+
+(defwin32fun ("GetObjectW" get-object gdi32) :int
+  (h handle)
+  (c :int)
+  (pv (:pointer :void)))
 
 (defwin32fun ("GetOpenClipboardWindow" get-open-clipboard-window user32) hwnd)
 
