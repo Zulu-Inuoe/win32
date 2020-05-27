@@ -3778,6 +3778,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (visible-mask dword)
   (damage-mask dword))
 
+(defwin32struct iconinfo
+  (icon bool)
+  (x-hotspot dword)
+  (y-hotspot dword)
+  (bm-mask hbitmap)
+  (bm-color hbitmap))
+
 (defwin32struct point
   (x long)
   (y long))
@@ -5116,6 +5123,24 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hatch :int)
   (color colorref))
 
+(defwin32fun ("CreateIconFromResource" create-icon-from-resource user32) hicon
+  (presbits (:pointer byte))
+  (dw-res-size dword)
+  (ficon bool)
+  (dw-ver dword))
+
+(defwin32fun ("CreateIconFromResourceEx" create-icon-from-resource-ex user32) hicon
+  (presbits (:pointer byte))
+  (dw-res-size dword)
+  (ficon bool)
+  (dw-ver dword)
+  (cx-desired :int)
+  (cy-desired :int)
+  (flags uint))
+
+(defwin32fun ("CreateIconIndirect" create-icon-indirect user32) hicon
+  (piconinfo (:pointer iconinfo)))
+
 (defwin32fun ("CreateMenu" create-menu user32) hmenu)
 
 (defwin32fun ("CreateMutexW" create-mutex kernel32) handle
@@ -5268,6 +5293,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("DestroyCursor" destroy-cursor user32) bool
   (cursor hcursor))
+
+(defwin32fun ("DestroyIcon" destroy-icon user32) bool
+  (icon hicon))
 
 (defwin32fun ("DestroyMenu" destroy-menu user32) bool
   (menu hmenu))
