@@ -6703,6 +6703,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SetDefaultDllDirectories" set-default-dll-directories kernel32) bool
   (directory-flags dword))
 
+(defwin32fun ("SetDIBits" set-di-bits gdi32) :int
+  (hdc hdc)
+  (hbm hbitmap)
+  (start uint)
+  (clines uint)
+  (lp-bits (:pointer :void))
+  (lp-bmi (:pointer bitmapinfo))
+  (color-use uint))
+
 (defwin32fun ("SetDoubleClickTime" set-double-click-time user32) bool
   (arg uint))
 
