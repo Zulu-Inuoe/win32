@@ -813,6 +813,21 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +idi-error+       +idi-hand+)
 (defwin32constant +idi-information+ +idi-asterisk+)
 
+
+;;; Dialog Box Command IDs
+(defwin32constant +idok+                1)
+(defwin32constant +idcancel+            2)
+(defwin32constant +idabort+             3)
+(defwin32constant +idretry+             4)
+(defwin32constant +idignore+            5)
+(defwin32constant +idyes+               6)
+(defwin32constant +idno+                7)
+(defwin32constant +idclose+         8)
+(defwin32constant +idhelp+          9)
+(defwin32constant +idtryagain+      10)
+(defwin32constant +idcontinue+      11)
+(defwin32constant +idtimeout+ 32000)
+
 ;;; Edit Control Styles
 (defwin32constant +es-left+             #x0000)
 (defwin32constant +es-center+           #x0001)
@@ -898,6 +913,67 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +em-getimestatus+         #x00d9)
 (defwin32constant +em-enablefeature+        #x00da)
 
+;;; Button Control Styles
+(defwin32constant +bs-pushbutton+       #x00000000)
+(defwin32constant +bs-defpushbutton+    #x00000001)
+(defwin32constant +bs-checkbox+         #x00000002)
+(defwin32constant +bs-autocheckbox+     #x00000003)
+(defwin32constant +bs-radiobutton+      #x00000004)
+(defwin32constant +bs-3state+           #x00000005)
+(defwin32constant +bs-auto3state+       #x00000006)
+(defwin32constant +bs-groupbox+         #x00000007)
+(defwin32constant +bs-userbutton+       #x00000008)
+(defwin32constant +bs-autoradiobutton+  #x00000009)
+(defwin32constant +bs-pushbox+          #x0000000A)
+(defwin32constant +bs-ownerdraw+        #x0000000B)
+(defwin32constant +bs-typemask+         #x0000000F)
+(defwin32constant +bs-lefttext+         #x00000020)
+(defwin32constant +bs-text+             #x00000000)
+(defwin32constant +bs-icon+             #x00000040)
+(defwin32constant +bs-bitmap+           #x00000080)
+(defwin32constant +bs-left+             #x00000100)
+(defwin32constant +bs-right+            #x00000200)
+(defwin32constant +bs-center+           #x00000300)
+(defwin32constant +bs-top+              #x00000400)
+(defwin32constant +bs-bottom+           #x00000800)
+(defwin32constant +bs-vcenter+          #x00000C00)
+(defwin32constant +bs-pushlike+         #x00001000)
+(defwin32constant +bs-multiline+        #x00002000)
+(defwin32constant +bs-notify+           #x00004000)
+(defwin32constant +bs-flat+             #x00008000)
+(defwin32constant +bs-rightbutton+      +bs-lefttext+)
+
+;;; User Button Notification Codes
+(defwin32constant +bn-clicked+          0)
+(defwin32constant +bn-paint+            1)
+(defwin32constant +bn-hilite+           2)
+(defwin32constant +bn-unhilite+         3)
+(defwin32constant +bn-disable+          4)
+(defwin32constant +bn-doubleclicked+    5)
+(defwin32constant +bn-pushed+           +bn-hilite+)
+(defwin32constant +bn-unpushed+         +bn-unhilite+)
+(defwin32constant +bn-dblclk+           +bn-doubleclicked+)
+(defwin32constant +bn-setfocus+         6)
+(defwin32constant +bn-killfocus+        7)
+
+;;; Button Control Messages
+(defwin32constant +bm-getcheck+        #x00F0)
+(defwin32constant +bm-setcheck+        #x00F1)
+(defwin32constant +bm-getstate+        #x00F2)
+(defwin32constant +bm-setstate+        #x00F3)
+(defwin32constant +bm-setstyle+        #x00F4)
+(defwin32constant +bm-click+           #x00F5)
+(defwin32constant +bm-getimage+        #x00F6)
+(defwin32constant +bm-setimage+        #x00F7)
+(defwin32constant +bm-setdontclick+    #x00F8)
+
+
+(defwin32constant +bst-unchecked+      #x0000)
+(defwin32constant +bst-checked+        #x0001)
+(defwin32constant +bst-indeterminate+  #x0002)
+(defwin32constant +bst-pushed+         #x0004)
+(defwin32constant +bst-focus+          #x0008)
+
 ;; Static Control Constants
 (defwin32constant +ss-left+             #x00000000)
 (defwin32constant +ss-center+           #x00000001)
@@ -959,6 +1035,25 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +idc-hand+            (make-pointer 32649))
 (defwin32constant +idc-appstarting+     (make-pointer 32650)) ; /*not in win3.1 */
 (defwin32constant +idc-help+            (make-pointer 32651))
+
+(defwin32constant +image-bitmap+        0)
+(defwin32constant +image-icon+          1)
+(defwin32constant +image-cursor+        2)
+(defwin32constant +image-enhmetafile+   3)
+
+(defwin32constant +lr-defaultcolor+     #x00000000)
+(defwin32constant +lr-monochrome+       #x00000001)
+(defwin32constant +lr-color+            #x00000002)
+(defwin32constant +lr-copyreturnorg+    #x00000004)
+(defwin32constant +lr-copydeleteorg+    #x00000008)
+(defwin32constant +lr-loadfromfile+     #x00000010)
+(defwin32constant +lr-loadtransparent+  #x00000020)
+(defwin32constant +lr-defaultsize+      #x00000040)
+(defwin32constant +lr-vgacolor+         #x00000080)
+(defwin32constant +lr-loadmap3dcolors+  #x00001000)
+(defwin32constant +lr-createdibsection+ #x00002000)
+(defwin32constant +lr-copyfromresource+ #x00004000)
+(defwin32constant +lr-shared+           #x00008000)
 
 ;;; Binary raster ops
 (defwin32constant +r2-black+            1)   ;  0
