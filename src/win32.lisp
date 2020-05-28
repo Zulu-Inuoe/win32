@@ -3672,6 +3672,27 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +clsctx-activate-aaa-as-iu+	 #x800000)
 (defwin32constant +clsctx-ps-dll+	 #x80000000)
 
+(defwin32struct memory-status
+  (length dword)
+  (memory-load dword)
+  (total-phys size-t)
+  (avail-phys size-t)
+  (total-page-file size-t)
+  (avail-page-file size-t)
+  (total-virtual size-t)
+  (avail-virtual size-t))
+
+(defwin32struct memory-status-ex
+  (length dword)
+  (memory-load dword)
+  (total-phys dwordlong)
+  (avail-phys dwordlong)
+  (total-page-file dwordlong)
+  (avail-page-file dwordlong)
+  (total-virtual dwordlong)
+  (avail-virtual dwordlong)
+  (avail-extended-virtual dwordlong))
+
 (defwin32type date :double)
 (defwin32union cy
   (int64 longlong))
@@ -5520,6 +5541,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (file-name lpcwstr)
   (file-size-high (:pointer dword)))
 
+(defwin32fun ("GetComputerNameW" get-computer-name kernel32) bool
+  (lp-buffer lpwstr)
+  (n-size (:pointer dword)))
+
+(defwin32fun ("GetCurrentDirectoryW" get-current-directory kernel32) dword
+  (n-buffer-length dword)
+  (lp-buffer lpwstr))
+
 (defwin32fun ("GetCurrentProcess" get-current-process kernel32) handle)
 
 (defwin32fun ("GetCurrentProcessId" get-current-process-id kernel32) dword)
@@ -5636,6 +5665,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetLocalTime" get-local-time kernel32) :void
   (system-time (:pointer systemtime)))
+
+(defwin32fun ("GetLogicalDriveStringsW" get-logical-drive-strings kernel32) dword
+  (n-buffer-length dword)
+  (lp-buffer lpwstr))
 
 (defwin32fun ("GetMappedFiledNameW" get-mapped-file-name psapi) dword
   (process handle)
@@ -5838,6 +5871,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (count-formats uint)
   (count-formats-out (:pointer uint)))
 
+(defwin32fun ("GetUserNameW" get-user-name advapi32) bool
+  (lp-buffer lpwstr)
+  (pcb-buffer (:pointer dword)))
+
 (defwin32fun ("GetWindow" get-window user32) hwnd
   (hwnd hwnd)
   (cmd uint))
@@ -5893,6 +5930,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GlobalLock" global-lock kernel32) (:pointer :void)
   (mem hglobal))
+
+(defwin32fun ("GlobalMemoryStatus" global-memory-status kernel32) :void
+  (lp-buffer (:pointer memory-status)))
+
+(defwin32fun ("GlobalMemoryStatusEx" global-memory-status-ex kernel32) bool
+  (lp-buffer (:pointer memory-status-ex)))
 
 (defwin32fun ("GlobalReAlloc" global-re-alloc kernel32) hglobal
   (mem hglobal)
@@ -6110,6 +6153,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("LocalUnlock" local-unlock kernel32) bool
   (mem hlocal))
+
+(defwin32fun ("LockWorkStation" lock-work-station user32) bool)
 
 (defwin32fun ("LogonUserW" logon-user advapi32) bool
   (user-name lpcwstr)
@@ -6692,6 +6737,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("SetClipboardViewer" set-clipboard-viewer user32) hwnd
   (new-viewer hwnd))
+
+(defwin32fun ("SetCurrentDirectoryW" set-current-directory kernel32) bool
+  (lp-path-name lpcwstr))
 
 (defwin32fun ("SetCursor" set-cursor user32) hcursor
   (cursor hcursor))
