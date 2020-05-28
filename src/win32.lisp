@@ -6321,6 +6321,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("LoadCursorFromFileW" load-cursor-from-file user32) hcursor
   (file-name lpctstr))
 
+(defwin32fun ("LoadImageW" load-image user32) handle
+  (hinst hinstance)
+  (name lpwstr)
+  (type uint)
+  (cx :int)
+  (cy :int)
+  (fu-load uint))
+
 (defwin32fun ("LoadIconW" load-icon user32) hicon
   (instance hinstance)
   (name lpctstr))
