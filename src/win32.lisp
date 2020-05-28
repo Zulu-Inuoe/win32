@@ -6380,6 +6380,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (map-type uint)
   (layout hkl))
 
+(defwin32fun ("MessageBeep" message-beep user32) bool
+  (u-type uint))
+
 (defwin32fun ("MaskBlt" mask-blt gdi32) bool
   (hdc-dest hdc)
   (x-dest :int)
@@ -6949,6 +6952,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (color colorref)
   (alpha byte)
   (flags dword))
+
+(defwin32fun ("SetMenu" set-menu user32) bool
+  (hwnd hwnd)
+  (hmenu hmenu))
 
 (defwin32fun ("SetMessageExtraInfo" set-message-extra-info user32) lparam
   (lparam lparam))
