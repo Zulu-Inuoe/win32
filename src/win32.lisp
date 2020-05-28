@@ -7161,3 +7161,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (number-of-bytes-to-write dword)
   (overlapped (:pointer overlapped))
   (completion-routine :pointer))
+
+(defwin32-lispfun zero-memory (destination length)
+  (dotimes (i length)
+    (setf (cffi:mem-aref destination :uint8 i) 0)))
