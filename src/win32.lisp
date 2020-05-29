@@ -497,20 +497,50 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +pfd-doublebuffer-dontcare+   #x40000000)
 (defwin32constant +pfd-stereo-dontcare+         #x80000000)
 
-;;Window styles
-(defwin32constant +ws-overlapped+     #x00000000)
-(defwin32constant +ws-popup+          #x80000000)
-(defwin32constant +ws-child+          #x40000000)
-(defwin32constant +ws-visible+        #x10000000)
-(defwin32constant +ws-caption+        #x00C00000)
-(defwin32constant +ws-border+         #x00800000)
-(defwin32constant +ws-tabstop+        #x00010000)
-(defwin32constant +ws-maximizebox+    #x00010000)
-(defwin32constant +ws-minimizebox+    #x00020000)
-(defwin32constant +ws-thickframe+     #x00040000)
-(defwin32constant +ws-sysmenu+        #x00080000)
+;;; Window styles
+(defwin32constant +ws-overlapped+       #x00000000)
+(defwin32constant +ws-popup+            #x80000000)
+(defwin32constant +ws-child+            #x40000000)
+(defwin32constant +ws-minimize+         #x20000000)
+(defwin32constant +ws-visible+          #x10000000)
+(defwin32constant +ws-disabled+         #x08000000)
+(defwin32constant +ws-clipsiblings+     #x04000000)
+(defwin32constant +ws-clipchildren+     #x02000000)
+(defwin32constant +ws-maximize+         #x01000000)
+(defwin32constant +ws-caption+          #x00C00000)
+(defwin32constant +ws-border+           #x00800000)
+(defwin32constant +ws-dlgframe+         #x00400000)
+(defwin32constant +ws-vscroll+          #x00200000)
+(defwin32constant +ws-hscroll+          #x00100000)
+(defwin32constant +ws-sysmenu+          #x00080000)
+(defwin32constant +ws-thickframe+       #x00040000)
+(defwin32constant +ws-group+            #x00020000)
+(defwin32constant +ws-tabstop+          #x00010000)
 
-(defwin32constant +ws-overlappedwindow+ (logior +ws-overlapped+ +ws-caption+ +ws-sysmenu+ +ws-thickframe+ +ws-minimizebox+ +ws-maximizebox+))
+(defwin32constant +ws-minimizebox+      #x00020000)
+(defwin32constant +ws-maximizebox+      #x00010000)
+
+
+(defwin32constant +ws-tiled+            +ws-overlapped+)
+(defwin32constant +ws-iconic+           +ws-minimize+)
+(defwin32constant +ws-sizebox+          +ws-thickframe+)
+(defwin32constant +ws-overlappedwindow+ (logior
+                                         +ws-overlapped+
+                                         +ws-caption+
+                                         +ws-sysmenu+
+                                         +ws-thickframe+
+                                         +ws-minimizebox+
+                                         +ws-maximizebox+))
+(defwin32constant +ws-tiledwindow+      +ws-overlappedwindow+)
+
+;;; Common Window Styles
+
+(defwin32constant +ws-popupwindow+      (logior
+                                         +ws-popup+
+                                         +ws-border+
+                                         +ws-sysmenu+))
+
+(defwin32constant +ws-childwindow+      +ws-child+)
 
 ;;Window ex styles
 (defwin32constant +ws-ex-left+                 #x00000000)
