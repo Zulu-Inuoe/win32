@@ -7416,6 +7416,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wndclass-name lpctstr)
   (instance hinstance))
 
+(defwin32fun ("UnregisterHotKey" unregister-hot-key user32) bool
+  (hwnd hwnd)
+  (id :int))
+
 (defwin32fun ("UpdateWindow" update-window user32) bool
   (hwnd hwnd))
 
