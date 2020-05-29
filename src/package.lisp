@@ -17,4 +17,5 @@
    #:gdi32
    #:opengl32
    #:advapi32
-   #:setupapi))
+   #:setupapi
+   #:comdlg32))

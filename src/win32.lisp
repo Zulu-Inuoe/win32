@@ -33,6 +33,9 @@
 (define-foreign-library oleaut32
   (:win32 "oleaut32.dll"))
 
+(define-foreign-library comdlg32
+  (:win32 "comdlg32.dll"))
+
 (use-foreign-library version)
 (use-foreign-library kernel32)
 (use-foreign-library user32)
@@ -44,6 +47,7 @@
 (use-foreign-library psapi)
 (use-foreign-library ole32)
 (use-foreign-library oleaut32)
+(use-foreign-library comdlg32)
 
 (defconstant +win32-string-encoding+
   #+little-endian :ucs-2le
@@ -3948,6 +3952,31 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (avail-virtual dwordlong)
   (avail-extended-virtual dwordlong))
 
+(defwin32struct openfilename
+  (size               dword)
+  (owner              hwnd)
+  (instance           hinstance)
+  (filter             lpcwstr)
+  (custom-filter      lpwstr)
+  (max-custom-filter  dword)
+  (filter-index       dword)
+  (file               lpwstr)
+  (max-file           dword)
+  (file-title         lpwstr)
+  (max-file-title     dword)
+  (initial-dir        lpcwstr)
+  (title              lpcwstr)
+  (flags              dword)
+  (file-offset        word)
+  (file-textension    word)
+  (def-ext            lpcwstr)
+  (cust-data          lparam)
+  (fn-hook            :pointer)
+  (template-name      lpcwstr)
+  (pv-reserved        (:pointer :void))
+  (dw-reserved        dword)
+  (Flags-ex           dword));
+
 (defwin32type date :double)
 (defwin32union cy
   (int64 longlong))
@@ -6016,6 +6045,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (pv (:pointer :void)))
 
 (defwin32fun ("GetOpenClipboardWindow" get-open-clipboard-window user32) hwnd)
+
+(defwin32fun ("GetOpenFileNameW" get-open-file-name comdlg32) bool
+  (arg (:pointer openfilename)))
 
 (defwin32fun ("GetOverlappedResult" get-overlapped-result kernel32) bool
   (file handle)
