@@ -1070,6 +1070,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +cw-usedefault+ (%to-int32 #x80000000))
 
+(defwin32constant +flashw-stop+         0)
+(defwin32constant +flashw-caption+      #x00000001)
+(defwin32constant +flashw-tray+         #x00000002)
+(defwin32constant +flashw-all+          (logior +flashw-caption+ +flashw-tray+))
+(defwin32constant +flashw-timer+        #x00000004)
+(defwin32constant +flashw-timernofg+    #x0000000C)
+
 (defwin32constant +cs-vredraw+ #x0001)
 (defwin32constant +cs-hredraw+ #x0002)
 (defwin32constant +cs-owndc+   #x0020)
@@ -4398,6 +4405,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (wndclass-name lpctstr)
   (icon-sm hicon))
 
+(defwin32struct flashwindowinfo
+  (size uint)
+  (hwnd hwnd)
+  (flags dword)
+  (count uint)
+  (timeout dword))
+
 (defwin32struct msg
   (hwnd hwnd)
   (message uint)
@@ -5998,6 +6012,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd-child-after hwnd)
   (class lpcwstr)
   (window lpcwstr))
+
+(defwin32fun ("FlashWindow" flash-window user32) bool
+  (hwnd hwnd)
+  (invert bool))
+
+(defwin32fun ("FlashWindowEx" flash-window-ex user32) bool
+  (pfwi (:pointer flashwindowinfo)))
 
 (defwin32fun ("FlushFileBuffers" flush-file-buffers kernel32) bool
   (hfile handle))
