@@ -585,6 +585,274 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +es-center+ #x0001)
 (defwin32constant +es-right+ #x0002)
 
+;;; Virtual Keys, Standard Set
+
+(defwin32constant +vk-lbutton+        #x01)
+(defwin32constant +vk-rbutton+        #x02)
+(defwin32constant +vk-cancel+         #x03)
+(defwin32constant +vk-mbutton+        #x04)    ; NOT contiguous with L & RBUTTON
+
+(defwin32constant +vk-xbutton1+       #x05)    ; NOT contiguous with L & RBUTTON
+(defwin32constant +vk-xbutton2+       #x06)    ; NOT contiguous with L & RBUTTON
+
+;;; #x07 : reserved
+
+
+(defwin32constant +vk-back+           #x08)
+(defwin32constant +vk-tab+            #x09)
+
+;;; #x0A - #x0B : reserved
+
+(defwin32constant +vk-clear+          #x0C)
+(defwin32constant +vk-return+         #x0D)
+
+;;; #x0E - #x0F : unassigned
+
+(defwin32constant +vk-shift+          #x10)
+(defwin32constant +vk-control+        #x11)
+(defwin32constant +vk-menu+           #x12)
+(defwin32constant +vk-pause+          #x13)
+(defwin32constant +vk-capital+        #x14)
+
+(defwin32constant +vk-kana+           #x15)
+(defwin32constant +vk-hangeul+        #x15)  ; old name - should be here for compatibility
+(defwin32constant +vk-hangul+         #x15)
+
+;;; #x16 : unassigned
+
+(defwin32constant +vk-junja+          #x17)
+(defwin32constant +vk-final+          #x18)
+(defwin32constant +vk-hanja+          #x19)
+(defwin32constant +vk-kanji+          #x19)
+
+
+;;; #x1A : unassigned
+
+(defwin32constant +vk-escape+         #x1B)
+
+(defwin32constant +vk-convert+        #x1C)
+(defwin32constant +vk-nonconvert+     #x1D)
+(defwin32constant +vk-accept+         #x1E)
+(defwin32constant +vk-modechange+     #x1F)
+
+(defwin32constant +vk-space+          #x20)
+(defwin32constant +vk-prior+          #x21)
+(defwin32constant +vk-next+           #x22)
+(defwin32constant +vk-end+            #x23)
+(defwin32constant +vk-home+           #x24)
+(defwin32constant +vk-left+           #x25)
+(defwin32constant +vk-up+             #x26)
+(defwin32constant +vk-right+          #x27)
+(defwin32constant +vk-down+           #x28)
+(defwin32constant +vk-select+         #x29)
+(defwin32constant +vk-print+          #x2A)
+(defwin32constant +vk-execute+        #x2B)
+(defwin32constant +vk-snapshot+       #x2C)
+(defwin32constant +vk-insert+         #x2D)
+(defwin32constant +vk-delete+         #x2E)
+(defwin32constant +vk-help+           #x2F)
+
+;;; VK-0 - VK-9 are the same as ASCII '0' - '9' (#x30 - #x39)
+;;; #x3A - #x40 : unassigned
+;;; VK-A - VK-Z are the same as ASCII 'A' - 'Z' (#x41 - #x5A)
+
+(defwin32constant +vk-lwin+           #x5B)
+(defwin32constant +vk-rwin+           #x5C)
+(defwin32constant +vk-apps+           #x5D)
+
+;;; #x5E : reserved
+
+(defwin32constant +vk-sleep+          #x5F)
+
+(defwin32constant +vk-numpad0+        #x60)
+(defwin32constant +vk-numpad1+        #x61)
+(defwin32constant +vk-numpad2+        #x62)
+(defwin32constant +vk-numpad3+        #x63)
+(defwin32constant +vk-numpad4+        #x64)
+(defwin32constant +vk-numpad5+        #x65)
+(defwin32constant +vk-numpad6+        #x66)
+(defwin32constant +vk-numpad7+        #x67)
+(defwin32constant +vk-numpad8+        #x68)
+(defwin32constant +vk-numpad9+        #x69)
+(defwin32constant +vk-multiply+       #x6A)
+(defwin32constant +vk-add+            #x6B)
+(defwin32constant +vk-separator+      #x6C)
+(defwin32constant +vk-subtract+       #x6D)
+(defwin32constant +vk-decimal+        #x6E)
+(defwin32constant +vk-divide+         #x6F)
+(defwin32constant +vk-f1+             #x70)
+(defwin32constant +vk-f2+             #x71)
+(defwin32constant +vk-f3+             #x72)
+(defwin32constant +vk-f4+             #x73)
+(defwin32constant +vk-f5+             #x74)
+(defwin32constant +vk-f6+             #x75)
+(defwin32constant +vk-f7+             #x76)
+(defwin32constant +vk-f8+             #x77)
+(defwin32constant +vk-f9+             #x78)
+(defwin32constant +vk-f10+            #x79)
+(defwin32constant +vk-f11+            #x7A)
+(defwin32constant +vk-f12+            #x7B)
+(defwin32constant +vk-f13+            #x7C)
+(defwin32constant +vk-f14+            #x7D)
+(defwin32constant +vk-f15+            #x7E)
+(defwin32constant +vk-f16+            #x7F)
+(defwin32constant +vk-f17+            #x80)
+(defwin32constant +vk-f18+            #x81)
+(defwin32constant +vk-f19+            #x82)
+(defwin32constant +vk-f20+            #x83)
+(defwin32constant +vk-f21+            #x84)
+(defwin32constant +vk-f22+            #x85)
+(defwin32constant +vk-f23+            #x86)
+(defwin32constant +vk-f24+            #x87)
+
+;;; #x88 - #x8F : UI navigation
+
+(defwin32constant +vk-navigation-view+     #x88) ; reserved
+(defwin32constant +vk-navigation-menu+     #x89) ; reserved
+(defwin32constant +vk-navigation-up+       #x8A) ; reserved
+(defwin32constant +vk-navigation-down+     #x8B) ; reserved
+(defwin32constant +vk-navigation-left+     #x8C) ; reserved
+(defwin32constant +vk-navigation-right+    #x8D) ; reserved
+(defwin32constant +vk-navigation-accept+   #x8E) ; reserved
+(defwin32constant +vk-navigation-cancel+   #x8F) ; reserved
+
+(defwin32constant +vk-numlock+        #x90)
+(defwin32constant +vk-scroll+         #x91)
+
+;;; NEC PC-9800 kbd definitions
+(defwin32constant +vk-oem-nec-equal+  #x92)   ; '=' key on numpad
+
+;;; Fujitsu/OASYS kbd definitions
+
+(defwin32constant +vk-oem-fj-jisho+   #x92)   ; 'Dictionary' key
+(defwin32constant +vk-oem-fj-masshou+ #x93)   ; 'Unregister word' key
+(defwin32constant +vk-oem-fj-touroku+ #x94)   ; 'Register word' key
+(defwin32constant +vk-oem-fj-loya+    #x95)   ; 'Left OYAYUBI' key
+(defwin32constant +vk-oem-fj-roya+    #x96)   ; 'Right OYAYUBI' key
+
+;;; #x97 - #x9F : unassigned
+
+;;; VK-L* & VK-R* - left and right Alt, Ctrl and Shift virtual keys.
+;;; Used only as parameters to GetAsyncKeyState() and GetKeyState().
+;;; No other API or message will distinguish left and right keys in this way.
+
+(defwin32constant +vk-lshift+         #xA0)
+(defwin32constant +vk-rshift+         #xA1)
+(defwin32constant +vk-lcontrol+       #xA2)
+(defwin32constant +vk-rcontrol+       #xA3)
+(defwin32constant +vk-lmenu+          #xA4)
+(defwin32constant +vk-rmenu+          #xA5)
+
+(defwin32constant +vk-browser-back+        #xA6)
+(defwin32constant +vk-browser-forward+     #xA7)
+(defwin32constant +vk-browser-refresh+     #xA8)
+(defwin32constant +vk-browser-stop+        #xA9)
+(defwin32constant +vk-browser-search+      #xAA)
+(defwin32constant +vk-browser-favorites+   #xAB)
+(defwin32constant +vk-browser-home+        #xAC)
+
+(defwin32constant +vk-volume-mute+         #xAD)
+(defwin32constant +vk-volume-down+         #xAE)
+(defwin32constant +vk-volume-up+           #xAF)
+(defwin32constant +vk-media-next-track+    #xB0)
+(defwin32constant +vk-media-prev-track+    #xB1)
+(defwin32constant +vk-media-stop+          #xB2)
+(defwin32constant +vk-media-play-pause+    #xB3)
+(defwin32constant +vk-launch-mail+         #xB4)
+(defwin32constant +vk-launch-media-select+ #xB5)
+(defwin32constant +vk-launch-app1+         #xB6)
+(defwin32constant +vk-launch-app2+         #xB7)
+
+
+;;; #xB8 - #xB9 : reserved
+
+(defwin32constant +vk-oem-1+          #xBA)   ; ';:' for US
+(defwin32constant +vk-oem-plus+       #xBB)   ; '+' any country
+(defwin32constant +vk-oem-comma+      #xBC)   ; ',' any country
+(defwin32constant +vk-oem-minus+      #xBD)   ; '-' any country
+(defwin32constant +vk-oem-period+     #xBE)   ; '.' any country
+(defwin32constant +vk-oem-2+          #xBF)   ; '/?' for US
+(defwin32constant +vk-oem-3+          #xC0)   ; '`~' for US
+
+;;; #xC1 - #xC2 : reserved
+
+;;; #xC3 - #xDA : Gamepad input
+
+(defwin32constant +vk-gamepad-a+                         #xC3) ; reserved
+(defwin32constant +vk-gamepad-b+                         #xC4) ; reserved
+(defwin32constant +vk-gamepad-x+                         #xC5) ; reserved
+(defwin32constant +vk-gamepad-y+                         #xC6) ; reserved
+(defwin32constant +vk-gamepad-right-shoulder+            #xC7) ; reserved
+(defwin32constant +vk-gamepad-left-shoulder+             #xC8) ; reserved
+(defwin32constant +vk-gamepad-left-trigger+              #xC9) ; reserved
+(defwin32constant +vk-gamepad-right-trigger+             #xCA) ; reserved
+(defwin32constant +vk-gamepad-dpad-up+                   #xCB) ; reserved
+(defwin32constant +vk-gamepad-dpad-down+                 #xCC) ; reserved
+(defwin32constant +vk-gamepad-dpad-left+                 #xCD) ; reserved
+(defwin32constant +vk-gamepad-dpad-right+                #xCE) ; reserved
+(defwin32constant +vk-gamepad-menu+                      #xCF) ; reserved
+(defwin32constant +vk-gamepad-view+                      #xD0) ; reserved
+(defwin32constant +vk-gamepad-left-thumbstick-button+    #xD1) ; reserved
+(defwin32constant +vk-gamepad-right-thumbstick-button+   #xD2) ; reserved
+(defwin32constant +vk-gamepad-left-thumbstick-up+        #xD3) ; reserved
+(defwin32constant +vk-gamepad-left-thumbstick-down+      #xD4) ; reserved
+(defwin32constant +vk-gamepad-left-thumbstick-right+     #xD5) ; reserved
+(defwin32constant +vk-gamepad-left-thumbstick-left+      #xD6) ; reserved
+(defwin32constant +vk-gamepad-right-thumbstick-up+       #xD7) ; reserved
+(defwin32constant +vk-gamepad-right-thumbstick-down+     #xD8) ; reserved
+(defwin32constant +vk-gamepad-right-thumbstick-right+    #xD9) ; reserved
+(defwin32constant +vk-gamepad-right-thumbstick-left+     #xDA) ; reserved
+
+(defwin32constant +vk-oem-4+          #xDB)  ;  '[{' for US
+(defwin32constant +vk-oem-5+          #xDC)  ;  '\|' for US
+(defwin32constant +vk-oem-6+          #xDD)  ;  ']}' for US
+(defwin32constant +vk-oem-7+          #xDE)  ;  ''"' for US
+(defwin32constant +vk-oem-8+          #xDF)
+
+;;; #xE0 : reserved
+
+;;; Various extended or enhanced keyboards
+(defwin32constant +vk-oem-ax+         #xE1)  ;  'AX' key on Japanese AX kbd
+(defwin32constant +vk-oem-102+        #xE2)  ;  "<>" or "\|" on RT 102-key kbd.
+(defwin32constant +vk-ico-help+       #xE3)  ;  Help key on ICO
+(defwin32constant +vk-ico-00+         #xE4)  ;  00 key on ICO
+
+(defwin32constant +vk-processkey+     #xE5)
+
+(defwin32constant +vk-ico-clear+      #xE6)
+
+
+(defwin32constant +vk-packet+         #xE7)
+
+;;; #xE8 : unassigned
+
+;;; Nokia/Ericsson definitions
+(defwin32constant +vk-oem-reset+      #xE9)
+(defwin32constant +vk-oem-jump+       #xEA)
+(defwin32constant +vk-oem-pa1+        #xEB)
+(defwin32constant +vk-oem-pa2+        #xEC)
+(defwin32constant +vk-oem-pa3+        #xED)
+(defwin32constant +vk-oem-wsctrl+     #xEE)
+(defwin32constant +vk-oem-cusel+      #xEF)
+(defwin32constant +vk-oem-attn+       #xF0)
+(defwin32constant +vk-oem-finish+     #xF1)
+(defwin32constant +vk-oem-copy+       #xF2)
+(defwin32constant +vk-oem-auto+       #xF3)
+(defwin32constant +vk-oem-enlw+       #xF4)
+(defwin32constant +vk-oem-backtab+    #xF5)
+
+(defwin32constant +vk-attn+           #xF6)
+(defwin32constant +vk-crsel+          #xF7)
+(defwin32constant +vk-exsel+          #xF8)
+(defwin32constant +vk-ereof+          #xF9)
+(defwin32constant +vk-play+           #xFA)
+(defwin32constant +vk-zoom+           #xFB)
+(defwin32constant +vk-noname+         #xFC)
+(defwin32constant +vk-pa1+            #xFD)
+(defwin32constant +vk-oem-clear+      #xFE)
+
+;;; #xFF : reserved
+
 (defwin32constant +wm-null+                     #x0000)
 (defwin32constant +wm-create+                   #x0001)
 (defwin32constant +wm-destroy+                  #x0002)
