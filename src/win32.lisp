@@ -5353,7 +5353,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (bytes-read (:pointer dword))
   (timeout dword))
 
-(defwin32fun ("CallNextHookEx" call-next-hook user32) lresult
+(defwin32fun ("CallNextHookEx" call-next-hook-ex user32) lresult
   (hk hhook)
   (code :int)
   (wparam wparam)
@@ -7685,6 +7685,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (time-zone-information (:pointer dynamic-time-zone-information))
   (local-time (:pointer systemtime))
   (universal-time (:pointer systemtime)))
+
+(defwin32fun ("UnhookWindowsHookEx" unhook-windows-hook-ex user32) bool
+  (hhook hhook))
 
 (defwin32fun ("UnloadKeyboardLayout" unload-keyboard-layout user32) bool
   (hkl hkl))
