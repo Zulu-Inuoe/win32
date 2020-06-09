@@ -853,6 +853,57 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 ;;; #xFF : reserved
 
+
+;;
+;; SetWindowsHook() codes
+;;
+(defwin32constant +wh-min+              -1)
+(defwin32constant +wh-msgfilter+        -1)
+(defwin32constant +wh-journalrecord+    0)
+(defwin32constant +wh-journalplayback+  1)
+(defwin32constant +wh-keyboard+         2)
+(defwin32constant +wh-getmessage+       3)
+(defwin32constant +wh-callwndproc+      4)
+(defwin32constant +wh-cbt+              5)
+(defwin32constant +wh-sysmsgfilter+     6)
+(defwin32constant +wh-mouse+            7)
+(defwin32constant +wh-hardware+         8)
+(defwin32constant +wh-debug+            9)
+(defwin32constant +wh-shell+           10)
+(defwin32constant +wh-foregroundidle+  11)
+(defwin32constant +wh-callwndprocret+  12)
+(defwin32constant +wh-keyboard-ll+     13)
+(defwin32constant +wh-mouse-ll+        14)
+(defwin32constant +wh-max+             14)
+
+(defwin32constant +wh-minhook+         +wh-min+)
+(defwin32constant +wh-maxhook+         +wh-max+)
+
+;;
+;; Hook Codes
+;;
+(defwin32constant +hc-action+           0)
+(defwin32constant +hc-getnext+          1)
+(defwin32constant +hc-skip+             2)
+(defwin32constant +hc-noremove+         3)
+(defwin32constant +hc-norem+            +hc-noremove+)
+(defwin32constant +hc-sysmodalon+       4)
+(defwin32constant +hc-sysmodaloff+      5)
+
+;;
+;; CBT Hook Codes
+;;
+(defwin32constant +hcbt-movesize+       0)
+(defwin32constant +hcbt-minmax+         1)
+(defwin32constant +hcbt-qs+             2)
+(defwin32constant +hcbt-createwnd+      3)
+(defwin32constant +hcbt-destroywnd+     4)
+(defwin32constant +hcbt-activate+       5)
+(defwin32constant +hcbt-clickskipped+   6)
+(defwin32constant +hcbt-keyskipped+     7)
+(defwin32constant +hcbt-syscommand+     8)
+(defwin32constant +hcbt-setfocus+       9)
+
 (defwin32constant +wm-null+                     #x0000)
 (defwin32constant +wm-create+                   #x0001)
 (defwin32constant +wm-destroy+                  #x0002)
