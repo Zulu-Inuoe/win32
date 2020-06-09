@@ -6660,6 +6660,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (process handle)
   (wow-64-process (:pointer bool)))
 
+(defwin32fun ("KillTimer" kill-timer user32) bool
+  (hwnd hwnd)
+  (u-id-event uint-ptr))
+
 (defwin32fun ("LineTo" line-to gdi32) bool
   (hdc hdc)
   (x :int)
@@ -7384,6 +7388,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SetSystemTimeAdjustment" set-system-time-adjustment kernel32) bool
   (time-adjustment dword)
   (time-adjustment-disabled bool))
+
+(defwin32fun ("SetTimer" set-timer user32) uint-ptr
+  (hwnd hwnd)
+  (n-id-event uint-ptr)
+  (u-elapse uint)
+  (lp-timer-func (:pointer :void)))
 
 (defwin32fun ("SetTimeZoneInformation" set-time-zone-information kernel32) bool
   (time-zone-information (:pointer time-zone-information)))
