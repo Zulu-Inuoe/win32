@@ -7288,6 +7288,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (width :int)
   (height :int))
 
+(defwin32fun ("ScreenToClient" screen-to-client user32) bool
+  (hwnd hwnd)
+  (lp-point (:pointer point)))
+
 (defwin32fun ("SelectObject" select-object gdi32) hgdiobj
   (hdc hdc)
   (obj hgdiobj))
