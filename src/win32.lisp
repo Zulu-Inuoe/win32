@@ -1966,6 +1966,22 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
                                         +desktop-writeobjects+
                                         +standard-rights-required+))
 
+(defwin32constant +process-terminate+                  #x0001)
+(defwin32constant +process-create-thread+              #x0002)
+(defwin32constant +process-set-sessionid+              #x0004)
+(defwin32constant +process-vm-operation+               #x0008)
+(defwin32constant +process-vm-read+                    #x0010)
+(defwin32constant +process-vm-write+                   #x0020)
+(defwin32constant +process-dup-handle+                 #x0040)
+(defwin32constant +process-create-process+             #x0080)
+(defwin32constant +process-set-quota+                  #x0100)
+(defwin32constant +process-set-information+            #x0200)
+(defwin32constant +process-query-information+          #x0400)
+(defwin32constant +process-suspend-resume+             #x0800)
+(defwin32constant +process-query-limited-information+  #x1000)
+(defwin32constant +process-set-limited-information+    #x2000)
+(defwin32constant +process-all-access+        (logior +standard-rights-required+ +synchronize+  #xFFFF))
+
 (defwin32constant +file-read-data+ #x0001)
 (defwin32constant +file-list-directory+ #x0001)
 
