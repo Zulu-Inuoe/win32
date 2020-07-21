@@ -164,7 +164,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type uchar :uchar)
 (defwin32type wchar :int16)
 
-(defwin32type int :int)
+(defwin32type int :int32)
 (defwin32type int-ptr #+32-bit :int32 #+64-bit :int64)
 (defwin32type int8 :int8)
 (defwin32type int16 :int16)
@@ -178,7 +178,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32type uint32 :uint32)
 (defwin32type uint64 :uint64)
 
-(defwin32type long :long)
+(defwin32type long :int32)
 (defwin32type longlong :int64)
 (defwin32type long-ptr #+32-bit :int32 #+64-bit :int64)
 (defwin32type long32 :int32)
