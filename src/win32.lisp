@@ -2308,6 +2308,40 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +sm-xvirtualscreen+ 76)
 (defwin32constant +sm-yvirtualscreen+ 77)
 
+;;
+;; MENUGETOBJECTINFO dwFlags values
+;;
+(defwin32constant +mngof-topgap+         #x00000001)
+(defwin32constant +mngof-bottomgap+      #x00000002)
+
+;;
+;; WM_MENUGETOBJECT return values
+;;
+(defwin32constant +mngo-nointerface+     #x00000000)
+(defwin32constant +mngo-noerror+         #x00000001)
+
+(defwin32constant +miim-state+       #x00000001)
+(defwin32constant +miim-id+          #x00000002)
+(defwin32constant +miim-submenu+     #x00000004)
+(defwin32constant +miim-checkmarks+  #x00000008)
+(defwin32constant +miim-type+        #x00000010)
+(defwin32constant +miim-data+        #x00000020)
+(defwin32constant +miim-string+      #x00000040)
+(defwin32constant +miim-bitmap+      #x00000080)
+(defwin32constant +miim-ftype+       #x00000100)
+
+(defwin32constant +hbmmenu-callback+            (%as-ptr -1))
+(defwin32constant +hbmmenu-system+              (%as-ptr  1))
+(defwin32constant +hbmmenu-mbar-restore+        (%as-ptr  2))
+(defwin32constant +hbmmenu-mbar-minimize+       (%as-ptr  3))
+(defwin32constant +hbmmenu-mbar-close+          (%as-ptr  5))
+(defwin32constant +hbmmenu-mbar-close-d+        (%as-ptr  6))
+(defwin32constant +hbmmenu-mbar-minimize-d+     (%as-ptr  7))
+(defwin32constant +hbmmenu-popup-close+         (%as-ptr  8))
+(defwin32constant +hbmmenu-popup-restore+       (%as-ptr  9))
+(defwin32constant +hbmmenu-popup-maximize+      (%as-ptr 10))
+(defwin32constant +hbmmenu-popup-minimize+      (%as-ptr 11))
+
 ;;;Accessibility parameters
 (defwin32constant +spi-getaccesstimeout+ #x003C)
 (defwin32constant +spi-getaudiodescription+ #x0074)
@@ -4107,6 +4141,26 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32constant +mf-end+              #x00000080) ; Obsolete -- only used by old RES files
 
+(defwin32constant +mft-string+          +mf-string+)
+(defwin32constant +mft-bitmap+          +mf-bitmap+)
+(defwin32constant +mft-menubarbreak+    +mf-menubarbreak+)
+(defwin32constant +mft-menubreak+       +mf-menubreak+)
+(defwin32constant +mft-ownerdraw+       +mf-ownerdraw+)
+(defwin32constant +mft-radiocheck+      #x00000200)
+(defwin32constant +mft-separator+       +mf-separator+)
+(defwin32constant +mft-rightorder+      #x00002000)
+(defwin32constant +mft-rightjustify+    +mf-rightjustify+)
+
+;; Menu flags for Add/Check/EnableMenuItem()
+(defwin32constant +mfs-grayed+          #x00000003)
+(defwin32constant +mfs-disabled+        +mfs-grayed+)
+(defwin32constant +mfs-checked+         +mf-checked+)
+(defwin32constant +mfs-hilite+          +mf-hilite+)
+(defwin32constant +mfs-enabled+         +mf-enabled+)
+(defwin32constant +mfs-unchecked+       +mf-unchecked+)
+(defwin32constant +mfs-unhilite+        +mf-unhilite+)
+(defwin32constant +mfs-default+         +mf-default+)
+
 (defwin32constant +nim-add+         #x00000000)
 (defwin32constant +nim-modify+      #x00000001)
 (defwin32constant +nim-delete+      #x00000002)
@@ -5324,6 +5378,20 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (cb-data dword)
   (lp-data (:pointer :void)))
 
+(defwin32struct menuiteminfo
+  (size uint)
+  (mask uint)
+  (type uint)
+  (state uint)
+  (id uint)
+  (sub-menu hmenu)
+  (bmp-checked hbitmap)
+  (bmp-unchecked hbitmap)
+  (item-data ulong-ptr)
+  (type-data lpwstr)
+  (cch uint)
+  (bmp-item hbitmap))
+
 (defwin32fun ("AbortPath" abort-path gdi32) bool
   (hdc hdc))
 
@@ -6323,6 +6391,24 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hmenu hmenu)
   (pos :int))
 
+(defwin32fun ("GetMenuItemInfoW" get-menu-item-info user32) bool
+  (hmenu hmenu)
+  (item uint)
+  (by-position bool)
+  (lpmii (:pointer menuiteminfo)))
+
+(defwin32fun ("GetMenuState" get-menu-state user32) uint
+  (hmenu hmenu)
+  (uid uint)
+  (uflags uint))
+
+(defwin32fun ("GetMenuStringW" get-menu-string user32) :int
+  (hmenu hmenu)
+  (uid-item uint)
+  (lp-string lpwstr)
+  (c-ch-max :int)
+  (flags uint))
+
 (defwin32fun ("GetMessageW" get-message user32) :int
   (msg (:pointer msg))
   (hwnd hwnd)
@@ -6440,6 +6526,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32-lispfun get-r-value (rgb)
   (ldb (cl:byte 8 0) rgb))
+
+(defwin32fun ("GetSaveFileNameW" get-save-file-name comdlg32) bool
+  (arg (:pointer openfilename)))
 
 (defwin32fun ("GetShellWindow" get-shell-window user32) hwnd)
 
