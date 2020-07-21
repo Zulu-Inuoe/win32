@@ -5227,6 +5227,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant        +vt-illegalmasked+	 #xfff)
 (defwin32constant        +vt-typemask+	 #xfff)
 
+(defwin32constant +th32cs-snapheaplist+ #x00000001)
+(defwin32constant +th32cs-snapprocess+  #x00000002)
+(defwin32constant +th32cs-snapthread+   #x00000004)
+(defwin32constant +th32cs-snapmodule+   #x00000008)
+(defwin32constant +th32cs-snapmodule32+ #x00000010)
+(defwin32constant +th32cs-snapall+      (logior +th32cs-snapheaplist+ +th32cs-snapprocess+ +th32cs-snapthread+ +th32cs-snapmodule+))
+(defwin32constant +th32cs-inherit+      #x80000000)
+
 (defwin32struct startupinfo
   (size dword)
   (reserved lpwstr)
@@ -5391,6 +5399,39 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (type-data lpwstr)
   (cch uint)
   (bmp-item hbitmap))
+
+(defwin32struct processentry32
+  (size dword)
+  (usage dword)
+  (process-id dword)
+  (default-heap-id ulong-ptr)
+  (module-id dword)
+  (count-threads dword)
+  (parent-process-id dword)
+  (pri-class-base long)
+  (flags dword)
+  (exe-file wchar :count 260))
+
+(defwin32struct moduleentry32
+  (size dword)
+  (module-id dword)
+  (process-id dword)
+  (glb-count-usage dword)
+  (proc-count-usage dword)
+  (mod-base-addr (:pointer byte))
+  (mod-base-size dword)
+  (hmodule hmodule)
+  (module wchar :count 256)
+  (exe-file wchar :count 260))
+
+(defwin32struct threadentry32
+  (size dword)
+  (count-usage dword)
+  (thread-id dword)
+  (owner-process-id dword)
+  (base-pri long)
+  (delta-pri long)
+  (flags dword))
 
 (defwin32fun ("AbortPath" abort-path gdi32) bool
   (hdc hdc))
@@ -5973,6 +6014,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CreateSolidBrush" create-solid-brush gdi32) hbrush
   (color colorref))
 
+(defwin32fun ("CreateToolhelp32Snapshot" create-tool-help-32-snapshot kernel32) handle
+  (flags dword)
+  (process-id dword))
+
 (defwin32-lispfun create-window (class-name window-name style x y width height parent menu instance param)
   (create-window-ex 0 class-name window-name style x y width height parent menu instance param))
 
@@ -6506,6 +6551,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetPixelFormat" get-pixel-format gdi32) :int
   (dc hdc))
 
+(defwin32fun ("GetPriorityClass" get-priority-class kernel32) dword
+  (process handle))
+
 (defwin32fun ("GetPriorityClipboardFormat" get-priority-clipboard-format user32) :int
   (format-priority-list (:pointer uint))
   (formats :int))
@@ -7024,6 +7072,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (id-new-item uint-ptr)
   (new-item lpcwstr))
 
+(defwin32fun ("Module32FirstW" module-32-first kernel32) bool
+  (snapshot handle)
+  (lpme (:pointer moduleentry32)))
+
+(defwin32fun ("Module32NextW" module-32-next kernel32) bool
+  (snapshot handle)
+  (lpme (:pointer moduleentry32)))
+
 (defwin32fun ("MoveFileW" move-file kernel32) bool
   (existing-file-name lpctstr)
   (new-file-name lpctstr))
@@ -7165,6 +7221,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32-lispfun primary-lang-id (lgid)
   (ldb (cl:byte 10 0) lgid))
+
+(defwin32fun ("Process32FirstW" process-32-first kernel32) bool
+  (snapshot handle)
+  (lppe (:pointer processentry32)))
+
+(defwin32fun ("Process32NextW" process-32-next kernel32) bool
+  (snapshot handle)
+  (lppe (:pointer processentry32)))
 
 (defwin32fun ("ProgIDFromCLSID" prog-id-from-clsid ole32) hresult
   (clsid refclsid)
@@ -7786,6 +7850,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (y :int)
   (string lpcwstr)
   (c :int))
+
+(defwin32fun ("Thread32First" thread-32-first kernel32) bool
+  (snapshot handle)
+  (lpte (:pointer threadentry32)))
+
+(defwin32fun ("Thread32Next" thread-32-next kernel32) bool
+  (snapshot handle)
+  (lpte (:pointer threadentry32)))
 
 (defwin32fun ("ToAscii" to-ascii user32) :int
   (virt-key uint)
