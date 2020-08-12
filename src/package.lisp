@@ -7,7 +7,8 @@
    #:boolean
    #:byte
    #:char
-   #:float)
+   #:float
+   #:sleep)
   (:export
    #:+win32-string-encoding+
    #:version

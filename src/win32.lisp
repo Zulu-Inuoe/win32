@@ -7065,6 +7065,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (caption lpcwstr)
   (type uint))
 
+(defwin32fun ("MessageBoxExW" message-box-ex user32) :int
+  (hwnd hwnd)
+  (text lpcwstr)
+  (caption lpcwstr)
+  (type uint)
+  (language-id word))
+
 (defwin32fun ("ModifyMenuW" modify-menu user32) bool
   (hmenu hmenu)
   (position uint)
@@ -7753,6 +7760,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("ShowWindow" show-window user32) bool
   (hwnd hwnd)
   (cmd :int))
+
+(defwin32fun ("Sleep" sleep kernel32) :void
+  (dw-milliseconds dword))
+
+(defwin32fun ("SleepEx" sleep-ex kernel32) dword
+  (dw-milliseconds dword)
+  (alertable bool))
 
 (defwin32fun ("StretchBlt" stretch-blt gdi32) bool
   (hdc-dest hdc)
