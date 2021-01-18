@@ -6631,6 +6631,8 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetThreadId" get-thread-id kernel32) dword
   (thread handle))
 
+(defwin32fun ("GetThreadLocale" get-thread-locale kernel32) lcid)
+
 (defwin32fun ("GetTickCount" get-tick-count kernel32) dword)
 
 (defwin32fun ("GetTickCount64" get-tick-count-64 kernel32) ulonglong)
@@ -7619,6 +7621,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SetSystemTimeAdjustment" set-system-time-adjustment kernel32) bool
   (time-adjustment dword)
   (time-adjustment-disabled bool))
+
+(defwin32fun ("SetThreadLocale" set-thread-locale kernel32) bool
+  (locale lcid))
 
 (defwin32fun ("SetTimer" set-timer user32) uint-ptr
   (hwnd hwnd)
