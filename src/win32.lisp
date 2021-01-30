@@ -5922,9 +5922,15 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CreateMenu" create-menu user32) hmenu)
 
 (defwin32fun ("CreateMutexW" create-mutex kernel32) handle
-  (mutex-attributes (:pointer security-attributes))
+  (security-attributes (:pointer security-attributes))
   (initial-owner bool)
   (name lpcwstr))
+
+(defwin32fun ("CreateMutexExW" create-mutex-ex kernel32) handle
+  (security-attributes (:pointer security-attributes))
+  (name lpcwstr)
+  (flags dword)
+  (desired-access dword))
 
 (defwin32fun ("CreateSystemMenu" create-system-menu user32) hmenu
   (hwnd hwnd)
