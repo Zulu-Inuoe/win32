@@ -5424,6 +5424,21 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (module wchar :count 256)
   (exe-file wchar :count 260))
 
+(defwin32struct reason-context_detailed-struct
+  (localized-reason-module hmodule)
+  (localized-reason-id ulong)
+  (reason-string-count ulong)
+  (reason-string lpwstr))
+
+(defwin32union reason-context_reason-union
+  (detailed reason-context_detailed-struct)
+  (simple-reason-string lpwstr))
+
+(defwin32struct reason-context
+  (version ulong)
+  (flags dword)
+  (reason reason-context_reason-union))
+
 (defwin32struct threadentry32
   (size dword)
   (count-usage dword)
@@ -6017,6 +6032,17 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CreateToolhelp32Snapshot" create-tool-help-32-snapshot kernel32) handle
   (flags dword)
   (process-id dword))
+
+(defwin32fun ("CreateWaitableTimerW" create-waitable-timer kernel32) handle
+  (security-attributes (:pointer security-attributes))
+  (manual-reset bool)
+  (timer-name lpcwstr))
+
+(defwin32fun ("CreateWaitableTimerExW" create-waitable-timer-ex kernel32) handle
+  (security-attributes (:pointer security-attributes))
+  (timer-name lpcwstr)
+  (flags dword)
+  (desired-access dword))
 
 (defwin32-lispfun create-window (class-name window-name style x y width height parent menu instance param)
   (create-window-ex 0 class-name window-name style x y width height parent menu instance param))
@@ -7685,6 +7711,23 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (numelements :int)
   (elements (:pointer :int))
   (rgbas (:pointer colorref)))
+
+(defwin32fun ("SetWaitableTimer" set-waitable-timer kernel32) bool
+  (handle handler)
+  (due-time (:pointer large-integer))
+  (period long)
+  (completion-routine :pointer)
+  (arg-to-completion-routine :pointer)
+  (resume bool))
+
+(defwin32fun ("SetWaitableTimerEx" set-waitable-timer-ex kernel32) bool
+  (handle handler)
+  (due-time (:pointer large-integer))
+  (period long)
+  (completion-routine :pointer)
+  (arg-to-completion-routine :pointer)
+  (wake-context (:pointer reason-context))
+  (tolerable-delay ulong))
 
 (defwin32fun ("SetWinEventHook" set-win-event-hook user32) hwineventhook
   (event-min uint)
