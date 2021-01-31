@@ -8083,15 +8083,27 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (ch wchar)
   (hkl hkl))
 
-(defwin32fun ("WaitForSingleObject" wait-for-single-object kernel32) dword
-  (handle handle)
-  (milliseconds dword))
-
 (defwin32fun ("WaitForMultipleObjects" wait-for-multiple-objects kernel32) dword
   (count dword)
   (handles (:pointer handle))
   (wait-all bool)
   (milliseconds dword))
+
+(defwin32fun ("WaitForMultipleObjectsEx" wait-for-multiple-objects-ex kernel32) dword
+  (count dword)
+  (handles (:pointer handle))
+  (wait-all bool)
+  (milliseconds dword)
+  (alertable bool))
+
+(defwin32fun ("WaitForSingleObject" wait-for-single-object kernel32) dword
+  (handle handle)
+  (milliseconds dword))
+
+(defwin32fun ("WaitForSingleObjectEx" wait-for-single-object-ex kernel32) dword
+  (handle handle)
+  (milliseconds dword)
+  (alertable bool))
 
 (defwin32fun ("WaitNamedPipeW" wait-named-pipe kernel32) bool
   (named-pipe-name lpcwstr)
