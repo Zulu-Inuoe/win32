@@ -5563,6 +5563,9 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CancelIo" cancel-io kernel32) bool
   (handle handle))
 
+(defwin32fun ("CancelWaitableTimer" cancel-waitable-timer kernel32) bool
+  (handle handle))
+
 (defwin32fun ("ChangeClipboardChain" change-clipboard-chain user32) bool
   (hwnd-remove hwnd)
   (hwnd-new-next hwnd))
