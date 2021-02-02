@@ -7722,7 +7722,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (rgbas (:pointer colorref)))
 
 (defwin32fun ("SetWaitableTimer" set-waitable-timer kernel32) bool
-  (handle handler)
+  (handle handle)
   (due-time (:pointer large-integer))
   (period long)
   (completion-routine :pointer)
@@ -7730,7 +7730,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (resume bool))
 
 (defwin32fun ("SetWaitableTimerEx" set-waitable-timer-ex kernel32) bool
-  (handle handler)
+  (handle handle)
   (due-time (:pointer large-integer))
   (period long)
   (completion-routine :pointer)
