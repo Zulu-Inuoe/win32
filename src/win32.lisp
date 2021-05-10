@@ -6038,6 +6038,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("CreateSolidBrush" create-solid-brush gdi32) hbrush
   (color colorref))
 
+(defwin32fun ("CreateThread" create-thread kernel32) handle
+  (security-attributes (:pointer security-attributes))
+  (stack-size size-t)
+  (start-address :pointer)
+  (parameter (:pointer :void))
+  (creation-flags dword)
+  (thread-id (:pointer dword)))
+
 (defwin32fun ("CreateToolhelp32Snapshot" create-tool-help-32-snapshot kernel32) handle
   (flags dword)
   (process-id dword))
