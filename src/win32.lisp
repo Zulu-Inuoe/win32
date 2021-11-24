@@ -7325,6 +7325,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (overlapped (:pointer overlapped))
   (completion-routine :pointer))
 
+(defwin32fun ("ReadProcessMemory" read-process-memory kernel32) bool
+  (hprocess handle)
+  (base-address (:pointer :void))
+  (buffer (:pointer :void))
+  (size size-t)
+  (number-of-bytes-read (:pointer size-t)))
+
 (defwin32fun ("RealizePalette" realize-palette gdi32) uint
   (dc hdc))
 
@@ -8140,6 +8147,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (number-of-bytes-to-write dword)
   (overlapped (:pointer overlapped))
   (completion-routine :pointer))
+
+(defwin32fun ("WriteProcessMemory" write-process-memory kernel32) bool
+  (hprocess handle)
+  (base-address (:pointer :void))
+  (buffer (:pointer :void))
+  (size size-t)
+  (number-of-bytes-written (:pointer size-t)))
 
 (defwin32-lispfun zero-memory (destination length)
   (dotimes (i length)
