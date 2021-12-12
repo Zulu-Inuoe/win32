@@ -5235,6 +5235,31 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +th32cs-snapall+      (logior +th32cs-snapheaplist+ +th32cs-snapprocess+ +th32cs-snapthread+ +th32cs-snapmodule+))
 (defwin32constant +th32cs-inherit+      #x80000000)
 
+(defwin32constant +keyeventf-extendedkey+ #x0001)
+(defwin32constant +keyeventf-keyup+       #x0002)
+(defwin32constant +keyeventf-unicode+     #x0004)
+(defwin32constant +keyeventf-scancode+    #x0008)
+
+(defwin32constant +mouseeventf-move+                #x0001) ; mouse move
+(defwin32constant +mouseeventf-leftdown+            #x0002) ; left button down
+(defwin32constant +mouseeventf-leftup+              #x0004) ; left button up
+(defwin32constant +mouseeventf-rightdown+           #x0008) ; right button down
+(defwin32constant +mouseeventf-rightup+             #x0010) ; right button up
+(defwin32constant +mouseeventf-middledown+          #x0020) ; middle button down
+(defwin32constant +mouseeventf-middleup+            #x0040) ; middle button up
+(defwin32constant +mouseeventf-xdown+               #x0080) ; x button down
+(defwin32constant +mouseeventf-xup+                 #x0100) ; x button down
+(defwin32constant +mouseeventf-wheel+               #x0800) ; wheel button rolled
+(defwin32constant +mouseeventf-hwheel+              #x01000) ; hwheel button rolled
+(defwin32constant +mouseeventf-move-nocoalesce+     #x2000) ; do not coalesce mouse moves
+(defwin32constant +mouseeventf-virtualdesk+         #x4000) ; map to entire virtual desktop
+(defwin32constant +mouseeventf-absolute+            #x8000) ; absolute move
+
+(defwin32constant +input-mouse+ 0)
+(defwin32constant +input-keyboard+ 1)
+(defwin32constant +input-hardware+ 2)
+
+
 (defwin32struct startupinfo
   (size dword)
   (reserved lpwstr)
