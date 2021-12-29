@@ -8183,3 +8183,18 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32-lispfun zero-memory (destination length)
   (dotimes (i length)
     (setf (cffi:mem-aref destination :uint8 i) 0)))
+
+(defwin32fun ("EnumProcesses" enum-processes psapi) bool
+  (lpid-process (:pointer dword))
+  (cb dword)
+  (cb-needed (:pointer dwordlong)))
+
+(defwin32fun ("GetProcessImageFileNameA" get-process-image-file-name-a psapi) dword
+  (hprocess handle)
+  (lpimage-file-name lpstr)
+  (n-size dword))
+
+(defwin32fun ("GetProcessImageFileNameW" get-process-image-file-name-w psapi) dword
+  (hprocess handle)
+  (lpimage-file-name lpwstr)
+  (n-size dword))
