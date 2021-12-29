@@ -6221,6 +6221,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (proc :pointer)
   (lparam lparam))
 
+(defwin32fun ("EnumProcesses" enum-processes psapi) bool
+  (lpid-process (:pointer dword))
+  (cb dword)
+  (cb-needed (:pointer dwordlong)))
+
 (defwin32fun ("EnumWindows" enum-windows user32) bool
   (callback :pointer)
   (lparam lparam))
@@ -6629,6 +6634,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("GetProcAddress" get-proc-address kernel32) far-proc
   (module hmodule)
   (proc-name lpcstr))
+
+(defwin32fun ("GetProcessImageFileNameW" get-process-image-file-name psapi) dword
+  (hprocess handle)
+  (lpimage-file-name lpwstr)
+  (nsize dword))
 
 (defwin32-lispfun get-proc-address* (module ordinal)
   (declare (type (unsigned-byte 16) ordinal))
@@ -8183,18 +8193,3 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32-lispfun zero-memory (destination length)
   (dotimes (i length)
     (setf (cffi:mem-aref destination :uint8 i) 0)))
-
-(defwin32fun ("EnumProcesses" enum-processes psapi) bool
-  (lpid-process (:pointer dword))
-  (cb dword)
-  (cb-needed (:pointer dwordlong)))
-
-(defwin32fun ("GetProcessImageFileNameA" get-process-image-file-name-a psapi) dword
-  (hprocess handle)
-  (lpimage-file-name lpstr)
-  (n-size dword))
-
-(defwin32fun ("GetProcessImageFileNameW" get-process-image-file-name-w psapi) dword
-  (hprocess handle)
-  (lpimage-file-name lpwstr)
-  (n-size dword))
