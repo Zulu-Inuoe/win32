@@ -6305,7 +6305,7 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetActiveWindow" get-active-window user32) hwnd)
 
-(defwin32fun ("GetAncesor" get-ancestor user32) hwnd
+(defwin32fun ("GetAncestor" get-ancestor user32) hwnd
   (hwnd hwnd)
   (ga-flags uint))
 
@@ -6735,6 +6735,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (lp-buffer lpwstr)
   (pcb-buffer (:pointer dword)))
 
+(defwin32fun ("GetForegroundWindow" get-foreground-window user32) hwnd
+  (hwnd hwnd)
+  (cmd uint))
+
+(defwin32fun ("SetForegroundWindow" set-foreground-window user32) bool
+  (hwnd hwnd))
+
 (defwin32fun ("GetWindow" get-window user32) hwnd
   (hwnd hwnd)
   (cmd uint))
@@ -6858,10 +6865,16 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("IsGUIThread" is-gui-thread user32) bool
   (convert bool))
 
+(defwin32fun ("IsIconic" is-iconic user32) bool
+  (hwnd hwnd))
+
 (defwin32fun ("IsWindow" is-window user32) bool
   (hwnd hwnd))
 
 (defwin32fun ("IsWindowEnabled" is-window-enabled user32) bool
+  (hwnd hwnd))
+
+(defwin32fun ("IsWindowVisible" is-window-visible user32) bool
   (hwnd hwnd))
 
 (defwin32-lispfun is-windows-version-or-greater (major minor service-pack)
