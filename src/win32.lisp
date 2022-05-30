@@ -4327,6 +4327,97 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32constant +clsctx-activate-aaa-as-iu+	 #x800000)
 (defwin32constant +clsctx-ps-dll+	 #x80000000)
 
+(defwin32constant +file-type-unknown+   #x0000)
+(defwin32constant +file-type-disk+      #x0001)
+(defwin32constant +file-type-char+      #x0002)
+(defwin32constant +file-type-pipe+      #x0003)
+(defwin32constant +file-type-remote+    #x8000)
+
+(defwin32constant +std-input-handle+    (%as-dword -10))
+(defwin32constant +std-output-handle+   (%as-dword -11))
+(defwin32constant +std-error-handle+    (%as-dword -12))
+
+(defwin32constant +noparity+            0)
+(defwin32constant +oddparity+           1)
+(defwin32constant +evenparity+          2)
+(defwin32constant +markparity+          3)
+(defwin32constant +spaceparity+         4)
+
+(defwin32constant +onestopbit+          0)
+(defwin32constant +one5stopbits+        1)
+(defwin32constant +twostopbits+         2)
+
+(defwin32constant +ignore+              0)       ;; Ignore signal
+(defwin32constant +infinite+            #xFFFFFFFF)  ;; Infinite timeout
+
+(defwin32constant +cbr-110+             110)
+(defwin32constant +cbr-300+             300)
+(defwin32constant +cbr-600+             600)
+(defwin32constant +cbr-1200+            1200)
+(defwin32constant +cbr-2400+            2400)
+(defwin32constant +cbr-4800+            4800)
+(defwin32constant +cbr-9600+            9600)
+(defwin32constant +cbr-14400+           14400)
+(defwin32constant +cbr-19200+           19200)
+(defwin32constant +cbr-38400+           38400)
+(defwin32constant +cbr-56000+           56000)
+(defwin32constant +cbr-57600+           57600)
+(defwin32constant +cbr-115200+          115200)
+(defwin32constant +cbr-128000+          128000)
+(defwin32constant +cbr-256000+          256000)
+
+(defwin32constant +ce-rxover+           #x0001)  ; Receive Queue overflow
+(defwin32constant +ce-overrun+          #x0002)  ; Receive Overrun Error
+(defwin32constant +ce-rxparity+         #x0004)  ; Receive Parity Error
+(defwin32constant +ce-frame+            #x0008)  ; Receive Framing error
+(defwin32constant +ce-break+            #x0010)  ; Break Detected
+(defwin32constant +ce-txfull+           #x0100)  ; TX Queue is full
+(defwin32constant +ce-pto+              #x0200)  ; LPTx Timeout
+(defwin32constant +ce-ioe+              #x0400)  ; LPTx I/O Error
+(defwin32constant +ce-dns+              #x0800)  ; LPTx Device not selected
+(defwin32constant +ce-oop+              #x1000)  ; LPTx Out-Of-Paper
+(defwin32constant +ce-mode+             #x8000)  ; Requested mode unsupported
+
+(defwin32constant +ie-badid+            -1)    ; Invalid or unsupported id
+(defwin32constant +ie-open+             -2)    ; Device Already Open
+(defwin32constant +ie-nopen+            -3)    ; Device Not Open
+(defwin32constant +ie-memory+           -4)    ; Unable to allocate queues
+(defwin32constant +ie-default+          -5)    ; Error in default parameters
+(defwin32constant +ie-hardware+         -10)   ; Hardware Not Present
+(defwin32constant +ie-bytesize+         -11)   ; Illegal Byte Size
+(defwin32constant +ie-baudrate+         -12)   ; Unsupported BaudRate
+
+(defwin32constant +ev-rxchar+           #x0001)  ; Any Character received
+(defwin32constant +ev-rxflag+           #x0002)  ; Received certain character
+(defwin32constant +ev-txempty+          #x0004)  ; Transmitt Queue Empty
+(defwin32constant +ev-cts+              #x0008)  ; CTS changed state
+(defwin32constant +ev-dsr+              #x0010)  ; DSR changed state
+(defwin32constant +ev-rlsd+             #x0020)  ; RLSD changed state
+(defwin32constant +ev-break+            #x0040)  ; BREAK received
+(defwin32constant +ev-err+              #x0080)  ; Line status error occurred
+(defwin32constant +ev-ring+             #x0100)  ; Ring signal detected
+(defwin32constant +ev-perr+             #x0200)  ; Printer error occured
+(defwin32constant +ev-rx80full+         #x0400)  ; Receive buffer is 80 percent full
+(defwin32constant +ev-event1+           #x0800)  ; Provider specific event 1
+(defwin32constant +ev-event2+           #x1000)  ; Provider specific event 2
+
+(defwin32constant +setxoff+             1)       ; Simulate XOFF received
+(defwin32constant +setxon+              2)       ; Simulate XON received
+(defwin32constant +setrts+              3)       ; Set RTS high
+(defwin32constant +clrrts+              4)       ; Set RTS low
+(defwin32constant +setdtr+              5)       ; Set DTR high
+(defwin32constant +clrdtr+              6)       ; Set DTR low
+(defwin32constant +resetdev+            7)       ; Reset device if possible
+(defwin32constant +setbreak+            8)       ; Set the device break line.
+(defwin32constant +clrbreak+            9)       ; Clear the device break line.
+
+(defwin32constant +purge-txabort+       #x0001)  ; Kill the pending/current writes to the comm port.
+(defwin32constant +purge-rxabort+       #x0002)  ; Kill the pending/current reads to the comm port.
+(defwin32constant +purge-txclear+       #x0004)  ; Kill the transmit queue if there.
+(defwin32constant +purge-rxclear+       #x0008)  ; Kill the typeahead buffer if there.
+
+(defwin32constant +lptx+                #x80)    ; Set if ID is for LPT device
+
 (defwin32struct memory-status
   (length dword)
   (memory-load dword)
@@ -4835,6 +4926,23 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (hwnd hwnd)
   (id uint)
   (guid-item guid))
+
+(defwin32struct dcb
+  (dcb-length dword)
+  (baud-rate dword)
+  (settings :uint32)
+  (reserved word)
+  (on-lim word)
+  (off-lim word)
+  (byte-size byte)
+  (parity byte)
+  (stop-bits byte)
+  (on-char :char)
+  (off-char :char)
+  (error-char :char)
+  (eof-char :char)
+  (evt-char :char)
+  (reserved-1 word))
 
 (defwin32constant +file-ver-get-localised+ #x01)
 (defwin32constant +file-ver-get-neutral+ #x02)
@@ -6361,6 +6469,10 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 
 (defwin32fun ("GetClipboardViewer" get-clipboard-viewer user32) hwnd)
 
+(defwin32fun ("GetCommState" get-comm-state kernel32) bool
+  (hfile handle)
+  (lpdcb (:pointer dcb)))
+
 (defwin32fun ("GetCommandLineW" get-command-line kernel32) lptstr)
 
 (defwin32fun ("GetCompressedFileSizeW" get-compressed-file-size kernel32) dword
@@ -7660,6 +7772,14 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("SetClipboardViewer" set-clipboard-viewer user32) hwnd
   (new-viewer hwnd))
 
+(defwin32fun ("SetCommMask" set-comm-mask kernel32) bool
+  (hfile handle)
+  (evt-mask dword))
+
+(defwin32fun ("SetCommState" set-comm-state kernel32) bool
+  (hfile handle)
+  (lpdcb (:pointer dcb)))
+
 (defwin32fun ("SetCurrentDirectoryW" set-current-directory kernel32) bool
   (lp-path-name lpcwstr))
 
@@ -8145,6 +8265,11 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
 (defwin32fun ("VkKeyScanExW" vk-key-scan-ex user32) short
   (ch wchar)
   (hkl hkl))
+
+(defwin32fun ("WaitCommEvent" wait-comm-event kernel32) bool
+  (hfile handle)
+  (lp-evt-mask (:pointer dword))
+  (lp-overlapped (:pointer overlapped)))
 
 (defwin32fun ("WaitForMultipleObjects" wait-for-multiple-objects kernel32) dword
   (count dword)
