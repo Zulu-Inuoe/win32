@@ -321,6 +321,13 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (cl-size ulong)
   (p-data (:pointer hyper)))
 
+(defwin32struct kbd-ll-hook
+  (vk-code dword)
+  (scan-code dword)
+  (flags dword)
+  (time dword)
+  (extra-info ulong-ptr))
+
 (defwin32type olechar wchar)
 (defwin32type wire-bstr (:pointer flagged-word-blob))
 (defwin32type bstr (:pointer olechar))
