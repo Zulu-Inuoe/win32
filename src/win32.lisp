@@ -6663,6 +6663,12 @@ Meant to be used around win32 C preprocessor macros which have to be implemented
   (buffer lptstr)
   (size dword))
 
+(defwin32fun ("GetModuleFileNameExW" get-module-file-name-ex kernel32) dword
+  (process handle)
+  (module hmodule)
+  (buffer lptstr)
+  (size dword))
+
 (defwin32fun ("GetModuleHandleW" get-module-handle kernel32) hmodule
   (module lpcwstr))
 
